@@ -2,9 +2,4 @@
 exportPattern(".")
 
 # Import all packages listed as Imports or Depends
-import(
-  FME,
-  deSolve,
-  minpack.lm,
-  rootSolve
-)
+import(mkin, gWidgetsWWW2)

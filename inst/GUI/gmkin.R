@@ -19,7 +19,6 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>
 
-require(mkin) # {{{1
 # Set the GUI title and create the basic widget layout {{{1
 w      <- gwindow("gmkin - Browser based GUI for kinetic evaluations using mkin")
 sb     <- gstatusbar(paste("Powered by gWidgetsWWW2, ExtJS, Rook, FME, deSolve",

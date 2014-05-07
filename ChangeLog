@@ -1,3 +1,11 @@
+2014-05-07  Johannes Ranke <jranke@uni-bremen.de> for gmkin (0.5-01)
+
+	* Remove all content that does not belong to the newly established
+	  GUI package gmkin
+	* Update DESCRIPTION, README.md, NAMESPACE, GNUmakefile
+	* Update R/gmkin.R and inst/GUI/gmkin.R
+	* Move inst/GUI/TODO to TODO
+
 2014-04-28  Johannes Ranke <jranke@uni-bremen.de> for mkin (0.9-26)
 
 	* DESCRIPTION: Added copyright information and location of gWidgetsWWW2
