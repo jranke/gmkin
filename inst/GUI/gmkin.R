@@ -903,6 +903,10 @@ update_plotting_and_fitting <- function() {
   get.initials.gc <<- gcombobox(paste("Fit", f.df$Fit), cont = f.gg.buttons)
 
   svalue(f.gg.opts.st) <- ftmp$solution_type
+  svalue(f.gg.opts.atol) <- ftmp$atol
+  svalue(f.gg.opts.rtol) <- ftmp$rtol
+  svalue(f.gg.opts.transform_rates) <- ftmp$transform_rates
+  svalue(f.gg.opts.transform_fractions) <- ftmp$transform_fractions
   svalue(f.gg.opts.weight) <- ftmp$weight.ini
   svalue(f.gg.opts.reweight.method) <- ifelse(is.null(ftmp$reweight.method),
                                                       "none", 
