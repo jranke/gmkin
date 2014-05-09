@@ -27,7 +27,7 @@ the GUI and therefore ExtJS the first time, but when the GUI is loaded it appear
 to work fine.
 
 ```s
-require(mkin)
+require(gmkin)
 gmkin()
 ```
 
