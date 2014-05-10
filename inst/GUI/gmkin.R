@@ -354,14 +354,18 @@ new_ds_from_csv_handler <- function(h, ...) {
   if(svalue(ds.e.up.widelong) == "wide") {
     tmpdl <- mkin_wide_to_long(tmpd, time = as.character(svalue(ds.e.up.wide.time)))
   } else {
-    tmpdl <- tmpd
+    tmpdl <- data.frame()
+    tmpdl$name <- tmpd[[svalue(ds.e.up.long.name)]]
+    tmpdl$time <- tmpd[[svalue(ds.e.up.long.time)]]
+    tmpdl$value <- tmpd[[svalue(ds.e.up.long.value)]]
+    tmpdl$err <- tmpd[[svalue(ds.e.up.long.err)]]
   }
   if (class(tmpd) != "try-error") {
     ds.cur <<- as.character(1 + length(ds))
     ds[[ds.cur]] <<- list(
                           study_nr = NA,
-                          title = "New upload",
-                          sampling_times = sort(unique(tmpd$t)),
+                          title = "New import",
+                          sampling_times = sort(unique(tmpdl$time)),
                           time_unit = "",
                           observed = unique(tmpdl$name),
                           unit = "",
