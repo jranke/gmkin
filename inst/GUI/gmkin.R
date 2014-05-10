@@ -185,7 +185,7 @@ pr.ge <- gedit(project_name, cont = prg, label = "Project",
 gbutton("Save current project contents", cont = left,
         handler = save_to_file_handler)
 
-# GUI widgets and a function for Studies {{{1
+# Widget and handler for Studies {{{1
 stg <- gexpandgroup("Studies", cont = left)
 visible(stg) <- FALSE
 update_study_selector <- function(h, ...) {
@@ -198,9 +198,9 @@ studies.gdf <- gdf(studies.df, name = "Edit studies in the project",
                    height = 180, cont = stg)
 studies.gdf$set_column_width(1, 40)
 addHandlerChanged(studies.gdf, update_study_selector)
-# Datasets and models {{{1
+# Widgets and handlers for datasets and models {{{1
 dsm <- gframe("Datasets and models", cont = left, horizontal = FALSE)
-# Dataset table with handler {{{2
+# Widget for dataset table with handler {{{2
 ds.switcher <- function(h, ...) {
   ds.cur <<- as.character(svalue(h$obj))
   update_ds_editor()
@@ -259,7 +259,7 @@ configure_fit_handler = function(h, ...) {
 gbutton("Configure fit for selected model and dataset", cont = dsm, 
         handler = configure_fit_handler)
 
-# Fits {{{1
+# Widget and handler for fits {{{1
 f.gf <- gframe("Fits", cont = left, horizontal = FALSE)
 f.switcher <- function(h, ...) {
   if (svalue(h$obj) != "0") {
@@ -279,7 +279,23 @@ f.gtable$set_column_width(2, 60)
 # Dataset editor {{{1
 ds.editor <- gframe("Dataset 1", horizontal = FALSE, cont = center, 
                     label = "Dataset editor")
-# Handler functions {{{3
+# Handler functions {{{2
+ds.empty <- list(
+                 study_nr = 1,
+                 title = "",
+                 sampling_times = c(0, 1),
+                 time_unit = "",
+                 observed = "parent",
+                 unit = "",
+                 replicates = 1,
+                 data = data.frame(
+                                   name = "parent",
+                                   time = c(0, 1),
+                                   value = c(100, NA),
+                                   override = "NA",
+                                   err = 1,
+                                   stringsAsFactors = FALSE))
+
 copy_dataset_handler <- function(h, ...) {
   ds.old <- ds.cur
   ds.cur <<- as.character(1 + length(ds))
@@ -300,23 +316,7 @@ delete_dataset_handler <- function(h, ...) {
  
 new_dataset_handler <- function(h, ...) {
   ds.cur <<- as.character(1 + length(ds))
-  ds[[ds.cur]] <<- list(
-                        study_nr = 1,
-                        title = "",
-                        sampling_times = c(0, 1),
-                        time_unit = "",
-                        observed = "parent",
-                        unit = "",
-                        replicates = 1,
-                        data = data.frame(
-                                          name = "parent",
-                                          time = c(0, 1),
-                                          value = c(100, NA),
-                                          override = "NA",
-                                          err = 1,
-                                          stringsAsFactors = FALSE
-                                          )
-                        )
+  ds[[ds.cur]] <<- ds.empty
   update_ds.df()
   ds.gtable[,] <- ds.df
   update_ds_editor()
@@ -413,15 +413,15 @@ keep_ds_changes_handler <- function(h, ...) {
   update_m_editor()
 }
  
-# Widget setup {{{3
-# Line 1 {{{4
+# Widget setup {{{2
+# Line 1 {{{3
 ds.e.1 <- ggroup(cont = ds.editor, horizontal = TRUE)
 glabel("Title: ", cont = ds.e.1) 
 ds.title.ge <- gedit(ds[[ds.cur]]$title, cont = ds.e.1) 
 glabel(" from ", cont = ds.e.1) 
 ds.study.gc <- gcombobox(paste("Study", studies.gdf[,1]), cont = ds.e.1) 
 
-# Line 2 {{{4
+# Line 2 {{{3
 ds.e.2 <- ggroup(cont = ds.editor, horizontal = TRUE)
 ds.e.2a <- ggroup(cont = ds.e.2, horizontal = FALSE)
 gbutton("Copy dataset", cont = ds.e.2a, handler = copy_dataset_handler)
@@ -437,9 +437,9 @@ upload_dataset.gf <- gfile(text = "Upload text file", cont = ds.e.2b,
 
 gbutton("Keep changes", cont = ds.e.2, handler = keep_ds_changes_handler)
 
-# Line 3 with forms or upload area {{{4
+# Line 3 with forms or upload area {{{3
 ds.e.stack <- gstackwidget(cont = ds.editor)
-# Forms for meta data {{{5
+# Forms for meta data {{{4
 ds.e.forms <- ggroup(cont = ds.e.stack, horizontal = TRUE)
 
 ds.e.3a <- gvbox(cont = ds.e.forms)
@@ -466,7 +466,7 @@ ds.e.obu <- gedit(ds[[ds.cur]]$unit,
 generate_grid.gb <- gbutton("Generate empty grid for kinetic data", cont = ds.e.3b, 
         handler = empty_grid_handler)
 tooltip(generate_grid.gb) <- "Overwrites the kinetic data shown below"
-# Data upload area {{{5
+# Data upload area {{{4
 ds.e.upload <- ggroup(cont = ds.e.stack, horizontal = TRUE)
 ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.upload, width = 400, height = 400)
 ds.e.up.options <- ggroup(cont = ds.e.upload, horizontal = FALSE)
@@ -497,8 +497,7 @@ svalue(ds.e.up.wlstack) <- 1
 
 svalue(ds.e.stack) <- 1
 
-
-# Kinetic Data {{{4
+# Kinetic Data {{{3
 ds.e.gdf <- gdf(ds[[ds.cur]]$data, name = "Kinetic data", 
                 width = 500, height = 700, cont = ds.editor)
 ds.e.gdf$set_column_width(2, 70)
