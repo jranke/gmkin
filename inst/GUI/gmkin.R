@@ -354,11 +354,12 @@ new_ds_from_csv_handler <- function(h, ...) {
   if(svalue(ds.e.up.widelong) == "wide") {
     tmpdl <- mkin_wide_to_long(tmpd, time = as.character(svalue(ds.e.up.wide.time)))
   } else {
-    tmpdl <- data.frame()
-    tmpdl$name <- tmpd[[svalue(ds.e.up.long.name)]]
-    tmpdl$time <- tmpd[[svalue(ds.e.up.long.time)]]
-    tmpdl$value <- tmpd[[svalue(ds.e.up.long.value)]]
-    tmpdl$err <- tmpd[[svalue(ds.e.up.long.err)]]
+    tmpdl <- data.frame(
+      name = tmpd[[svalue(ds.e.up.long.name)]],
+      time = tmpd[[svalue(ds.e.up.long.time)]],
+      value = tmpd[[svalue(ds.e.up.long.value)]])
+    tmpderr <- tmpd[[svalue(ds.e.up.long.err)]]
+    if (!is.null(tmpderr)) tmpdl$err <- tmpderr
   }
   if (class(tmpd) != "try-error") {
     ds.cur <<- as.character(1 + length(ds))
@@ -375,7 +376,7 @@ new_ds_from_csv_handler <- function(h, ...) {
                                                      length)$x),
                           data = tmpdl)
     ds[[ds.cur]]$data$override <<- as.numeric(NA)
-    ds[[ds.cur]]$data$err <<- 1
+    if (!is.null(ds[[ds.cur]]$data$err)) ds[[ds.cur]]$data$err <<- 1
     update_ds.df()
     ds.gtable[,] <- ds.df
     update_ds_editor()
