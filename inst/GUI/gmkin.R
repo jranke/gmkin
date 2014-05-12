@@ -376,7 +376,7 @@ new_ds_from_csv_handler <- function(h, ...) {
                                                      length)$x),
                           data = tmpdl)
     ds[[ds.cur]]$data$override <<- as.numeric(NA)
-    if (!is.null(ds[[ds.cur]]$data$err)) ds[[ds.cur]]$data$err <<- 1
+    if (is.null(ds[[ds.cur]]$data$err)) ds[[ds.cur]]$data$err <<- 1
     update_ds.df()
     ds.gtable[,] <- ds.df
     update_ds_editor()
