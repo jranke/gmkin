@@ -47,7 +47,7 @@ ds.df <- data.frame()
 m.df <- data.frame()
 f.df <- data.frame()
 # Empty versions of meta data {{{2
-f.df.empty <- data.frame(Fit = "0", 
+f.df.empty <- data.frame(Fit = as.integer(0), 
                          Dataset = "", 
                          Model = "",
                          stringsAsFactors = FALSE)
@@ -92,7 +92,8 @@ update_f.df <- function() {
   for (fit.index in names(f)) {
     f.count <- f.count + 1
     ftmp <- f[[fit.index]]
-    f.df[f.count, ] <<- c(as.character(f.count), ftmp$ds.index, ftmp$mkinmod$name)
+    f.df[f.count, "Fit"] <<- as.integer(f.count)
+    f.df[f.count, c("Dataset", "Model")] <<- c(ftmp$ds.index, ftmp$mkinmod$name)
   }
 }
 # Initialise meta data objects {{{1

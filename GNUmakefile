@@ -25,7 +25,10 @@ help:
 # Development Tasks
 #------------------------------------------------------------------------------
 
-build:
+NEWS: NEWS.md
+	sed -e 's/^-/ -/' -e 's/^## *//' -e 's/^#/\t\t/' <NEWS.md | fmt -80 >NEWS
+
+build: NEWS
 	cd ..;\
 		"$(RBIN)/R" CMD build $(PKGSRC)
 
