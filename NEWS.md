@@ -2,7 +2,7 @@
 
 ## BUG FIXES
 
-- Sorting in the fit table now works correctly
+- Sorting in the fit table now works correctly also for more than 9 fits
 
 ## MINOR CHANGES
 
