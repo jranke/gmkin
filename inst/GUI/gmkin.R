@@ -247,6 +247,8 @@ configure_fit_handler = function(h, ...) {
                                          "none", ftmp$reweight.method)
           svalue(f.gg.opts.reweight.tol) <<- ftmp$reweight.tol
           svalue(f.gg.opts.reweight.max.iter) <<- ftmp$reweight.max.iter
+          svalue(f.gg.opts.method.modFit) <<- ftmp$method.modFit
+          svalue(f.gg.opts.maxit.modFit) <<- ftmp$maxit.modFit
           f.gg.parms[,] <- get_Parameters(stmp, FALSE)
           delete(f.gg.plotopts, f.gg.po.obssel)
           f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), cont = f.gg.plotopts, 
@@ -718,7 +720,9 @@ run_fit <- function() {
                    err = err,
                    reweight.method = reweight.method,
                    reweight.tol = as.numeric(svalue(f.gg.opts.reweight.tol)),
-                   reweight.max.iter = as.numeric(svalue(f.gg.opts.reweight.max.iter))
+                   reweight.max.iter = as.numeric(svalue(f.gg.opts.reweight.max.iter)),
+                   method.modFit = svalue(f.gg.opts.method.modFit),
+                   maxit.modFit = svalue(f.gg.opts.maxit.modFit)
                    )
   ftmp$ds.index <<- ds.i
   ftmp$ds <<- ds[[ds.i]]
@@ -858,19 +862,19 @@ f.gg.parms$set_column_width(5, 60)
 # Fit options form {{{4
 f.gg.opts <- gformlayout(cont = f.gn, label = "Fit options")
 solution_types <- c("auto", "analytical", "eigen", "deSolve")
-f.gg.opts.st <- gcombobox(solution_types, selected = 1, 
-                          label = "solution_type", width = 200, 
+f.gg.opts.st <- gcombobox(solution_types, selected = 1,
+                          label = "solution_type", width = 200,
                           cont = f.gg.opts)
-f.gg.opts.atol <- gedit(ftmp$atol, label = "atol", width = 20, 
+f.gg.opts.atol <- gedit(ftmp$atol, label = "atol", width = 20,
                          cont = f.gg.opts)
-f.gg.opts.rtol <- gedit(ftmp$rtol, label = "rtol", width = 20, 
+f.gg.opts.rtol <- gedit(ftmp$rtol, label = "rtol", width = 20,
                          cont = f.gg.opts)
 f.gg.opts.transform_rates <- gcheckbox("transform_rates",
                          cont = f.gg.opts, checked = TRUE)
 f.gg.opts.transform_fractions <- gcheckbox("transform_fractions",
                          cont = f.gg.opts, checked = TRUE)
 weights <- c("manual", "none", "std", "mean")
-f.gg.opts.weight <- gcombobox(weights, selected = 1, label = "weight", 
+f.gg.opts.weight <- gcombobox(weights, selected = 1, label = "weight",
                               width = 200, cont = f.gg.opts)
 f.gg.opts.reweight.method <- gcombobox(c("none", "obs"), selected = 1,
                                        label = "reweight.method",
@@ -879,6 +883,13 @@ f.gg.opts.reweight.method <- gcombobox(c("none", "obs"), selected = 1,
 f.gg.opts.reweight.tol <- gedit(1e-8, label = "reweight.tol",
                                  width = 20, cont = f.gg.opts)
 f.gg.opts.reweight.max.iter <- gedit(10, label = "reweight.max.iter",
+                                 width = 20, cont = f.gg.opts)
+optimisation_methods <- c("Marq", "Port", "SANN")
+f.gg.opts.method.modFit <- gcombobox(optimisation_methods, selected = 1,
+                                     label = "method.modFit",
+                                     width = 200,
+                                     cont = f.gg.opts)
+f.gg.opts.maxit.modFit <- gedit("auto", label = "maxit.modFit",
                                  width = 20, cont = f.gg.opts)
 
 # Summary {{{3
@@ -919,6 +930,8 @@ update_plotting_and_fitting <- function() {
                                                       ftmp$reweight.method)
   svalue(f.gg.opts.reweight.tol) <- ftmp$reweight.tol
   svalue(f.gg.opts.reweight.max.iter) <- ftmp$reweight.max.iter
+  svalue(f.gg.opts.method.modFit) <- ftmp$method.modFit
+  svalue(f.gg.opts.maxit.modFit) <- ftmp$maxit.modFit
 
   # Summary
   oldwidth <<- options()$width

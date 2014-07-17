@@ -1,5 +1,11 @@
 # CHANGES in gmkin VERSION 0.5-2
 
+## NEW FEATURES
+
+- Make `Port` and `SANN` optimisation algorithms from FME available to gmkin, in addition to the default algorithm `Marq`
+
+- Make it possible to specify the maximum number of iterations for these algorithms
+
 ## BUG FIXES
 
 - Sorting in the fit table now works correctly also for more than 9 fits
