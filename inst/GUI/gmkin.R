@@ -22,7 +22,7 @@
 # Set the GUI title and create the basic widget layout {{{1
 w      <- gwindow("gmkin - Browser based GUI for kinetic evaluations using mkin")
 sb     <- gstatusbar(paste("Powered by gWidgetsWWW2 (ExtJS, Rook)",
-                           "and mkin (FME, deSolve and minpack.lm",
+                           "and mkin (FME, deSolve and minpack.lm)",
                            "--- Working directory is", getwd()), cont = w)
 pg     <- gpanedgroup(cont = w, default.size = 260)
 center <- gnotebook(cont = pg)
@@ -326,6 +326,7 @@ new_dataset_handler <- function(h, ...) {
   update_ds_editor()
 }
 
+tmptextheader <- character(0)
 load_text_file_with_data <- function(h, ...) {
   tmptextfile <<- normalizePath(svalue(h$obj), winslash = "/")
   tmptext <- readLines(tmptextfile, warn = FALSE)
