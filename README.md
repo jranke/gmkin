@@ -9,6 +9,8 @@ ExtJS which is bundled with gWidgetsWWW2.
 
 ## Installation
 
+First you need to install gWidgetsWWW2:
+
 ```s
 require(devtools)
 install_github("gWidgetsWWW2", "jverzani")
@@ -17,6 +19,14 @@ install_github("gWidgetsWWW2", "jverzani")
 Installing gWidgetsWWW2 yields a lot of warnings concerning overly long path
 names. This is because the JavaScript library ExtJS is installed 
 along with it which has lots of files with long paths to be installed.
+
+Then you can install gmkin, also directly from the latest github sources:
+
+```s
+install_github("gmkin", "jranke")
+```
+
+## Usage
 
 You start the GUI from your R terminal with latest mkin installed as shown below. 
 You may also want to adapt the browser that R starts (using
