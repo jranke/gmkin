@@ -20,7 +20,7 @@ Installing gWidgetsWWW2 yields a lot of warnings concerning overly long path
 names. This is because the JavaScript library ExtJS is installed 
 along with it which has lots of files with long paths to be installed.
 
-Then you can install gmkin, also directly from the latest github sources:
+Then you can install gmkin, also directly from github:
 
 ```s
 install_github("gmkin", "jranke")
