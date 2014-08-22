@@ -556,7 +556,7 @@ add_observed_handler <- function(h, ...) {
                                  cont = m.e.rows[[obs.i]])
   svalue(m.e.type[[obs.i]]) <- "SFO"
   glabel("to", cont = m.e.rows[[obs.i]]) 
-  m.e.to[[obs.i]] <<- gedit("", cont = m.e.rows[[obs.i]])
+  m.e.to[[obs.i]] <<- gedit("", width = 40, cont = m.e.rows[[obs.i]])
   m.e.sink[[obs.i]] <<- gcheckbox("Path to sink", 
                                   checked = TRUE, cont = m.e.rows[[obs.i]]) 
   gbutton("Remove compound", handler = remove_compound_handler, 
@@ -621,7 +621,7 @@ show_m_spec <- function() {
     glabel("to", cont = m.e.rows[[obs.i]]) 
     obs.to <<- ifelse(is.null(m[[m.cur]]$spec[[obs.i]]$to), "",
                  paste(m[[m.cur]]$spec[[obs.i]]$to, collapse = ", "))
-    m.e.to[[obs.i]] <<- gedit(obs.to, cont = m.e.rows[[obs.i]])
+    m.e.to[[obs.i]] <<- gedit(obs.to, width = 40, cont = m.e.rows[[obs.i]])
     m.e.sink[[obs.i]] <<- gcheckbox("Path to sink", checked = m[[m.cur]]$spec[[obs.i]]$sink,
               cont = m.e.rows[[obs.i]]) 
     if (obs.i > 1) {
