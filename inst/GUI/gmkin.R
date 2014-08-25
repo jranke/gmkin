@@ -236,6 +236,7 @@ configure_fit_handler = function(h, ...) {
           ftmp$ds <<- ds[[ds.i]]
           stmp <<- summary(ftmp)
           svalue(pf) <- paste0("Dataset ", ds.i, ", Model ", m[[m.i]]$name)
+          svalue(f.gg.opts.plot) <<- FALSE
           svalue(f.gg.opts.st) <<- ftmp$solution_type
           svalue(f.gg.opts.weight) <<- ftmp$weight
           svalue(f.gg.opts.atol) <<- ftmp$atol
@@ -712,6 +713,7 @@ run_fit <- function() {
                    fixed_initials = inifixed,
                    parms.ini = deparms, 
                    fixed_parms = defixed,
+                   plot = svalue(f.gg.opts.plot),
                    solution_type = svalue(f.gg.opts.st),
                    atol = as.numeric(svalue(f.gg.opts.atol)),
                    rtol = as.numeric(svalue(f.gg.opts.rtol)),
@@ -863,6 +865,8 @@ f.gg.parms$set_column_width(5, 60)
 # Fit options form {{{4
 f.gg.opts <- gformlayout(cont = f.gn, label = "Fit options")
 solution_types <- c("auto", "analytical", "eigen", "deSolve")
+f.gg.opts.plot <- gcheckbox("plot",
+                         cont = f.gg.opts, checked = FALSE)
 f.gg.opts.st <- gcombobox(solution_types, selected = 1,
                           label = "solution_type", width = 200,
                           cont = f.gg.opts)

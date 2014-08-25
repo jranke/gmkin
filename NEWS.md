@@ -8,6 +8,8 @@
 
 - Provide the possibility to save summaries as text file
 
+- Show the fitting process in a separate plot device, optionally turn this off
+
 ## BUG FIXES
 
 - Sorting in the fit table now works correctly also for more than 9 fits
