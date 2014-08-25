@@ -896,8 +896,16 @@ f.gg.opts.maxit.modFit <- gedit("auto", label = "maxit.modFit",
 # Summary {{{3
 oldwidth <- options()$width
 options(width = 90)
+summaryfile <- paste(ds[[ds.cur]]$title, "_", m[[m.cur]]$name, ".txt", sep = "")
+f.gg.summary <- ggroup(label = "Summary", cont = f.gn, horizontal = FALSE)
+f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
+f.gg.summary.filename <- gedit(summaryfile, width = 50, cont = f.gg.summary.topline)
+f.gg.summary.savebutton <-  gbutton("Save summary", cont = f.gg.summary.topline,
+                                    handler = function(h, ...) {
+                                      capture.output(stmp,  file = summaryfile)
+                                    })
 f.gg.summary <- ghtml(c("<pre>", capture.output(stmp), "</pre>"),
-                        cont = f.gn, label = "Summary")
+                        cont = f.gg.summary, label = "Summary")
 options(width = oldwidth)
 
 # Plot options {{{4

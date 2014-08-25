@@ -6,6 +6,8 @@
 
 - Make it possible to specify the maximum number of iterations for these algorithms
 
+- Provide the possibility to save summaries as text file
+
 ## BUG FIXES
 
 - Sorting in the fit table now works correctly also for more than 9 fits
