@@ -8,7 +8,7 @@
 
 - Provide the possibility to save summaries as text file
 
-- Show the fitting process in a separate plot device, optionally turn this off
+- Option to show the fitting process in a separate plot device, default is not to
 
 ## BUG FIXES
 
