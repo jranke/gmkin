@@ -13,9 +13,11 @@ First you need to install gWidgetsWWW2:
 
 ```s
 require(devtools)
-install_github("gWidgetsWWW2", "jverzani")
+install_github("gWidgetsWWW2", "jverzani", quick = TRUE)
 ```
 
+Using `quick = TRUE` skips docs, multiple-architecture builds, demos, and
+vignettes, to make installation as fast and painless as possible.
 Installing gWidgetsWWW2 yields a lot of warnings concerning overly long path
 names. This is because the JavaScript library ExtJS is installed 
 along with it which has lots of files with long paths to be installed.
@@ -23,7 +25,7 @@ along with it which has lots of files with long paths to be installed.
 Then you can install gmkin, also directly from github:
 
 ```s
-install_github("gmkin", "jranke")
+install_github("gmkin", "jranke", quick = TRUE)
 ```
 
 ## Usage
