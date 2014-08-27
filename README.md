@@ -55,8 +55,7 @@ save(FOCUS_2006_Z_gmkin, file = "FOCUS_2006_gmkin_Z.RData")
 
 ## Status and known issues
 
-- At the moment (Firefox 31.0), text fields using Firefox on Windows are not rendered 
-  correctly, but only with a black box. Chrome on Windows works, Firefox 31.0 on Linux as well.
+- Please check the [issues](https://github.com/jranke/gmkin/issues) reported on github
 - Starting the GUI takes some time. Once it is started, it is reasonably responsive.
 - Do not delete the last dataset or the last model from the respective lists,
   this is not supported.
