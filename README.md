@@ -55,13 +55,13 @@ save(FOCUS_2006_Z_gmkin, file = "FOCUS_2006_gmkin_Z.RData")
 
 ## Status and known issues
 
-- Please check the [issues](https://github.com/jranke/gmkin/issues) reported on github
-- Starting the GUI takes some time. Once it is started, it is reasonably responsive.
-- Do not delete the last dataset or the last model from the respective lists,
-  this is not supported.
-- The fit list is not always updated when using Firefox version 28 on Windows. This
-  works with Firefox starting from version 29 and with Chrome.
 - gmkin was developed in the hope that it will be useful. However, no warranty can be 
   given that it will meet your expectations. There may be bugs, so please be
   careful, check your results for plausibility and use your own expertise to judge
   yourself.
+- Please check the [issues](https://github.com/jranke/gmkin/issues) reported on github
+- Starting the GUI takes some time. Once it is started, it is reasonably responsive.
+- Do not delete the last dataset or the last model from the respective lists,
+  this is not supported.
+- The fit list was not always updated when using Firefox version 28 on Windows. This
+  works with Firefox starting from version 29 and with Chrome.
