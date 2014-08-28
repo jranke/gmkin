@@ -10,6 +10,8 @@
 
 - Option to show the fitting process in a separate plot device, default is not to
 
+- Add an inital message explaining the use of the target input box of the model editor 
+
 ## BUG FIXES
 
 - Sorting in the fit table now works correctly also for more than 9 fits
