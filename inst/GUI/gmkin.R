@@ -311,12 +311,16 @@ copy_dataset_handler <- function(h, ...) {
 }
  
 delete_dataset_handler <- function(h, ...) {
-  ds[[ds.cur]] <<- NULL
-  names(ds) <<- as.character(1:length(ds))
-  ds.cur <<- names(ds)[[1]]
-  update_ds.df()
-  ds.gtable[,] <- ds.df
-  update_ds_editor()
+  if (length(ds) > 1) {
+    ds[[ds.cur]] <<- NULL
+    names(ds) <<- as.character(1:length(ds))
+    ds.cur <<- names(ds)[[1]]
+    update_ds.df()
+    ds.gtable[,] <- ds.df
+    update_ds_editor()
+  } else {
+    galert("Deleting the last dataset is not supported", parent = w)
+  }
 }
  
 new_dataset_handler <- function(h, ...) {
@@ -540,12 +544,16 @@ copy_model_handler <- function(h, ...) {
 }
  
 delete_model_handler <- function(h, ...) {
-  m[[m.cur]] <<- NULL
-  names(m) <<- as.character(1:length(m))
-  m.cur <<- "1"
-  update_m.df()
-  m.gtable[,] <- m.df
-  update_m_editor()
+  if (length(m) > 1) {
+    m[[m.cur]] <<- NULL
+    names(m) <<- as.character(1:length(m))
+    m.cur <<- "1"
+    update_m.df()
+    m.gtable[,] <- m.df
+    update_m_editor()
+  } else {
+    galert("Deleting the last model is not supported", parent = w)
+  }
 }
 
 add_observed_handler <- function(h, ...) {
