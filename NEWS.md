@@ -16,6 +16,8 @@
 
 - Sorting in the fit table now works correctly also for more than 9 fits
 
+- The fit table was not always updated (e.g. after deleting a fit) due to a bug introduced while fixing the bug above
+
 ## MINOR CHANGES
 
 - The statusbar message was improved
@@ -24,4 +26,4 @@
 
 # CHANGES in gmkin VERSION 0.5-1
 
-- This is the gmkin version presented at SETAC in Basel
+- This is the gmkin version presented at SETAC in Basel in May 2014

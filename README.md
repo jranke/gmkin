@@ -9,24 +9,74 @@ ExtJS which is bundled with gWidgetsWWW2.
 
 ## Installation
 
-First you need to install gWidgetsWWW2:
+For running gmkin you need a system running a recent version of R (version
+3.0.0 or later should be OK), the gWidgesWWW2 package from github, the gmkin
+package and a web browser (Firefox and Chrome work for me) with
+JavaScript enabled.
+
+It should be possible to run gmkin on most laptop or desktop computers running
+Linux, Mac OS X, Windows XP or Windows 7. It is frequently checked under Linux and
+Windows 7.
+
+### Installing R
+
+For Linux users, binary R packages should be available through the usual package repositories. 
+For more information for the most common distributions, please refer to 
+[CRAN](http://cran.r-project.org/bin/linux). 
+
+[Windows](http://cran.r-project.org/bin/windows) and [Mac OS X](http://cran.r-project.org/bin/macosx)
+users are also referred to the respective pages on [CRAN](http://cran.r-project.org) where
+there is more background information, notably an 
+[R for Windows FAQ](http://cran.r-project.org/bin/windows/base/rw-FAQ.html).
+
+### Installing the devtools package
+
+Installation of gWidgetsWWW2 and gmkin directly from
+[github](http://github.com) is facilitated by installing the R package `devtools`
+using either the Menu, or, more conveniently, using the R command
 
 ```s
+install.packages("devtools")
+```
+
+### Installing gWidgetsWWW2
+
+The gWidgetsWWW2 package provides the glue between R code defining the
+graphical user interface (GUI) and the internal R help server which serves 
+the GUI elements in the form of JavaScript. The JavaScript library ExtJS
+is used for this, and it is bundled in the gWidgetsWWW2 package.
+
+Therefore, the package is a bit large. It is not available on CRAN because it
+contains very long path names in the JavaScript files which limits its portability.
+Also, it attaches an R object called `app` to the global environment in R, which
+is not allowed by the CRAN package policy.
+
+Installation is easy using the devtools library in R, so make sure it is installed, and 
+then run
+
+```{r, eval = FALSE}
 require(devtools)
 install_github("gWidgetsWWW2", "jverzani", quick = TRUE)
 ```
 
-Using `quick = TRUE` skips docs, multiple-architecture builds, demos, and
-vignettes, to make installation as fast and painless as possible.
 Installing gWidgetsWWW2 yields a lot of warnings concerning overly long path
-names. This is because the JavaScript library ExtJS is installed 
-along with it which has lots of files with long paths to be installed.
+names.  Using `quick = TRUE` skips docs, multiple-architecture builds, demos,
+and vignettes, to make installation as fast and painless as possible.
+
+### Installing gmkin
 
 Then you can install gmkin, also directly from github:
 
 ```s
+require(devtools)
 install_github("gmkin", "jranke", quick = TRUE)
 ```
+
+The same command can be run if you want to update gmkin. See the 
+[NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file 
+for a list of recent changes, or the 
+[commit history](https://github.com/jranke/gmkin/commits/master)
+if you are interested in the details.
 
 ## Usage
 
