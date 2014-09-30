@@ -54,7 +54,7 @@ is not allowed by the CRAN package policy.
 Installation is easy using the devtools library in R, so make sure it is installed, and 
 then run
 
-```{r, eval = FALSE}
+```s
 require(devtools)
 install_github("gWidgetsWWW2", "jverzani", quick = TRUE)
 ```
