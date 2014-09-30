@@ -52,13 +52,13 @@ f.df.empty <- data.frame(Fit = as.integer(0),
                          Model = "",
                          stringsAsFactors = FALSE)
 # Helper functions {{{1
-# Override function for making it possible to override original data in the GUI {{{2
+# Override function for making it possible to override original data points using the GUI {{{2
 override <- function(d) {
   data.frame(name = d$name, time = d$time, 
              value = ifelse(is.na(d$override), d$value, d$override),
              err = d$err)
 }
-# Update dataframe with datasets for selection {{{2
+# Update dataframe with datasets {{{2
 update_ds.df <- function() {
   ds.n <- length(ds)
   ds.df <<- data.frame(Index = 1:ds.n, 
@@ -74,7 +74,7 @@ update_ds.df <- function() {
     observed.all <<- union(observed, observed.all)
   }
 }
-# Update dataframe with models for selection {{{2
+# Update dataframe with models {{{2
 update_m.df <- function() {
   m.n <- length(m)
   m.df <<- data.frame(Index = 1:m.n, 
@@ -85,7 +85,7 @@ update_m.df <- function() {
     m.df[i, "Name"] <<- m[[m.index]]$name
   }
 }
-# Update dataframe with fits for selection {{{2
+# Update dataframe with fits {{{2
 update_f.df <- function() {
   f.df <<- f.df.empty
   f.count <- 0
@@ -267,7 +267,7 @@ gbutton("Configure fit for selected model and dataset", cont = dsm,
 # Widget and handler for fits {{{1
 f.gf <- gframe("Fits", cont = left, horizontal = FALSE)
 f.switcher <- function(h, ...) {
-  if (svalue(h$obj) != "0") {
+  if (svalue(h$obj) != 0) {
     f.cur <<- svalue(h$obj)
     ftmp <<- f[[f.cur]]
     stmp <<- s[[f.cur]]
