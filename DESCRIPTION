@@ -1,8 +1,8 @@
 Package: gmkin
 Type: Package
 Title: GUI for fitting kinetic models to chemical degradation data with mkin
-Version: 0.5-2
-Date: 2014-09-30
+Version: 0.5-3
+Date: 2014-10-06
 Authors@R: c(person("Johannes", "Ranke", role = c("aut", "cre", "cph"), 
                     email = "jranke@uni-bremen.de"),
              person("Eurofins Regulatory AG", role = "cph"))
@@ -15,4 +15,5 @@ LazyLoad: yes
 LazyData: yes
 Encoding: UTF-8
 BugReports: http://github.com/jranke/gmkin/issues
-URL: http://github.com/jranke/gmkin
+URL: http://kinfit.r-forge.r-project.org/gmkin_static,
+     http://github.com/jranke/gmkin

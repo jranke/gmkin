@@ -10,73 +10,84 @@ ExtJS which is bundled with gWidgetsWWW2.
 ## Installation
 
 For running gmkin you need a system running a recent version of R (version
-3.0.0 or later should be OK), the gWidgesWWW2 package from github, the gmkin
-package and a web browser (Firefox and Chrome work for me) with
-JavaScript enabled.
+3.0.0 or later should be OK), the gWidgesWWW2 package, the gmkin package and a
+web browser (Firefox and Chrome work for me) with JavaScript enabled.
 
 It should be possible to run gmkin on most laptop or desktop computers running
 Linux, Mac OS X, Windows XP or Windows 7. It is frequently checked under Linux and
 Windows 7.
 
+### Notes on the gWidgetsWWW2 package
+
+The R package gWidgetsWWW2 is not available on CRAN because it contains 
+path names with more then 100 characters in the JavaScript files which limits
+its portability.  Also, it attaches an R object called `app` to the global
+environment in R, which is not allowed by the CRAN package policy. It is not
+a widely used library for creating graphical user interfaces, is not supported 
+by a commercial company and was used for gmkin simply because it makes it
+possible to create a reasonably complex user interface by just writing R code.
+
 ### Installing R
 
-For Linux users, binary R packages should be available through the usual package repositories. 
-For more information for the most common distributions, please refer to 
-[CRAN](http://cran.r-project.org/bin/linux). 
+Please refer to [CRAN](http://cran.r-project.org) for installation instructions
+and binary packages. If you are on Windows and would like to upgrade your R 
+installation, please refer to the respective [FAQ entry](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#What_0027s-the-best-way-to-upgrade_003f).
 
-[Windows](http://cran.r-project.org/bin/windows) and [Mac OS X](http://cran.r-project.org/bin/macosx)
-users are also referred to the respective pages on [CRAN](http://cran.r-project.org) where
-there is more background information, notably an 
-[R for Windows FAQ](http://cran.r-project.org/bin/windows/base/rw-FAQ.html).
+### Installing gmkin using an additional repository
 
-### Installing the devtools package
-
-Installation of gWidgetsWWW2 and gmkin directly from
-[github](http://github.com) is facilitated by installing the R package `devtools`
-using either the Menu, or, more conveniently, using the R command
+Windows and Linux users running R 3.1.0 or later can make use of the gmkin
+package repository on r-forge. If you would like to test gmkin just once, open
+the R console and issue the commands
 
 ```s
-install.packages("devtools")
+setRepositories(addURLs = c(gmkin_repo = "http://kinfit.r-forge.r-project.org/repo"))
+install.packages("gmkin")
 ```
 
-### Installing gWidgetsWWW2
+This should pull the gmkin package and its dependencies, notably the
+gWidgetsWWW2 package which is not available from the CRAN archive (see above).
 
-The gWidgetsWWW2 package provides the glue between R code defining the
-graphical user interface (GUI) and the internal R help server which serves 
-the GUI elements in the form of JavaScript. The JavaScript library ExtJS
-is used for this, and it is bundled in the gWidgetsWWW2 package.
+### Keeping it current
 
-Therefore, the package is a bit large. It is not available on CRAN because it
-contains very long path names in the JavaScript files which limits its portability.
-Also, it attaches an R object called `app` to the global environment in R, which
-is not allowed by the CRAN package policy.
+If you would like to pull in new versions of gmkin from time to time, you could
+add this repository to your startup options, e.g. by including a command like
 
-Installation is easy using the devtools library in R, so make sure it is installed, and 
-then run
+```s
+options(repos = c(CRAN = "http://cran.rstudio.com", 
+                  gmkin_repo = "http://kinfit.r-forge.r-project.org/repo"))
+```
+
+to your startup options, e.g. to your `.Rprofile` file. Please consult the help
+page for this, e.g. by typing
+
+```s
+?Startup
+```
+
+You can than update your packages including gmkin by using `update.packages()`,
+please see its help files for details.
+
+The latest changes to gmkin are recorded in the 
+[NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file,
+more details can be found in the 
+[commit history](https://github.com/jranke/gmkin/commits/master).
+
+
+### Installation using the devtools package
+
+Users of the `devtools` package can also install gWidgetsWWW2 and gmkin directly from
+the respective github repositories:
 
 ```s
 require(devtools)
-install_github("gWidgetsWWW2", "jverzani", quick = TRUE)
+install_github("jverzani/gWidgetsWWW2", quick = TRUE)
+install_github("jranke/gmkin", quick = TRUE)
 ```
 
-Installing gWidgetsWWW2 yields a lot of warnings concerning overly long path
-names.  Using `quick = TRUE` skips docs, multiple-architecture builds, demos,
-and vignettes, to make installation as fast and painless as possible.
-
-### Installing gmkin
-
-Then you can install gmkin, also directly from github:
-
-```s
-require(devtools)
-install_github("gmkin", "jranke", quick = TRUE)
-```
-
-The same command can be run if you want to update gmkin. See the 
-[NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file 
-for a list of recent changes, or the 
-[commit history](https://github.com/jranke/gmkin/commits/master)
-if you are interested in the details.
+Installing gWidgetsWWW2 in this way yields a lot of warnings concerning overly
+long path names (see Notes on gWidgetsWWW2 above).  Using `quick = TRUE` skips
+docs, multiple-architecture builds, demos, and vignettes, to make installation
+as fast and painless as possible.
 
 ## Usage
 
