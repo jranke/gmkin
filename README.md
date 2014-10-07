@@ -46,6 +46,8 @@ install.packages("gmkin")
 
 This should pull the gmkin package and its dependencies, notably the
 gWidgetsWWW2 package which is not available from the CRAN archive (see above).
+Mac users that have the necessary development files installed can probably 
+install from the source files in this repository (not tested).
 
 ### Keeping it current
 
@@ -57,12 +59,8 @@ options(repos = c(CRAN = "http://cran.rstudio.com",
                   gmkin_repo = "http://kinfit.r-forge.r-project.org/repo"))
 ```
 
-to your startup options, e.g. to your `.Rprofile` file. Please consult the help
-page for this, e.g. by typing
-
-```s
-?Startup
-```
+to your startup options, e.g. to your `.Rprofile` file. For details, please
+consult the help page for this, e.g. by typing `?Startup` in R.
 
 You can than update your packages including gmkin by using `update.packages()`,
 please see its help files for details.
@@ -105,7 +103,7 @@ gmkin()
 ```
 
 The following screenshot is taken after loading the gmkin workspace with
-an analysis of FOCUS dataset Z. It has to be saved as an .RData file 
+an analysis of FOCUS dataset Z. It has to be saved in R as an .RData file
 first, and can then be loaded to the GUI.
 
 ```s

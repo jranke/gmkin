@@ -15,8 +15,11 @@
   needed to populate the gmkin user interface.
 }
 \examples{
+  \dontrun{
   save(FOCUS_2006_gmkin, file = "FOCUS_2006_gmkin.RData")
-  # Now you can load the file "FOCUS_2006_gmkin.RData" from gmkin
+  # Now you can load the file "FOCUS_2006_gmkin.RData" from gmkin,
+  # restoring the workspace that is loaded at startup.
+  }
 }
 \source{
   FOCUS (2006) \dQuote{Guidance Document on Estimating Persistence and

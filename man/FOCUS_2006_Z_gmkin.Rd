@@ -14,8 +14,10 @@
   needed to populate the \code{\link{gmkin}} user interface.
 }
 \examples{
-  save(FOCUS_2006_Z_gmkin, file = "FOCUS_2006_gmkin_Z.RData")
-  # Now you can load the file "FOCUS_2006_gmkin_Z.RData" from gmkin
+  \dontrun{
+  save(FOCUS_2006_Z_gmkin, file = "FOCUS_2006_Z_gmkin.RData")
+  # Now you can load the file "FOCUS_2006_Z_gmkin.RData" from gmkin
+  }
 }
 \source{
   FOCUS (2006) \dQuote{Guidance Document on Estimating Persistence and
