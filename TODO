@@ -1,4 +1,2 @@
 - Make plot of fit and residuals more configurable
 - Make it possible to select and delete models, maybe move up and down as well
-- Remove association of datasets with studies as this is not important to the
-  evaluations and brings unnecessary complexity

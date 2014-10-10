@@ -24,9 +24,8 @@ pkgfiles = NEWS \
 	   NAMESPACE \
 	   R/* \
 	   README.md \
-	   TODO
-	  # TODO \
-	  # vignettes/*
+	   TODO \
+           vignettes/gmkin_manual.html
 
 all: NEWS check clean
 
@@ -62,11 +61,10 @@ check-no-vignettes: build-no-vignettes
 	"$(RBIN)/R" CMD check --as-cran --no-tests $(TGZ)
 	mv $(TGZ) $(TGZVNR)
 
-vignettes/gmkin_manual.pdf: vignettes/gmkin_manual.Rnw
-	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rnw', dir = 'vignettes')"
+vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
+	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
 
-vignettes:
-#vignettes: vignettes/gmkin_manual.pdf
+vignettes: vignettes/gmkin_manual.html
 
 sd:
 	"$(RBIN)/Rscript" -e "library(staticdocs); build_site()"

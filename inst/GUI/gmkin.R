@@ -561,7 +561,7 @@ add_observed_handler <- function(h, ...) {
   m.e.rows[[obs.i]] <<- ggroup(cont = m.editor, horizontal = TRUE)
   m.e.obs[[obs.i]] <<- gcombobox(observed.all, selected = obs.i, 
                                 cont = m.e.rows[[obs.i]])
-  m.e.type[[obs.i]] <<- gcombobox(c("SFO", "FOMC", "DFOP", "HS", "SFORB"),
+  m.e.type[[obs.i]] <<- gcombobox(c("SFO", "SFORB"),
                                  cont = m.e.rows[[obs.i]])
   svalue(m.e.type[[obs.i]]) <- "SFO"
   glabel("to", cont = m.e.rows[[obs.i]]) 
@@ -570,11 +570,11 @@ add_observed_handler <- function(h, ...) {
                             width = 40, cont = m.e.rows[[obs.i]])
   m.e.sink[[obs.i]] <<- gcheckbox("Path to sink", 
                                   checked = TRUE, cont = m.e.rows[[obs.i]]) 
-  gbutton("Remove compound", handler = remove_compound_handler, 
+  gbutton("Remove compound", handler = remove_observed_handler, 
           action = obs.i, cont = m.e.rows[[obs.i]])
 }
 
-remove_compound_handler <- function(h, ...) {
+remove_observed_handler <- function(h, ...) {
   m[[m.cur]]$spec[[h$action]] <<- NULL
   update_m_editor()
 }
@@ -609,7 +609,7 @@ svalue(m.ff.gc) <- m[[m.cur]]$use_of_ff
 m.e.b <- ggroup(cont = m.editor, horizontal = TRUE)
 gbutton("Copy model", cont = m.e.b, handler = copy_model_handler)
 gbutton("Delete model", cont = m.e.b, handler = delete_model_handler)
-gbutton("Add transformation product", cont = m.e.b, 
+gbutton("Add observed variable", cont = m.e.b, 
         handler = add_observed_handler)
 gbutton("Keep changes", cont = m.e.b, handler = keep_m_changes_handler)
 
@@ -626,8 +626,13 @@ show_m_spec <- function() {
     m.e.obs[[obs.i]] <<- gcombobox(observed.all, selected = 0, 
                                   cont = m.e.rows[[obs.i]])
     svalue(m.e.obs[[obs.i]]) <<- obs.name
-    m.e.type[[obs.i]] <<- gcombobox(c("SFO", "FOMC", "DFOP", "HS", "SFORB"),
-                                   cont = m.e.rows[[obs.i]])
+    if (obs.i == 1) {
+      m.e.type[[obs.i]] <<- gcombobox(c("SFO", "FOMC", "DFOP", "HS", "SFORB"),
+                                     cont = m.e.rows[[obs.i]])
+    } else {
+      m.e.type[[obs.i]] <<- gcombobox(c("SFO", "SFORB"),
+                                     cont = m.e.rows[[obs.i]])
+    }
     svalue(m.e.type[[obs.i]]) <<- m[[m.cur]]$spec[[obs.i]]$type
     glabel("to", cont = m.e.rows[[obs.i]]) 
     obs.to <<- ifelse(is.null(m[[m.cur]]$spec[[obs.i]]$to), "",
@@ -638,7 +643,7 @@ show_m_spec <- function() {
     m.e.sink[[obs.i]] <<- gcheckbox("Path to sink", checked = m[[m.cur]]$spec[[obs.i]]$sink,
               cont = m.e.rows[[obs.i]]) 
     if (obs.i > 1) {
-      gbutton("Remove compound", handler = remove_compound_handler, 
+      gbutton("Remove observed variable", handler = remove_observed_handler, 
               action = obs.i, cont = m.e.rows[[obs.i]])
     }
   }

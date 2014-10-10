@@ -1,3 +1,13 @@
+# CHANGES in gmkin VERSION 0.5-3
+
+## NEW FEATURES
+
+- First version installable from the package repository on r-forge
+
+- New vignette gmkin_manual
+
+- Small improvements in the model editor
+
 # CHANGES in gmkin VERSION 0.5-2
 
 ## NEW FEATURES
