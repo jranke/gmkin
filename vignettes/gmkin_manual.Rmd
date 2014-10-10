@@ -1,5 +1,13 @@
+---
+title: "Manual for gmkin"
+output:
+  html_document:
+    css: gmkin_manual.css
+    toc: true
+    theme: united
+---
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Manual for gmkin}
 -->
 
@@ -7,8 +15,6 @@
 library(knitr)
 opts_chunk$set(tidy = FALSE, cache = TRUE)
 ```
-# Manual for gmkin
-
 ## Introduction
 
 The R add-on package gmkin provides a browser based graphical interface for

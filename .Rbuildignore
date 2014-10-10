@@ -1,4 +1,6 @@
 GNUmakefile
 NEWS.md
 gmkin_screenshot.png
+vignettes/.build.timestamp
 vignettes/cache
+vignettes/gmkin_manual_cache

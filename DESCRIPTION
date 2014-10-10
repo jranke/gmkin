@@ -2,7 +2,7 @@ Package: gmkin
 Type: Package
 Title: GUI for fitting kinetic models to chemical degradation data with mkin
 Version: 0.5-4
-Date: 2014-10-10
+Date: 2014-10-11
 Authors@R: c(person("Johannes", "Ranke", role = c("aut", "cre", "cph"), 
                     email = "jranke@uni-bremen.de"),
              person("Eurofins Regulatory AG", role = "cph"))
@@ -10,6 +10,7 @@ Description: This package contains a browser based graphical user interface
   for R package mkin, based on the gWidgetsWWW2 package on GitHub
   (http://github.com/jverzani/gWidgetsWWW2/)
 Depends: mkin (>= 0.9-32), gWidgetsWWW2
+Suggests: knitr, rmarkdown
 License: GPL
 LazyLoad: yes
 LazyData: yes
