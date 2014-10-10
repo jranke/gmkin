@@ -15,6 +15,7 @@ License: GPL
 LazyLoad: yes
 LazyData: yes
 Encoding: UTF-8
+VignetteBuilder: knitr
 BugReports: http://github.com/jranke/gmkin/issues
 URL: http://kinfit.r-forge.r-project.org/gmkin_static,
      http://github.com/jranke/gmkin

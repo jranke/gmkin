@@ -71,7 +71,7 @@ sd:
 
 move-sd:
 	rm -rf $(SDDIR)/*;\
-	cp -r inst/web/* $(SDDIR); cd $(SDDIR) && svn add --force .
+	cp -r inst/web/* $(SDDIR); cp gmkin_screenshot.png $(SDDIR); cd $(SDDIR) && svn add --force .
 
 r-forge: sd move-sd
 	cd $(RFSVN) && svn commit -m 'update gmkin static documentation from github repository'
