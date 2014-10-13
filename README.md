@@ -112,6 +112,11 @@ save(FOCUS_2006_Z_gmkin, file = "FOCUS_2006_gmkin_Z.RData")
 
 ![gmkin screenshot](gmkin_screenshot.png)
 
+For a complete overview of the functionality of the gmkin graphical user
+interface please refer to the 
+[manual](http://kinfit.r-forge.r-project.org/gmkin_static/vignettes/gmkin_manual.html)
+available at the gmkin [documentation website](http://kinfit.r-forge.r-project.org/gmkin_static).
+
 ## Status and known issues
 
 - gmkin was developed in the hope that it will be useful. However, no warranty can be 
