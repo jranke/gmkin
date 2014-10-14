@@ -124,6 +124,9 @@ available at the gmkin [documentation website](http://kinfit.r-forge.r-project.o
   careful, check your results for plausibility and use your own expertise to judge
   yourself.
 - Please check the [issues](https://github.com/jranke/gmkin/issues) reported on github
+- The R console starting the graphical user interface is not secured against manipulations
+  from local users on multiuser systems 
+  (see [gWidgetsWWW2 issue](https://github.com/jverzani/gWidgetsWWW2/issues/22)).
 - Starting the GUI takes some time. Once it is started, it is reasonably responsive.
 - The fit list was not always updated when using Firefox version 28 on Windows. This
   works with Firefox starting from version 29 and with Chrome.
