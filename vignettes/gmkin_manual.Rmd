@@ -160,7 +160,7 @@ If everything is OK, press "Keep changes" to save the dataset in the current
 workspace. Note that you need to save the project file (see above) in order to
 be able to use the dataset that you created in a future gmkin session.
 
-### Entering data directly
+### Importing data from text files
 
 In case you want to work with a larger dataset that is already available as a computer 
 file e.g. in a spreadsheet application, you can export these data as a tab separated

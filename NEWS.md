@@ -1,5 +1,9 @@
 # CHANGES in gmkin VERSION 0.5-4
 
+## BUG FIXES
+
+- A heading in the manual was fixed
+
 # CHANGES in gmkin VERSION 0.5-3
 
 ## NEW FEATURES
