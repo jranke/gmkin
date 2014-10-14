@@ -1,6 +1,7 @@
 # gmkin
 
-The R package **gmkin** provides a browser based graphical user interface (GUI) for
+The R package [gmkin](http://kinfit.r-forge.r-project.org/gmkin_static) 
+provides a browser based graphical user interface (GUI) for
 fitting kinetic models to chemical degradation data based on R package
 [mkin](http://github.com/jranke/mkin). The GUI is based on the 
 [gWidgetsWWW2](http://github.com/jverzani/gWidgetsWWW2) package developed by
