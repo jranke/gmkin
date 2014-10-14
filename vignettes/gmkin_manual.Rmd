@@ -329,10 +329,11 @@ refer to the `mkinfit` [documentation](http://kinfit.r-forge.r-project.org/mkin_
 for more details.
 
 The drop down box "method.modFit" makes it possible to choose between the optimisation
-algorithms "Marq" (the default Levenberg-Marquardt implementation from the R package 
-`minpack.lm`), "Port" (an alternative, also local optimisation algorithm) and
-"SANN" (the simulated annealing method - robust but inefficient and without a
-convergence criterion).
+algorithms "Port" (the default in mkin versions > 0.9-33, a local optimisation
+algorithm using a model/trust region approach), "Marq" (the former default in
+mkin, a Levenberg-Marquardt variant from the R package `minpack.lm`), 
+and "SANN" (the simulated annealing method - robust but inefficient and without
+a convergence criterion).
 
 Finally, the maximum number of iterations for the optimisation can be adapted using the
 "maxit.modFit" field.

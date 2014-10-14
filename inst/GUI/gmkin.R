@@ -906,7 +906,7 @@ f.gg.opts.reweight.tol <- gedit(1e-8, label = "reweight.tol",
                                  width = 20, cont = f.gg.opts)
 f.gg.opts.reweight.max.iter <- gedit(10, label = "reweight.max.iter",
                                  width = 20, cont = f.gg.opts)
-optimisation_methods <- c("Marq", "Port", "SANN")
+optimisation_methods <- c("Port", "Marq", "SANN")
 f.gg.opts.method.modFit <- gcombobox(optimisation_methods, selected = 1,
                                      label = "method.modFit",
                                      width = 200,
