@@ -282,7 +282,8 @@ plot of the model and the data using the specified initial parameter values.
 
 If a similar model with a partially overlapping model definition has already be fitted, 
 initial values for parameters with the same name in both models can also be retrieved
-from previous fits. This facilitates stepwise fitting of more complex degradation pathways.
+from previous fits by selecting the fit and pressing the button "Get initials
+from". This facilitates stepwise fitting of more complex degradation pathways.
 
 After the model has been successfully fitted by pressing the "Run" button, the optimised
 parameter values are added to the parameter table.
@@ -309,6 +310,11 @@ The checkboxes "transform\_rates" and "transform\_fractions" control if the para
 as defined in the model, or if they are internally transformed during the fitting process in 
 order to improve the estimation of standard errors and confidence intervals which are based 
 on a linear approximation at the optimum found by the fitting algorithm.
+
+If fitting with transformed fractions leads to a suboptimal fit, doing a first
+run without transforming fractions may help. A final run using the optimised
+parameters from the previous run as starting values (see comment on "Get
+initials from" above) can then be performed with transformed fractions.
 
 The dropdown box "weight" specifies if and how the observed values should be weighted 
 in the fitting process. If "manual" is chosen, the values in the "err" column of the 
