@@ -116,15 +116,20 @@ upload_file_handler <- function(h, ...)
   workspace <- get(project_name)
 
   # Check for old workspaces created using mkin < 0.9-32 that aren't loaded properly
-  if (is.null(workspace$f[[1]]$method.modFit)) {
-    stopmessage <- paste("Could not load workspace ",
-                         project_file,
-                         ". It seems it was created using mkin with version < 0.9-32", 
-                         sep = "")
-    galert(stopmessage, parent = w)
-    svalue(sb) <- stopmessage
-  } else {
+  workspace_old <- FALSE
+  if (length(workspace$f) > 0) {
+    if (is.null(workspace$f[[1]]$method.modFit)) {
+      stopmessage <- paste("Could not load workspace ",
+                           project_file,
+                           ". It seems it was created using mkin with version < 0.9-32", 
+                           sep = "")
+      galert(stopmessage, parent = w)
+      svalue(sb) <- stopmessage
+      workspace_old <- TRUE
+    }
+  }
 
+  if (!workspace_old) {
     # Update project file name and status bar
     svalue(pr.ge) <- project_name
     svalue(sb) <- paste("Loaded project file", project_file)
