@@ -4,6 +4,8 @@
 
 - Prevent loading old gmkin workspace files created with mkin < 0.9-32 as they do not load properly
 
+- Fix saving summary files. They were all saved under the same name without a warning
+
 # CHANGES in gmkin VERSION 0.5-4
 
 ## BUG FIXES

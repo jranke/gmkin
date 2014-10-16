@@ -19,6 +19,7 @@ SDDIR ?= $(RFSVN)/www/gmkin_static
 pkgfiles = NEWS \
 	   data/* \
 	   DESCRIPTION \
+	   inst/GUI/gmkin.R \
 	   inst/staticdocs/README \
 	   man/* \
 	   NAMESPACE \
@@ -75,6 +76,10 @@ move-sd:
 
 r-forge: sd move-sd
 	cd $(RFSVN) && svn commit -m 'update gmkin static documentation from github repository'
+
+release: build
+	cp $(TGZ) $(RFSVN)/www/repo/src/contrib; scp $(TGZ) qnap:projects/gmkin
+	@echo Now build gmkin on windows and copy the zip to the repo
 
 clean: 
 	$(RM) -r $(PKGNAME).Rcheck/

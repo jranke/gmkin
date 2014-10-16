@@ -270,7 +270,8 @@ configure_fit_handler = function(h, ...) {
           show_plot("Initial", default = TRUE)
           oldwidth <<- options()$width
           options(width = 90)
-          svalue(f.gg.summary) <- c("<pre>", capture.output(stmp), "</pre>")
+          svalue(f.gg.summary.filename) <<- ""
+          svalue(f.gg.summary.listing) <<- c("<pre>", capture.output(stmp), "</pre>")
           options(width = oldwidth)
           svalue(center) <- 3
 }
@@ -764,7 +765,8 @@ run_fit <- function() {
   svalue(f.gg.opts.st) <- ftmp$solution_type
   svalue(f.gg.opts.weight) <- ftmp$weight.ini
   f.gg.parms[,] <- get_Parameters(stmp, TRUE)
-  svalue(f.gg.summary) <- c("<pre>", capture.output(stmp), "</pre>")
+  svalue(f.gg.summary.filename) <<- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
+  svalue(f.gg.summary.listing) <<- c("<pre>", capture.output(stmp), "</pre>")
 }
 ds.i <- m.i <- "1"
 f.cur <- "0"
@@ -930,15 +932,26 @@ f.gg.opts.maxit.modFit <- gedit("auto", label = "maxit.modFit",
 # Summary {{{3
 oldwidth <- options()$width
 options(width = 90)
-summaryfile <- paste(ds[[ds.cur]]$title, "_", m[[m.cur]]$name, ".txt", sep = "")
 f.gg.summary <- ggroup(label = "Summary", cont = f.gn, horizontal = FALSE)
 f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
-f.gg.summary.filename <- gedit(summaryfile, width = 50, cont = f.gg.summary.topline)
+f.gg.summary.filename <- gedit(paste(ds[[ds.cur]]$title, "_", m[[m.cur]]$name,
+                                     ".txt", sep = ""),
+                               width = 50, cont = f.gg.summary.topline)
 f.gg.summary.savebutton <-  gbutton("Save summary", cont = f.gg.summary.topline,
                                     handler = function(h, ...) {
-                                      capture.output(stmp,  file = summaryfile)
+                                      filename <- svalue(f.gg.summary.filename)
+                                      if (file.exists(filename))
+                                      {
+                                        gconfirm(paste("File", filename, "exists. Overwrite?"),
+                                                 parent = w,
+                                                 handler = function(h, ...) {
+                                                   capture.output(stmp,  file = filename)
+                                                 })
+                                      } else {
+                                        capture.output(stmp,  file = filename)
+                                      }
                                     })
-f.gg.summary <- ghtml(c("<pre>", capture.output(stmp), "</pre>"),
+f.gg.summary.listing <- ghtml(c("<pre>", capture.output(stmp), "</pre>"),
                         cont = f.gg.summary, label = "Summary")
 options(width = oldwidth)
 
@@ -979,7 +992,8 @@ update_plotting_and_fitting <- function() {
   # Summary
   oldwidth <<- options()$width
   options(width = 90)
-  svalue(f.gg.summary) <- c("<pre>", capture.output(stmp), "</pre>")
+  svalue(f.gg.summary.filename) <<- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
+  svalue(f.gg.summary.listing) <<- c("<pre>", capture.output(stmp), "</pre>")
   options(width = oldwidth)
 
   # Plot options
