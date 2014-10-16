@@ -111,48 +111,61 @@ upload_file_handler <- function(h, ...)
   project_name <<- try(load(tmpfile))
   if (inherits(project_name, "try-error")) {
     galert(paste("Failed to load", project_file), parent = w)
-  } 
+  }
 
-  svalue(sb) <- paste("Loaded project file", project_file)
-  svalue(pr.ge) <- project_name
   workspace <- get(project_name)
 
-  # Studies
-  studies.gdf[,] <- studies.df <- workspace$studies.df
-
-  # Datasets
-  ds.cur <<- workspace$ds.cur
-  ds <<- workspace$ds
-  update_ds.df()
-  ds.gtable[,] <- ds.df
-  update_ds_editor()
-
-  # Models
-  m.cur <<- workspace$m.cur
-  m <<- workspace$m
-  update_m.df()
-  m.gtable[,] <- m.df
-  update_m_editor()
-
-  # Fits
-  f.cur <<- workspace$f.cur
-  f <<- workspace$f
-  s <<- workspace$s
-  if (length(f) > 0) {
-    update_f.df()
-    ftmp <<- f[[f.cur]]
-    stmp <<- s[[f.cur]]
-    ds.i <<- ds.cur
-    delete(f.gg.plotopts, f.gg.po.obssel)
-    f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), cont = f.gg.plotopts, 
-                                     checked = TRUE)
-    update_plotting_and_fitting()
+  # Check for old workspaces created using mkin < 0.9-32 that aren't loaded properly
+  if (is.null(workspace$f[[1]]$method.modFit)) {
+    stopmessage <- paste("Could not load workspace ",
+                         project_file,
+                         ". It seems it was created using mkin with version < 0.9-32", 
+                         sep = "")
+    galert(stopmessage, parent = w)
+    svalue(sb) <- stopmessage
   } else {
-    f.df <<- f.df.empty
+
+    # Update project file name and status bar
+    svalue(pr.ge) <- project_name
+    svalue(sb) <- paste("Loaded project file", project_file)
+
+    # Studies
+    studies.gdf[,] <- studies.df <- workspace$studies.df
+
+    # Datasets
+    ds.cur <<- workspace$ds.cur
+    ds <<- workspace$ds
+    update_ds.df()
+    ds.gtable[,] <- ds.df
     update_ds_editor()
-    svalue(center) <- 1
+
+    # Models
+    m.cur <<- workspace$m.cur
+    m <<- workspace$m
+    update_m.df()
+    m.gtable[,] <- m.df
+    update_m_editor()
+
+    # Fits
+    f.cur <<- workspace$f.cur
+    f <<- workspace$f
+    s <<- workspace$s
+    if (length(f) > 0) {
+      update_f.df()
+      ftmp <<- f[[f.cur]]
+      stmp <<- s[[f.cur]]
+      ds.i <<- ds.cur
+      delete(f.gg.plotopts, f.gg.po.obssel)
+      f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), cont = f.gg.plotopts, 
+                                       checked = TRUE)
+      update_plotting_and_fitting()
+    } else {
+      f.df <<- f.df.empty
+      update_ds_editor()
+      svalue(center) <- 1
+    }
+    f.gtable[,] <- f.df
   }
-  f.gtable[,] <- f.df
 }
 save_to_file_handler <- function(h, ...)
 {

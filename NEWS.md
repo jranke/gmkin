@@ -1,5 +1,9 @@
 # CHANGES in gmkin VERSION 0.5-5
 
+## BUG FIXES
+
+- Prevent loading old gmkin workspace files created with mkin < 0.9-32 as they do not load properly
+
 # CHANGES in gmkin VERSION 0.5-4
 
 ## BUG FIXES
