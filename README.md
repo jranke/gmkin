@@ -18,6 +18,9 @@ It should be possible to run gmkin on most laptop or desktop computers running
 Linux, Mac OS X, Windows XP or Windows 7. It is frequently checked under Linux and
 Windows 7.
 
+To view the complete set of widgets in the browser window without resizing
+anything, it needs a resolution of 1380x900 pixels.
+
 ### Notes on the gWidgetsWWW2 package
 
 The R package gWidgetsWWW2 is not available on CRAN because it contains 
