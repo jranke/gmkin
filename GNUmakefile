@@ -70,16 +70,17 @@ vignettes: vignettes/gmkin_manual.html
 sd:
 	"$(RBIN)/Rscript" -e "library(staticdocs); build_site()"
 
-move-sd:
+move-sd: sd
 	rm -rf $(SDDIR)/*;\
 	cp -r inst/web/* $(SDDIR); cp gmkin_screenshot.png $(SDDIR); cd $(SDDIR) && svn add --force .
 
-r-forge: sd move-sd
+r-forge: move-sd
 	cd $(RFSVN) && svn commit -m 'update gmkin static documentation from github repository'
 
-release: build
+release: r-forge build
 	cp $(TGZ) $(RFSVN)/www/repo/src/contrib; scp $(TGZ) qnap:projects/gmkin
-	@echo Now build gmkin on windows and copy the zip to the repo
+	@echo Now build gmkin on windows and copy the zip to the repo with
+	@echo scp qnap:projects/gmkin/$(PKGSRC)_$(PKGVERS).zip $(RFSVN)/www/repo/bin/windows/contrib/3.1
 
 clean: 
 	$(RM) -r $(PKGNAME).Rcheck/

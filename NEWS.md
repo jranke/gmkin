@@ -1,3 +1,9 @@
+# CHANGES in gmkin VERSION 0.5-6
+
+## NEW FEATURES
+
+- The plot of the current fit and the residuals can be saved as pdf or png file, on windows also as a windows metafile (wmf)
+
 # CHANGES in gmkin VERSION 0.5-5
 
 ## BUG FIXES

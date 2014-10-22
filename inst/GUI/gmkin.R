@@ -273,6 +273,8 @@ configure_fit_handler = function(h, ...) {
           f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), cont = f.gg.plotopts, 
                                            checked = TRUE)
           show_plot("Initial", default = TRUE)
+          svalue(plot.ftmp.savefile) <<- paste(ftmp$ds$title, "_", ftmp$mkinmod$name,
+                                               ".", plot_format, sep = "")
           oldwidth <<- options()$width
           options(width = 90)
           svalue(f.gg.summary.filename) <<- ""
@@ -790,22 +792,42 @@ ftmp$ds = ds[[ds.i]]
 stmp <- summary(ftmp)
 Parameters <- get_Parameters(stmp, FALSE)
 
-plot_ftmp_png <- function() {
-  tf <- get_tempfile(ext=".png")
+plot_ftmp <- function() {
   if(exists("f.gg.po.obssel")) {
     obs_vars_plot = svalue(f.gg.po.obssel)
   } else {
     obs_vars_plot = names(ftmp$mkinmod$spec)
   }
-  png(tf, width = 400, height = 400)
+  if(exists("f.gg.po.legend")) {
+    plot_legend = svalue(f.gg.po.legend)
+  } else {
+    plot_legend = TRUE
+  }
   plot(ftmp, main = ftmp$ds$title, obs_vars = obs_vars_plot,
        xlab = ifelse(ftmp$ds$time_unit == "", "Time", 
                      paste("Time in", ftmp$ds$time_unit)),
        ylab = ifelse(ds[[ds.i]]$unit == "", "Observed", 
                      paste("Observed in", ftmp$ds$unit)),
+       legend = plot_legend,
        show_residuals = TRUE)
+}
+
+plot_ftmp_png <- function() {
+  tf <- get_tempfile(ext=".png")
+  png(tf, width = 400, height = 400)
+  plot_ftmp()
   dev.off()
   return(tf)
+}
+
+plot_ftmp_save <- function(filename) {
+  switch(plot_format,
+         png = png(filename, width = 400, height = 400),
+         pdf = pdf(filename),
+         wmf = win.metafile(filename))
+  plot_ftmp()
+  dev.off()
+  svalue(sb) <- paste("Saved plot to", filename, "in working directory", getwd())
 }
 
 plot_confint_png <- function() {
@@ -816,7 +838,34 @@ plot_confint_png <- function() {
   return(tf)
 }
 
+plot_formats <- c("png", "pdf")
+if (exists("win.metafile", "package:grDevices", inherits = FALSE)) {
+  plot_formats = c("wmf", plot_formats)
+}
+plot_format <- plot_formats[[1]]
+
 plot.ftmp.gi <- gimage(plot_ftmp_png(), container = pf.p, width = 400, height = 400)
+plot.ftmp.saveline <- ggroup(cont = pf.p, horizontal = TRUE)
+plot.ftmp.savefile <- gedit(paste(ds[[ds.cur]]$title, "_", m[[m.cur]]$name, ".",
+                                     plot_format, sep = ""),
+                               width = 40, cont = plot.ftmp.saveline)
+plot.ftmp.savebutton <-  gbutton("Save plot", cont = plot.ftmp.saveline,
+                                    handler = function(h, ...) {
+                                      filename <- svalue(plot.ftmp.savefile)
+                                      if (file.exists(filename))
+                                      {
+                                        gconfirm(paste("File", filename, 
+                                                       "exists. Overwrite?"),
+                                                 parent = w,
+                                                 handler = function(h, ...) {
+                                            plot_ftmp_save(filename)
+                                          }
+                                        )
+                                      } else {
+                                        plot_ftmp_save(filename)
+                                      }
+                                    })
+plot.space <- ggroup(cont = pf.p, horizontal = TRUE, height = 18)
 plot.confint.gi <- gimage(plot_confint_png(), container = pf.p, width = 400, height = 400)
 
 # Buttons and notebook area to the right {{{3
@@ -961,8 +1010,19 @@ f.gg.summary.listing <- ghtml(c("<pre>", capture.output(stmp), "</pre>"),
 options(width = oldwidth)
 
 # Plot options {{{4
-f.gg.plotopts <- ggroup(cont = f.gn, label = "Plot options", horizontal = FALSE)
-f.gg.po.update <- gbutton("Update plot", 
+f.gg.plotopts <- ggroup(cont = f.gn, label = "Plot options", horizontal = FALSE,
+                        width = 200)
+
+f.gg.po.format <- gcombobox(plot_formats, selected = 1, label = "File format",
+                  cont = f.gg.plotopts,
+                  handler = function(h, ...) {
+                    plot_format <<- svalue(h$obj)
+                    svalue(plot.ftmp.savefile) <<- gsub("...$", plot_format,
+                                                       svalue(plot.ftmp.savefile))
+                  })
+plot_format <- svalue(f.gg.po.format)
+f.gg.po.legend <- gcheckbox("legend", cont = f.gg.plotopts, checked = TRUE)
+f.gg.po.update <- gbutton("Update plot",
                           handler = function(h, ...) show_plot("Optimised"), 
                           cont = f.gg.plotopts)
 f.gg.po.obssel <- gcheckboxgroup(names(m[[m.cur]]$spec), cont = f.gg.plotopts, 
@@ -1006,6 +1066,8 @@ update_plotting_and_fitting <- function() {
   f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), cont = f.gg.plotopts, 
                                    checked = TRUE)
   # Plot
+  svalue(plot.ftmp.savefile) <<- paste(ftmp$ds$title, "_", ftmp$mkinmod$name,
+                                       ".", plot_format, sep = "")
   show_plot("Optimised")  
  
 }

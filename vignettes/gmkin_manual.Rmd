@@ -380,10 +380,15 @@ and pressing the button "Save summary".
 
 ### Plot options
 
-In the tab "Plot options", the observed variables for which the data and the model fit should be 
-plotted can be selected as shown below.
+In the tab "Plot options", the file format can be chosen, the legend can be
+turned off, and the observed variables for which the data and the model fit
+should be plotted can be selected as shown below.
 
 ![plot options](img/plotoptions.png)
+
+On systems running the Windows operating system, the windows metafile (wmf) format
+can be additionally chosen. Chaning the file format for plotting will also change 
+the extension of the proposed filename for saving the plot.
 
 ### Confidence interval plots
 
