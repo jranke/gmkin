@@ -12,6 +12,7 @@ RBIN ?= $(shell dirname "`which R`")
 #
 # Specify static documentation directories for subversion on r-forge
 RFSVN ?= $(HOME)/svn/kinfit.r-forge
+RFDIR ?= $(RFSVN)/pkg/gmkin
 SDDIR ?= $(RFSVN)/www/gmkin_static
 
 .PHONY: help
@@ -63,7 +64,7 @@ check-no-vignettes: build-no-vignettes
 	mv $(TGZ) $(TGZVNR)
 
 vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
-	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
+	"$(RBIN)/Rscript" -e "rmarkdown::render(input = 'vignettes/gmkin_manual.Rmd')"
 
 vignettes: vignettes/gmkin_manual.html
 
@@ -75,7 +76,9 @@ move-sd: sd
 	cp -r inst/web/* $(SDDIR); cp gmkin_screenshot.png $(SDDIR); cd $(SDDIR) && svn add --force .
 
 r-forge: move-sd
-	cd $(RFSVN) && svn commit -m 'update gmkin static documentation from github repository'
+	git archive master > $(HOME)/gmkin.tar;\
+	cd $(RFDIR) && rm -r `ls` && tar -xf $(HOME)/gmkin.tar;\
+	svn add --force .; cd $(RFSVN) && svn commit -m 'update gmkin from github repository'
 
 release: r-forge build
 	cp $(TGZ) $(RFSVN)/www/repo/src/contrib; scp $(TGZ) qnap:projects/gmkin

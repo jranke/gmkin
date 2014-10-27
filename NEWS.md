@@ -1,3 +1,9 @@
+# CHANGES in gmkin VERSION 0.5-7
+
+## NEW FEATURES
+
+- Installation is further simplified, as both gmkin and gWidgetsWWW2 are now available from R-Forge.
+
 # CHANGES in gmkin VERSION 0.5-6
 
 ## NEW FEATURES

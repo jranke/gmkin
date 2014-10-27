@@ -25,8 +25,8 @@ anything, it needs a resolution of 1380x900 pixels.
 
 The R package gWidgetsWWW2 is not available on CRAN because it contains 
 path names with more then 100 characters in the JavaScript files which limits
-its portability.  Also, it attaches an R object called `app` to the global
-environment in R, which is not allowed by the CRAN package policy. It is not
+its portability.  Also, it attaches some R objects to the search path, which is, 
+in its current form, not fully in line with the CRAN package policy. It is not
 a widely used library for creating graphical user interfaces, is not supported 
 by a commercial company and was used for gmkin simply because it makes it
 possible to create a reasonably complex user interface by just writing R code.
@@ -40,33 +40,35 @@ installation, please refer to the respective [FAQ entry](http://cran.r-project.o
 ### Installing gmkin using an additional repository
 
 Windows and Linux users running R 3.1.0 or later can make use of the gmkin
-package repository on r-forge. If you would like to test gmkin just once, open
-the R console and issue the commands
+package repository on R-Forge. If you would like to install gmkin just once, 
+you can install it using the command
 
 ```s
-setRepositories(addURLs = c(gmkin_repo = "http://kinfit.r-forge.r-project.org/repo"))
-install.packages("gmkin")
+install.packages("gmkin", repos = c("http://r-forge.r-project.org", getOption("repos")))
 ```
 
-This should pull the gmkin package and its dependencies, notably the
+I you have not set your CRAN mirror yet, you may have to select one from the list.
+This adds the R-Forge repository to your package sources for this installation only.
+It should pull the gmkin package and its dependencies, notably the
 gWidgetsWWW2 package which is not available from the CRAN archive (see above).
 Mac users that have the necessary development files installed can probably 
 install from the source files in this repository (not tested).
 
 ### Keeping it current
 
-If you would like to pull in new versions of gmkin from time to time, you could
-add this repository to your startup options, e.g. by including a command like
+If you would like to pull in new versions of gmkin or gWidgetsWWW2 from time to
+time, you could add the R-Forge repository to your startup options, e.g. by
+including a command like
 
 ```s
 options(repos = c(CRAN = "http://cran.rstudio.com", 
-                  gmkin_repo = "http://kinfit.r-forge.r-project.org/repo"))
+                  "R-Forge" = "http://r-forge.r-project.org"))
 ```
 
 to your startup options, e.g. to your `.Rprofile` file. For details, please
 consult the help page for this, e.g. by typing `?Startup` in R.
 
-You can than update your packages including gmkin by using `update.packages()`,
+You can then update your packages including gmkin by using `update.packages()`,
 please see its help files for details.
 
 The latest changes to gmkin are recorded in the 
