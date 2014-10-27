@@ -37,9 +37,9 @@ Please refer to [CRAN](http://cran.r-project.org) for installation instructions
 and binary packages. If you are on Windows and would like to upgrade your R 
 installation, please refer to the respective [FAQ entry](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#What_0027s-the-best-way-to-upgrade_003f).
 
-### Installing gmkin using an additional repository
+### Installing gmkin from R-Forge
 
-Windows and Linux users running R 3.1.0 or later can make use of the gmkin
+Windows and Linux users running R 3.1.0 or later can make use of the 
 package repository on R-Forge. If you would like to install gmkin just once, 
 you can install it using the command
 
