@@ -47,7 +47,7 @@ you can install it using the command
 install.packages("gmkin", repos = c("http://r-forge.r-project.org", getOption("repos")))
 ```
 
-I you have not set your CRAN mirror yet, you may have to select one from the list.
+If you have not set your CRAN mirror yet, you may have to select one from the list.
 This adds the R-Forge repository to your package sources for this installation only.
 It should pull the gmkin package and its dependencies, notably the
 gWidgetsWWW2 package which is not available from the CRAN archive (see above).
