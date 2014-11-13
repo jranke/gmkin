@@ -64,7 +64,7 @@ check-no-vignettes: build-no-vignettes
 	mv $(TGZ) $(TGZVNR)
 
 vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
-	"$(RBIN)/Rscript" -e "rmarkdown::render(input = 'vignettes/gmkin_manual.Rmd')"
+	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
 
 vignettes: vignettes/gmkin_manual.html
 
