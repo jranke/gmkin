@@ -11,7 +11,7 @@ ExtJS which is bundled with gWidgetsWWW2.
 ## Installation
 
 For running gmkin you need a system running a recent version of R (version
-3.0.0 or later should be OK), the gWidgesWWW2 package, the gmkin package and a
+3.1.0 or later should be OK), the gWidgesWWW2 package, the gmkin package and a
 web browser (Firefox and Chrome work for me) with JavaScript enabled.
 
 It should be possible to run gmkin on most laptop or desktop computers running
@@ -34,8 +34,17 @@ possible to create a reasonably complex user interface by just writing R code.
 ### Installing R
 
 Please refer to [CRAN](http://cran.r-project.org) for installation instructions
-and binary packages. If you are on Windows and would like to upgrade your R 
-installation, please refer to the respective [FAQ entry](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#What_0027s-the-best-way-to-upgrade_003f).
+and binary packages. If you are on Windows, please consult the 
+[FAQ for Windows](http://cran.r-project.org/bin/windows/base/rw-FAQ.html), especially
+the entries 
+"[How do I install R for Windows?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-install-R-for-Windows_003f)", 
+"[How do I run it?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-run-it_003f)",
+and 
+"[How can I keep workspaces for different projects in different directories?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-can-I-keep-workspaces-for-different-projects-in-different-directories_003f)".
+
+If you would like to upgrade your R installation, please refer to the
+respective 
+[FAQ entry](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#What_0027s-the-best-way-to-upgrade_003f).
 
 ### Installing gmkin from R-Forge
 
