@@ -1,7 +1,7 @@
 GNUmakefile
 NEWS.md
 gmkin_screenshot.png
-.Rprofile
+Rprofile
 vignettes/.build.timestamp
 vignettes/cache
 vignettes/gmkin_manual_cache
