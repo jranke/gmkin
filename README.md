@@ -121,8 +121,10 @@ gmkin()
 ```
 
 You can also put these two commands into an `.Rprofile` file in the working directory
-where you start R. For your convenience, you can find such a file [here](Rprofile?raw=true).
-On Windows, you can save this file to the directory where you would like to start gmkin
+where you start R. For some reason, the `utils` package also needs to be loaded when 
+you do this from an .Rprofile file. For your convenience, you can find such a
+file [here](Rprofile?raw=true).  On Windows, you can save this file to the
+directory where you would like to start gmkin
 by right clicking on the link to this file, choose `save target as` or similar,
 and choose `.Rprofile.` as the name. This will lead to the creation of a file
 named `.Rprofile` which will be executed when you start R within this directory.
