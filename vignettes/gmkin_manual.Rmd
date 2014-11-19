@@ -115,7 +115,7 @@ setting up fits as shown below.
 
 ![datasets and models](img/datasetsnmodels.png)
 
-For editing, adding or removing datasets or models, you need to click on an
+For editing, adding or removing datasets or models, you need to double-click on an
 entry in the respective list. 
 
 For setting up a fit of a specific model to a specific dataset, the model and
@@ -393,7 +393,7 @@ the extension of the proposed filename for saving the plot.
 ### Confidence interval plots
 
 Whenever a new fit has been configured or a run of a fit has been completed, the plotting
-area is update with the abovementioned plot of the data and the current model solution.
+area is updated with the abovementioned plot of the data and the current model solution.
 
 In addition, a confidence interval plot is shown below this conventional plot. In case
 a fit has been run and confidence intervals were successfully calculated for the fit (i.e. 
