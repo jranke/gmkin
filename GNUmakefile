@@ -73,7 +73,7 @@ sd:
 
 move-sd: sd
 	rm -rf $(SDDIR)/*;\
-	cp -r inst/web/* $(SDDIR); cp gmkin_screenshot.png $(SDDIR); cd $(SDDIR) && svn add --force .
+	cp -r inst/web/* $(SDDIR); cp gmkin_screenshot.png Rprofile $(SDDIR); cd $(SDDIR) && svn add --force .
 
 r-forge: move-sd
 	git archive master > $(HOME)/gmkin.tar;\
