@@ -894,26 +894,29 @@ keep.fit.gb <- gbutton("Keep fit",
                           }, cont = f.gg.buttons)
 tooltip(keep.fit.gb) <- "Store the optimised model with all settings and the current dataset in the fit list"
 
-delete.fit.gb <- gbutton("Delete fit", handler = function(h, ...) {
-          if (length(f) > 0) {
-            f[[f.cur]] <<- NULL
-            s[[f.cur]] <<- NULL
-          }
-          if (length(f) > 0) {
-            names(f) <<- as.character(1:length(f))
-            names(s) <<- as.character(1:length(f))
-            update_f.df()
-            f.cur <<- "1"
-            ftmp <<- f[[f.cur]]
-            stmp <<- s[[f.cur]]
-            ds.i <<- ftmp$ds.index
-            update_plotting_and_fitting()
-          } else {
-            f.df <<- f.df.empty
-            f.cur <<- "0"
-          }
-          f.gtable[,] <<- f.df
-        }, cont = f.gg.buttons)
+delete_fit_handler <- function(h, ...) {
+  if (length(f) > 0) {
+    f[[f.cur]] <<- NULL
+    s[[f.cur]] <<- NULL
+  }
+  if (length(f) > 0) {
+    names(f) <<- as.character(1:length(f))
+    names(s) <<- as.character(1:length(f))
+    update_f.df()
+    f.cur <<- "1"
+    ftmp <<- f[[f.cur]]
+    stmp <<- s[[f.cur]]
+    ds.i <<- ftmp$ds.index
+    update_plotting_and_fitting()
+  } else {
+    f.df <<- f.df.empty
+    f.cur <<- "0"
+  }
+  f.gtable[,] <<- f.df
+}
+
+delete.fit.gb <- gbutton("Delete fit", handler = delete_fit_handler,
+                         cont = f.gg.buttons)
 tooltip(delete.fit.gb) <- "Delete the currently loaded fit from the fit list"
 
 show.initial.gb <- gbutton("Show initial", 
