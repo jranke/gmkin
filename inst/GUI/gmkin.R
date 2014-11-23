@@ -608,7 +608,7 @@ keep_m_changes_handler <- function(h, ...) {
     spec[[obs.i]] <- list(type = svalue(m.e.type[[obs.i]]),
                           to = to_vector,
                           sink = svalue(m.e.sink[[obs.i]]))
-    if(spec[[obs.i]]$to == "") spec[[obs.i]]$to = NULL
+    if(spec[[obs.i]]$to[[1]] == "") spec[[obs.i]]$to = NULL
     names(spec)[[obs.i]] <- svalue(m.e.obs[[obs.i]])
   }
   m[[m.cur]] <<- mkinmod(use_of_ff = svalue(m.ff.gc), 
