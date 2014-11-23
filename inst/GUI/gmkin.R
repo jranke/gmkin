@@ -248,6 +248,7 @@ configure_fit_handler = function(h, ...) {
           m.i <<- as.character(svalue(m.gtable))
           ftmp <<- suppressWarnings(mkinfit(m[[m.i]],
                                             override(ds[[ds.i]]$data),
+                                            method.modFit = "Marq",
                                             err = "err", 
                                             control.modFit = list(maxiter = 0)))
           ftmp$ds.index <<- ds.i
@@ -266,7 +267,7 @@ configure_fit_handler = function(h, ...) {
                                          "none", ftmp$reweight.method)
           svalue(f.gg.opts.reweight.tol) <<- ftmp$reweight.tol
           svalue(f.gg.opts.reweight.max.iter) <<- ftmp$reweight.max.iter
-          svalue(f.gg.opts.method.modFit) <<- ftmp$method.modFit
+          svalue(f.gg.opts.method.modFit) <<- "Port"
           svalue(f.gg.opts.maxit.modFit) <<- ftmp$maxit.modFit
           f.gg.parms[,] <- get_Parameters(stmp, FALSE)
           delete(f.gg.plotopts, f.gg.po.obssel)
@@ -701,6 +702,7 @@ show_plot <- function(type, default = FALSE) {
                                       fixed_parms = names(deparms),
                                       fixed_initials = names(stateparms),
                                       err = "err", 
+                                      method.modFit = "Marq",
                                       control.modFit = list(maxiter = 0)))
     ftmp$ds.index <<- ds.i
     ftmp$ds <<- ds[[ds.i]]
@@ -786,6 +788,7 @@ pf <- gframe("Dataset 1, Model SFO", horizontal = TRUE,
 pf.p <- ggroup(cont = pf, horizontal = FALSE)
 ftmp <- suppressWarnings(mkinfit(m[[m.cur]], override(ds[[ds.i]]$data), 
                                  err = "err", 
+                                 method.modFit = "Marq",
                                  control.modFit = list(maxiter = 0)))
 ftmp$ds.index = ds.i
 ftmp$ds = ds[[ds.i]]

@@ -1,3 +1,9 @@
+# CHANGES in gmkin VERSION 0.5-8
+
+## MINOR CHANGES
+
+- Adapt fit configuration to the fact that the default optimisation algorithm in mkin has been changed to `Port`
+
 # CHANGES in gmkin VERSION 0.5-7
 
 ## NEW FEATURES
