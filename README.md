@@ -49,8 +49,8 @@ respective
 ### Installing gmkin from R-Forge
 
 Windows and Linux users running R 3.1.0 or later can make use of the 
-package repository on R-Forge. If you would like to install gmkin just once, 
-you can install it using the command
+package repository on R-Forge. For installing or upgrading to the latest released
+version you can use the command
 
 ```s
 install.packages("gmkin", repos = c("http://r-forge.r-project.org", getOption("repos")))
@@ -59,29 +59,17 @@ install.packages("gmkin", repos = c("http://r-forge.r-project.org", getOption("r
 If you have not set your CRAN mirror yet, you may have to select one from the list that 
 appears. 
 
-The above command adds the R-Forge repository to your package sources for this
-installation only.
+The above command temporarily adds the R-Forge repository to your package
+sources.
 It should pull the gmkin package and its dependencies, notably the
 gWidgetsWWW2 package which is not available from the CRAN archive (see above).
 Mac users that have the necessary development files installed can probably 
 install from the source files in this repository (not tested).
 
-### Keeping it current
-
-If you would like to pull in new versions of gmkin or gWidgetsWWW2 from time to
-time, you could add the R-Forge repository to your startup options, e.g. by
-including a command like
-
-```s
-options(repos = c(CRAN = "http://cran.rstudio.com", 
-                  "R-Forge" = "http://r-forge.r-project.org"))
-```
-
-to your startup options, e.g. to your `.Rprofile` file. For details, please
-consult the help page for this, e.g. by typing `?Startup` in R.
-
-You can then update your packages including gmkin by using `update.packages()`,
-please see its help files for details.
+In a previous version of this README I have described how to permanently add 
+the R-Forge repository to your options. However, I noticed this has unwanted
+side effects, so I do not recommend it any longer. Therefore, you may want
+to revert such changes to your R startup options.
 
 The latest changes to gmkin are recorded in the 
 [NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file,
