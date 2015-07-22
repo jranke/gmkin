@@ -17,7 +17,7 @@ SDDIR ?= $(RFSVN)/www/gmkin_static
 
 .PHONY: help
 
-pkgfiles = NEWS \
+pkgfiles = NEWS.md \
 	   data/* \
 	   DESCRIPTION \
 	   inst/GUI/gmkin.R \
@@ -29,10 +29,7 @@ pkgfiles = NEWS \
 	   TODO \
            vignettes/gmkin_manual.html
 
-all: NEWS check clean
-
-NEWS: NEWS.md
-	sed -e 's/^-/ -/' -e 's/^## *//' -e 's/^#/\t\t/' <NEWS.md | fmt -80 >NEWS
+all: check clean
 
 $(TGZ): $(pkgfiles)
 	cd ..;\

@@ -1,38 +1,52 @@
-# CHANGES in gmkin VERSION 0.5-8
+# NEWS for package 'gmkin'
 
-## MINOR CHANGES
+## gmkin 0.5-10.9000
+
+
+
+## gmkin 0.5-10 (2015-05-08)
+
+### Minor changes
+
+- Updates to DESCRIPTION and README.md
+
+- man/gmkin.Rd: Do not mark gmkin as being experimental any more
+
+## gmkin 0.5-8 (2014-11-25)
+
+### Minor changes
 
 - Adapt fit configuration to the fact that the default optimisation algorithm in mkin has been changed to `Port`
 
-# CHANGES in gmkin VERSION 0.5-7
+## gmkin 0.5-7
 
-## NEW FEATURES
+### New features
 
 - Installation is further simplified, as both gmkin and gWidgetsWWW2 are now available from R-Forge.
 
-# CHANGES in gmkin VERSION 0.5-6
+## gmkin 0.5-6
 
-## NEW FEATURES
+### New features
 
 - The plot of the current fit and the residuals can be saved as pdf or png file, on windows also as a windows metafile (wmf)
 
-# CHANGES in gmkin VERSION 0.5-5
+## gmkin 0.5-5
 
-## BUG FIXES
+### Bug fixes
 
 - Prevent loading old gmkin workspace files created with mkin < 0.9-32 as they do not load properly
 
 - Fix saving summary files. They were all saved under the same name without a warning
 
-# CHANGES in gmkin VERSION 0.5-4
+## gmkin 0.5-4
 
-## BUG FIXES
+### Bug fixes
 
 - A heading in the manual was fixed
 
-# CHANGES in gmkin VERSION 0.5-3
+## gmkin 0.5-3
 
-## NEW FEATURES
+### New features
 
 - First version installable from the package repository on r-forge
 
@@ -40,9 +54,9 @@
 
 - Small improvements in the model editor
 
-# CHANGES in gmkin VERSION 0.5-2
+## gmkin 0.5-2
 
-## NEW FEATURES
+### New features
 
 - Make `Port` and `SANN` optimisation algorithms from FME available to gmkin, in addition to the default algorithm `Marq`
 
@@ -54,18 +68,18 @@
 
 - Add an inital message explaining the use of the target input box of the model editor 
 
-## BUG FIXES
+### Bug fixes
 
 - Sorting in the fit table now works correctly also for more than 9 fits
 
 - The fit table was not always updated (e.g. after deleting a fit) due to a bug introduced while fixing the bug above
 
-## MINOR CHANGES
+### Minor changes
 
 - The statusbar message was improved
 
 - This NEWS file was added, in markdown format for viewing on github
 
-# CHANGES in gmkin VERSION 0.5-1
+## gmkin 0.5-1
 
 - This is the gmkin version presented at SETAC in Basel in May 2014
