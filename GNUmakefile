@@ -64,7 +64,7 @@ vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
 vignettes: vignettes/gmkin_manual.html
 
 sd:
-	rm -rf $(SDDIR)/*;\
+	rm -rf $(SDDIR)/*
 	cp gmkin_screenshot.png Rprofile $(SDDIR)
 	"$(RBIN)/Rscript" -e "library(staticdocs); build_site(site_path = '$(SDDIR)')"
 	cd $(SDDIR) && svn add --force .
