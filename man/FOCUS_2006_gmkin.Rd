@@ -1,5 +1,4 @@
 \name{FOCUS_2006_gmkin}
-\Rdversion{1.1}
 \alias{FOCUS_2006_gmkin}
 \docType{data}
 \title{
