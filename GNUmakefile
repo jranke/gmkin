@@ -15,19 +15,17 @@ RFSVN ?= $(HOME)/svn/kinfit.r-forge
 RFDIR ?= $(RFSVN)/pkg/gmkin
 SDDIR ?= $(RFSVN)/www/gmkin_static
 
-.PHONY: help
-
 pkgfiles = NEWS.md \
-	   data/* \
-	   DESCRIPTION \
-	   inst/GUI/gmkin.R \
-	   inst/staticdocs/README \
-	   man/* \
-	   NAMESPACE \
-	   R/* \
-	   README.md \
-	   TODO \
-           vignettes/gmkin_manual.html
+	data/* \
+	DESCRIPTION \
+	inst/GUI/gmkin.R \
+	inst/staticdocs/README \
+	man/* \
+	NAMESPACE \
+	R/* \
+	README.md \
+	TODO \
+	vignettes/gmkin_manual.html
 
 all: check clean
 
@@ -66,13 +64,14 @@ vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
 vignettes: vignettes/gmkin_manual.html
 
 sd:
-	"$(RBIN)/Rscript" -e "library(staticdocs); build_site()"
-
-move-sd: sd
 	rm -rf $(SDDIR)/*;\
-	cp -r inst/web/* $(SDDIR); cp gmkin_screenshot.png Rprofile $(SDDIR); cd $(SDDIR) && svn add --force .
+	cp gmkin_screenshot.png Rprofile $(SDDIR)
+	"$(RBIN)/Rscript" -e "library(staticdocs); build_site(site_path = '$(SDDIR)')"
+	cd $(SDDIR) && svn add --force .
+	git add -A
+	git commit -m 'Vignettes rebuilt by staticdocs::build_site() for static documentation on r-forge' -e
 
-r-forge: move-sd
+r-forge: sd
 	git archive master > $(HOME)/gmkin.tar;\
 	cd $(RFDIR) && rm -r `ls` && tar -xf $(HOME)/gmkin.tar;\
 	svn add --force .; cd $(RFSVN) && svn commit -m 'update gmkin from github repository'
