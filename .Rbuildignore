@@ -1,5 +1,6 @@
 GNUmakefile
 NEWS.md
+README.html
 gmkin_screenshot.png
 Rprofile
 vignettes/.build.timestamp

@@ -19,11 +19,10 @@ pkgfiles = NEWS.md \
 	data/* \
 	DESCRIPTION \
 	inst/GUI/gmkin.R \
-	inst/staticdocs/README \
 	man/* \
 	NAMESPACE \
 	R/* \
-	README.md \
+	README.html \
 	TODO \
 	vignettes/gmkin_manual.html
 
@@ -57,6 +56,9 @@ check-no-vignettes: build-no-vignettes
 	mv $(TGZVNR) $(TGZ)
 	"$(RBIN)/R" CMD check --as-cran --no-tests $(TGZ)
 	mv $(TGZ) $(TGZVNR)
+
+README.html: README.md
+	"$(RBIN)/Rscript" -e "rmarkdown::render('README.md', output_format = 'html_document')"
 
 vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
 	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
