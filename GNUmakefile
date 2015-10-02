@@ -50,11 +50,11 @@ install-no-vignettes: build-no-vignettes
 
 check: build
 	# Vignettes have been rebuilt by the build target
-	"$(RBIN)/R" CMD check --as-cran --no-tests --no-build-vignettes $(TGZ)
+	"$(RBIN)/R" CMD check --no-tests --no-build-vignettes $(TGZ)
 
 check-no-vignettes: build-no-vignettes
 	mv $(TGZVNR) $(TGZ)
-	"$(RBIN)/R" CMD check --as-cran --no-tests $(TGZ)
+	"$(RBIN)/R" CMD check --no-tests $(TGZ)
 	mv $(TGZ) $(TGZVNR)
 
 README.html: README.md
