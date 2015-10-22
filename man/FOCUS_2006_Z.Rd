@@ -1,5 +1,5 @@
-\name{FOCUS_2006_Z_gmkin}
-\alias{FOCUS_2006_Z_gmkin}
+\name{FOCUS_2006_Z}
+\alias{FOCUS_2006_Z}
 \docType{data}
 \title{
   Example gmkin workspace for Dataset Z from the FOCUS Kinetics report
@@ -7,15 +7,15 @@
 \description{
   Data taken from FOCUS (2006), Appendix 7, p. 350.
 }
-\usage{FOCUS_2006_Z_gmkin}
+\usage{FOCUS_2006_Z}
 \format{
-  A list named \code{FOCUS_2006_Z_gmkin} containing the components
-  needed to populate the \code{\link{gmkin}} user interface.
+  An \code{\link{gmkinws}} object with dataset Z taken from FOCUS (2006),
+  together with most of the models used in the corresponding vignette.
 }
 \examples{
   \dontrun{
-  save(FOCUS_2006_Z_gmkin, file = "FOCUS_2006_Z_gmkin.RData")
-  # Now you can load the file "FOCUS_2006_Z_gmkin.RData" from gmkin
+  save(FOCUS_2006_Z, file = "FOCUS_2006_Z.RData")
+  # Now you can load the file "FOCUS_2006_Z.RData" from gmkin
   }
 }
 \source{

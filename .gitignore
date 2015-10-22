@@ -1,4 +1,8 @@
 NEWS
+cache/*
+gmkin.Rcheck/*
 inst/web*
+inst/GUI/old.R
 vignettes/cache
 vignettes/gmkin_manual_cache
+*.swp

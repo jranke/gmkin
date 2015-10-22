@@ -11,10 +11,7 @@ output:
 %\VignetteIndexEntry{Manual for gmkin}
 -->
 
-```{r, include = FALSE}
-library(knitr)
-opts_chunk$set(tidy = FALSE, cache = TRUE)
-```
+
 ## Introduction
 
 The R add-on package gmkin provides a browser based graphical interface for
@@ -30,7 +27,8 @@ For system requirements and installation instructions, please refer to the
 As gmkin is an R package, you need to start R and load the gmkin package before you can run gmkin. 
 This can be achieved by entering the command
 
-```{r, eval = FALSE}
+
+```r
 library(gmkin)
 ```
 
@@ -46,7 +44,8 @@ from the File menu.
 Once you are sure that the working directory is what you want it to be, gmkin
 can be started by entering the R command
 
-```{r, eval = FALSE}
+
+```r
 gmkin()
 ```
 
@@ -59,7 +58,8 @@ using and that it is starting an app called gmkin.
 
 Finally, it should give a message like
 
-```{r, eval = FALSE}
+
+```r
 Model cost at call 1: 2388.077
 ```
 
@@ -170,7 +170,8 @@ dataset editor.
 As an example, we can create a text file from one of the datasets shipped with
 the mkin package using the following R command:
 
-```{r, eval = FALSE}
+
+```r
 write.table(schaefer07_complex_case, sep = ",", dec = ".", 
             row.names = FALSE, quote = FALSE, 
             file = "schaefer07.csv")
@@ -261,7 +262,8 @@ showing the data points in the selected dataset and the model, evaluated with th
 defined by calling `mkinfit` without defining starting parameters. The value of the objective function
 to be minimized for these default parameters can be seen in the R console, e.g. as
 
-```{r, eval = FALSE}
+
+```r
 Model cost at call 1: 15156.12
 ```
 
@@ -345,7 +347,8 @@ and the model fitting process can simply be started by pressing the "Run" button
 In the R console, the progressive reduction in the model cost can be monitored and will 
 be displayed like this:
 
-```{r, eval = FALSE}
+
+```r
 Model cost at call  1 :  15156.12 
 Model cost at call  3 :  15156.12 
 Model cost at call  7 :  14220.79 

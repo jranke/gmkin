@@ -1,22 +1,23 @@
-\name{FOCUS_2006_gmkin}
-\alias{FOCUS_2006_gmkin}
+\name{FOCUS_2006}
+\alias{FOCUS_2006}
 \docType{data}
 \title{
   Example gmkin workspace for Datasets C and D from the FOCUS Kinetics report
 }
 \description{
-  Data taken from FOCUS (2006), Appendix 3. This is the the workspace that is
-  loaded into \code{\link{gmkin}} by default.
+  An \code{\link{gmkinws}} object with data taken from FOCUS (2006), Appendix
+  3. This is the the workspace that is loaded into \code{\link{gmkin}} by
+  default.
 }
-\usage{FOCUS_2006_gmkin}
+\usage{FOCUS_2006}
 \format{
-  A list named \code{FOCUS_2006_gmkin} containing the components
+  A list named \code{FOCUS_2006} containing the components
   needed to populate the gmkin user interface.
 }
 \examples{
   \dontrun{
-  save(FOCUS_2006_gmkin, file = "FOCUS_2006_gmkin.RData")
-  # Now you can load the file "FOCUS_2006_gmkin.RData" from gmkin,
+  save(FOCUS_2006, file = "FOCUS_2006.RData")
+  # Now you can load the file "FOCUS_2006.RData" from gmkin,
   # restoring the workspace that is loaded at startup.
   }
 }

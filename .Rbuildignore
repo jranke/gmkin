@@ -1,8 +1,10 @@
 GNUmakefile
-NEWS.md
 README.html
 gmkin_screenshot.png
 Rprofile
 vignettes/.build.timestamp
 vignettes/cache
 vignettes/gmkin_manual_cache
+vignettes/gmkin_manual.R
+vignettes/gmkin_manual.md
+inst/GUI/gmkin_workflow_inkscape.svg

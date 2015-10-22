@@ -18,7 +18,7 @@ SDDIR ?= $(RFSVN)/www/gmkin_static
 pkgfiles = NEWS.md \
 	data/* \
 	DESCRIPTION \
-	inst/GUI/gmkin.R \
+	inst/GUI/* \
 	man/* \
 	NAMESPACE \
 	R/* \
@@ -62,6 +62,16 @@ README.html: README.md
 
 vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
 	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
+
+vignettes/gmkin_manual.md: vignettes/gmkin_manual.Rmd
+	cd vignettes; \
+		"$(RBIN)/Rscript" -e "knitr::knit('gmkin_manual.Rmd', out = 'gmkin_manual.md')"; \
+
+inst/GUI/gmkin_manual.html: vignettes/gmkin_manual.md
+	cd vignettes; \
+		pandoc -o ../inst/GUI/gmkin_manual.html gmkin_manual.md --toc --self-contained
+
+manual: vignettes/gmkin_manual.html inst/GUI/gmkin_manual.html
 
 vignettes: vignettes/gmkin_manual.html
 
