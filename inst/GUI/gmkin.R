@@ -83,7 +83,7 @@ update_f.df <- function() {
   if (!is.na(ftmp[1])) {
     f.df[1, "Name"] <- c("Temporary (not fitted)")
   }
-  if (!is.na(ws$f)) {
+  if (!is.na(ws$f[1])) {
     f.df.ws <- data.frame(Name = names(ws$f), stringsAsFactors = FALSE)
     f.df <- rbind(f.df, f.df.ws)
   }
@@ -141,7 +141,7 @@ addHandlerClicked(p.gtable, p.switcher)
 ds.switcher <- function(h, ...) {
   ws$ds.cur <<- h$row_index
   svalue(c.ds) <- ds.df[ws$ds.cur, "Title"]
-  #update_ds_editor()
+  update_ds_editor()
   svalue(center) <- 2
 }
 ds.gtable <- gtable(ds.df, cont = ds.gf, width = left_width - 10, height = 160)
@@ -180,6 +180,22 @@ c.conf <- gbutton("Configure fit", cont = c.gf, handler = function(h, ...) svalu
 # center: Project editor {{{1
 p.editor  <- gframe("", horizontal = FALSE, cont = center, 
                      label = "Project")
+# New project {{{2
+p.line.clear <- ggroup(cont = p.editor, horizontal = TRUE)
+p.line.clear.b <- gbutton("New project", cont = p.line.clear,
+  handler = function(h, ...) {
+    project_name <- "New project"
+    svalue(p.name) <- project_name
+    svalue(p.filename) <- file.path(getwd(), paste0(project_name, ".gmkinws"))
+    p.delete$call_Ext("disable")
+    ws <<- gmkinws$new()
+    update_ds.df()
+    ds.gtable[,] <- ds.df
+    update_m.df()
+    m.gtable[,] <- m.df
+    update_f.df()
+    f.gtable[,] <- f.df
+  })
 # Working directory {{{2
 p.line.wd <- ggroup(cont = p.editor, horizontal = TRUE)
 wd_handler <- function(h, ...) {
@@ -306,15 +322,259 @@ p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
     m.gtable[,] <- m.df
   }
 )
-
-
 # center: Dataset editor {{{1
 ds.editor <- gframe("", horizontal = FALSE, cont = center, 
                      label = "Dataset editor")
+# # Handler functions {{{2
+# ds.empty <- list(
+#                  study_nr = 1,
+#                  title = "",
+#                  sampling_times = c(0, 1),
+#                  time_unit = "",
+#                  observed = "parent",
+#                  unit = "",
+#                  replicates = 1,
+#                  data = data.frame(
+#                                    name = "parent",
+#                                    time = c(0, 1),
+#                                    value = c(100, NA),
+#                                    override = "NA",
+#                                    err = 1,
+#                                    stringsAsFactors = FALSE))
+
+# copy_dataset_handler <- function(h, ...) {
+#   ds.old <- ds.cur
+#   ds.cur <<- as.character(1 + length(ds))
+#   svalue(ds.editor) <- paste("Dataset", ds.cur)
+#   ds[[ds.cur]] <<- ds[[ds.old]]
+#   update_ds.df()
+#   ds.gtable[,] <- ds.df
+# }
+#  
+# delete_dataset_handler <- function(h, ...) {
+#   if (length(ds) > 1) {
+#     ds[[ds.cur]] <<- NULL
+#     names(ds) <<- as.character(1:length(ds))
+#     ds.cur <<- names(ds)[[1]]
+#     update_ds.df()
+#     ds.gtable[,] <- ds.df
+#     update_ds_editor()
+#   } else {
+#     galert("Deleting the last dataset is not supported", parent = w)
+#   }
+# }
+#  
+# new_dataset_handler <- function(h, ...) {
+#   ds.cur <<- as.character(1 + length(ds))
+#   ds[[ds.cur]] <<- ds.empty
+#   update_ds.df()
+#   ds.gtable[,] <- ds.df
+#   update_ds_editor()
+# }
+
+# tmptextheader <- character(0)
+# load_text_file_with_data <- function(h, ...) {
+#   tmptextfile <<- normalizePath(svalue(h$obj), winslash = "/")
+#   tmptext <- readLines(tmptextfile, warn = FALSE)
+#   tmptextskip <<- 0
+#   for (tmptextline in tmptext) {
+#     if (grepl(":|#|/", tmptextline)) tmptextskip <<- tmptextskip + 1
+#     else break()
+#   }
+#   svalue(ds.e.up.skip) <- tmptextskip
+#   if (svalue(ds.e.up.header)) {
+#     tmptextheader <<- strsplit(tmptext[tmptextskip + 1], 
+#                              " |\t|;|,")[[1]]
+#   }
+#   svalue(ds.e.up.wide.time) <- tmptextheader[[1]]
+#   svalue(ds.e.up.long.time) <- tmptextheader[[2]]
+#   svalue(ds.e.up.text) <- c("<pre>", tmptext, "</pre>")
+#   svalue(ds.e.stack) <- 2
+# }
+#  
+# new_ds_from_csv_handler <- function(h, ...) {
+#    tmpd <- try(read.table(tmptextfile,
+#                           skip = as.numeric(svalue(ds.e.up.skip)), 
+#                           dec = svalue(ds.e.up.dec),
+#                           sep = switch(svalue(ds.e.up.sep), 
+#                                        whitespace = "", 
+#                                        ";" = ";",
+#                                        "," = ","),
+#                           header = svalue(ds.e.up.header),
+#                           stringsAsFactors = FALSE))
+#   if(svalue(ds.e.up.widelong) == "wide") {
+#     tmpdl <- mkin_wide_to_long(tmpd, time = as.character(svalue(ds.e.up.wide.time)))
+#   } else {
+#     tmpdl <- data.frame(
+#       name = tmpd[[svalue(ds.e.up.long.name)]],
+#       time = tmpd[[svalue(ds.e.up.long.time)]],
+#       value = tmpd[[svalue(ds.e.up.long.value)]])
+#     tmpderr <- tmpd[[svalue(ds.e.up.long.err)]]
+#     if (!is.null(tmpderr)) tmpdl$err <- tmpderr
+#   }
+#   if (class(tmpd) != "try-error") {
+#     ds.cur <<- as.character(1 + length(ds))
+#     ds[[ds.cur]] <<- list(
+#                           study_nr = NA,
+#                           title = "New import",
+#                           sampling_times = sort(unique(tmpdl$time)),
+#                           time_unit = "",
+#                           observed = unique(tmpdl$name),
+#                           unit = "",
+#                           replicates = max(aggregate(tmpdl$time,
+#                                                        list(tmpdl$time,
+#                                                             tmpdl$name),
+#                                                      length)$x),
+#                           data = tmpdl)
+#     ds[[ds.cur]]$data$override <<- as.numeric(NA)
+#     if (is.null(ds[[ds.cur]]$data$err)) ds[[ds.cur]]$data$err <<- 1
+#     update_ds.df()
+#     ds.gtable[,] <- ds.df
+#     update_ds_editor()
+#   } else {
+#     galert("Uploading failed", parent = "w")
+#   }
+# }
+#  
+# empty_grid_handler <- function(h, ...) {
+#   obs <- strsplit(svalue(ds.e.obs), ", ")[[1]]
+#   sampling_times <- strsplit(svalue(ds.e.st), ", ")[[1]]
+#   replicates <- as.numeric(svalue(ds.e.rep))
+#   new.data = data.frame(
+#     name = rep(obs, each = replicates * length(sampling_times)),
+#     time = as.numeric(rep(sampling_times, each = replicates, times = length(obs))),
+#     value = as.numeric(NA),
+#     override = as.numeric(NA),
+#     err = 1,
+#     stringsAsFactors = FALSE
+#   )
+#   ds.e.gdf[,] <- new.data
+# }
+
+# keep_ds_changes_handler <- function(h, ...) {
+#   ds[[ds.cur]]$title <<- svalue(ds.title.ge)
+#   ds[[ds.cur]]$study_nr <<- as.numeric(gsub("Study ", "", svalue(ds.study.gc)))
+#   update_ds.df()
+#   ds.gtable[,] <- ds.df
+#   tmpd <- ds.e.gdf[,]
+#   ds[[ds.cur]]$data <<- tmpd
+#   ds[[ds.cur]]$sampling_times <<- sort(unique(tmpd$time))
+#   ds[[ds.cur]]$time_unit <<- svalue(ds.e.stu)
+#   ds[[ds.cur]]$observed <<- unique(tmpd$name)
+#   ds[[ds.cur]]$unit <<- svalue(ds.e.obu)
+#   ds[[ds.cur]]$replicates <<- max(aggregate(tmpd$time, 
+#                                             list(tmpd$time, tmpd$name), length)$x)
+#   update_ds_editor()
+#   observed.all <<- union(observed.all, ds[[ds.cur]]$observed)
+#   update_m_editor()
+# }
+#  
+# Widget setup {{{2
+# Line 1 {{{3
+ds.e.1 <- ggroup(cont = ds.editor, horizontal = TRUE)
+ds.title.ge <- gedit("", label = "Title", width = 50, cont = ds.e.1) 
+
+# # Line 2 {{{3
+# ds.e.2 <- ggroup(cont = ds.editor, horizontal = TRUE)
+# ds.e.2a <- ggroup(cont = ds.e.2, horizontal = FALSE)
+# gbutton("Copy dataset", cont = ds.e.2a, handler = copy_dataset_handler)
+# gbutton("Delete dataset", cont = ds.e.2a, handler = delete_dataset_handler)
+# gbutton("New dataset", cont = ds.e.2a, handler = new_dataset_handler)
+
+# ds.e.2b <- ggroup(cont = ds.e.2)
+# tmptextfile <- "" # Initialize file name for imported data
+# tmptextskip <- 0 # Initialize number of lines to be skipped
+# tmptexttime <- "V1" # Initialize name of time variable if no header row
+# upload_dataset.gf <- gfile(text = "Upload text file", cont = ds.e.2b,
+#         handler = load_text_file_with_data)
+
+# gbutton("Keep changes", cont = ds.e.2, handler = keep_ds_changes_handler)
+
+# # Line 3 with forms or upload area {{{3
+# ds.e.stack <- gstackwidget(cont = ds.editor)
+# # Forms for meta data {{{4
+# ds.e.forms <- ggroup(cont = ds.e.stack, horizontal = TRUE)
+
+# ds.e.3a <- gvbox(cont = ds.e.forms)
+# ds.e.3a.gfl <- gformlayout(cont = ds.e.3a)
+# ds.e.st  <- gedit(paste(ds[[ds.cur]]$sampling_times, collapse = ", "),
+#                   width = 40,
+#                   label = "Sampling times", 
+#                   cont = ds.e.3a.gfl)
+# ds.e.stu <- gedit(ds[[ds.cur]]$time_unit, 
+#                   width = 20,
+#                   label = "Unit", cont = ds.e.3a.gfl)
+# ds.e.rep <- gedit(ds[[ds.cur]]$replicates, 
+#                   width = 20,
+#                   label = "Replicates", cont = ds.e.3a.gfl)
+
+# ds.e.3b <- gvbox(cont = ds.e.forms)
+# ds.e.3b.gfl <- gformlayout(cont = ds.e.3b)
+# ds.e.obs <- gedit(paste(ds[[ds.cur]]$observed, collapse = ", "),
+#                   width = 50,
+#                   label = "Observed", cont = ds.e.3b.gfl)
+# ds.e.obu <- gedit(ds[[ds.cur]]$unit,
+#                   width = 20, label = "Unit", 
+#                   cont = ds.e.3b.gfl)
+# generate_grid.gb <- gbutton("Generate empty grid for kinetic data", cont = ds.e.3b, 
+#         handler = empty_grid_handler)
+# tooltip(generate_grid.gb) <- "Overwrites the kinetic data shown below"
+# # Data upload area {{{4
+# ds.e.upload <- ggroup(cont = ds.e.stack, horizontal = TRUE)
+# ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.upload, width = 400, height = 400)
+# ds.e.up.options <- ggroup(cont = ds.e.upload, horizontal = FALSE)
+# ds.e.up.import <- gbutton("Import using options specified below", cont = ds.e.up.options,
+#                           handler = new_ds_from_csv_handler)
+# ds.e.up.skip <- gedit(tmptextskip, label = "Comment lines", cont = ds.e.up.options)
+# ds.e.up.header <- gcheckbox(cont = ds.e.up.options, label = "Column names", 
+#                             checked = TRUE)
+# ds.e.up.sep <- gcombobox(c("whitespace", ";", ","), cont = ds.e.up.options,
+#                          selected = 1, label = "Separator")
+# ds.e.up.dec <- gcombobox(c(".", ","), cont = ds.e.up.options,
+#                          selected = 1, label = "Decimal")
+# ds.e.up.widelong <- gradio(c("wide", "long"), horizontal = TRUE, 
+#                            label = "Format", cont = ds.e.up.options,
+#                            handler = function(h, ...) {
+#                              widelong = svalue(h$obj, index = TRUE)
+#                              svalue(ds.e.up.wlstack) <- widelong
+#                            })
+# ds.e.up.wlstack <- gstackwidget(cont = ds.e.up.options)
+# ds.e.up.wide <- ggroup(cont = ds.e.up.wlstack, horizontal = FALSE, width = 300)
+# ds.e.up.wide.time <- gedit(tmptexttime, cont = ds.e.up.wide, label = "Time column")
+# ds.e.up.long <- ggroup(cont = ds.e.up.wlstack, horizontal = FALSE, width = 300)
+# ds.e.up.long.name <- gedit("name", cont = ds.e.up.long, label = "Observed variables")
+# ds.e.up.long.time <- gedit(tmptexttime, cont = ds.e.up.long, label = "Time column")
+# ds.e.up.long.value <- gedit("value", cont = ds.e.up.long, label = "Value column")
+# ds.e.up.long.err <- gedit("err", cont = ds.e.up.long, label = "Relative errors")
+# svalue(ds.e.up.wlstack) <- 1
+
+# svalue(ds.e.stack) <- 1
+
+# # Kinetic Data {{{3
+# ds.e.gdf <- gdf(ds[[ds.cur]]$data, name = "Kinetic data", 
+#                 width = 500, height = 700, cont = ds.editor)
+# ds.e.gdf$set_column_width(2, 70)
+
+# # Update the dataset editor {{{3
+update_ds_editor <- function() {
+  svalue(ds.title.ge) <- ws$ds[[ws$ds.cur]]$title
+#   svalue(ds.study.gc, index = TRUE) <- ds[[ds.cur]]$study_nr
+
+#   svalue(ds.e.st) <- paste(ds[[ds.cur]]$sampling_times, collapse = ", ")
+#   svalue(ds.e.stu) <- ds[[ds.cur]]$time_unit
+#   svalue(ds.e.obs) <- paste(ds[[ds.cur]]$observed, collapse = ", ")
+#   svalue(ds.e.obu) <- ds[[ds.cur]]$unit
+#   svalue(ds.e.rep) <- ds[[ds.cur]]$replicates
+#   svalue(ds.e.stack) <- 1
+#   ds.e.gdf[,] <- ds[[ds.cur]]$data
+}
+# center: Model editor {{{1
 m.editor  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Model editor")
+# center: Fit configuration {{{1
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Fit configuration")
+# center: Results viewer {{{1
 r.viewer  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Result viewer")
 svalue(center) <- 1

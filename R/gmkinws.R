@@ -26,22 +26,16 @@
 #' @field observed Names of the observed variables in the datasets, named
 #'   by the names used in the models contained in field m
 #' @field ds A list of datasets compatible with mkinfit (long format)
-#' @field ds.cur Index of the currently selected dataset
 #' @field m A list of mkinmod models
-#' @field m.cur Index of the currently selected model
 #' @field f A list of mkinfit objects
-#' @field f.cur Index of the currently selected fit
 #' @field s The summaries of the mkinfit objects in field f
 
 gmkinws <- R6Class("gmkinws", 
   public = list(
     observed = NULL,
     ds = list(),
-    ds.cur = NULL,
     m = list(),
-    m.cur = NULL,
     f = list(),
-    f.cur = NULL,
     s = NA,
 
     initialize = function(ds, m, f, ds.cur = NA, m.cur = NA, f.cur = NA) {
@@ -50,7 +44,6 @@ gmkinws <- R6Class("gmkinws",
       if (!missing(ds)) {
         self$check_ds(ds)
         self$ds = ds
-        self$ds.cur = ds.cur
 
         # Collect names of observed variables
         self$observed <- unique(sapply(ds, function(x) x$observed))
@@ -61,13 +54,11 @@ gmkinws <- R6Class("gmkinws",
         self$check_m(m)
         self$m <- m
       }
-      self$m.cur = m.cur
 
       ## Fits
       if (!missing(f)) {
         self$f <- f
       }
-      self$f.cur = f.cur
 
       invisible(self)
     },
@@ -86,7 +77,7 @@ gmkinws <- R6Class("gmkinws",
       self$check_ds(ds)
       common_names = intersect(names(self$ds), names(ds))
       if (length(common_names) > 0) stop("Dataset name(s) ", paste(common_names, collapse = ", "), " already used.")
-      else append(self$ds, ds)
+      else self$ds <- append(self$ds, ds)
 
       # Update names of observed variables
       observed <- unique(sapply(ds, function(x) x$observed))
@@ -122,8 +113,6 @@ print.gmkinws <- function(x, ...) {
   print(x$ds)
   cat("\nModels:\n")
   print(x$m)
-  cat("Current selections:\n")
-  cat("Dataset ", x$ds.cur, ", Model ", x$m.cur, ", Fit ", x$f.cur, "\n", sep = "")
-  cat("\nFits:\n")
+  cat("\nNames of fits:\n")
   print(names(x$f))
 }
