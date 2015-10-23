@@ -136,7 +136,7 @@ p.gtable <- gtable(p.df, cont = p.gf, width = left_width - 10, height = 120)
 size(p.gtable) <- list(columnWidths = c(130, 100))
 p.loaded <- NA # The index of the loaded project. We reset the selection to this when the user 
                # does not confirm
-p.modified <- TRUE # Keep track of modifications after loading
+p.modified <- FALSE # Keep track of modifications after loading
 p.switcher <- function(h, ...) {
   p.cur <- h$row_index # h$row_index for clicked or doubleclick handlers, h$value for change
   project_switched <- FALSE
@@ -146,7 +146,7 @@ p.switcher <- function(h, ...) {
       load(paste0(Name, ".gmkinws"))
       ws <<- ws
     } else {
-      ws <<-  get(Name)
+      ws <<-  get(Name)$clone()
     }
     svalue(center) <- 1
     svalue(c.ds) <- empty_conf_labels[1]
@@ -160,6 +160,7 @@ p.switcher <- function(h, ...) {
     p.loaded <<- p.cur
     project_switched <- TRUE
     p.gtable$set_index(p.cur)
+    p.modified <<- FALSE
   }
   if (p.modified) {
     gconfirm("When you switch projects, you loose any unsaved changes. Proceed to switch?",
@@ -271,6 +272,7 @@ p.save.action <- gaction("Save", parent = w,
         svalue(sb) <- paste("Saved project to file", filename,
                             "in working directory", getwd())
         update_p.df()
+        p.modified <<- FALSE
       } else {
         gmessage("Saving failed for an unknown reason", parent = w)
       }
@@ -350,6 +352,7 @@ p.line.import.dsb <- gbutton("Import selected", cont = p.line.import.dsf,
     i <- svalue(p.line.import.dst, index = TRUE)
     ws$add_ds(ws.import$ds[i])
     update_ds.df()
+    p.modified <<- TRUE
   }
 )
 
@@ -364,36 +367,38 @@ p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
     ws$add_m(ws.import$m[i])
     update_m.df()
     m.gtable[,] <- m.df
+    p.modified <<- TRUE
   }
 )
 # center: Dataset editor {{{1
 ds.editor <- gframe("", horizontal = FALSE, cont = center, 
                      label = "Dataset")
 # Handler functions {{{2
-# copy_dataset_handler <- function(h, ...) {
-#   ds.old <- ds.cur
-#   ds.cur <<- as.character(1 + length(ds))
-#   svalue(ds.editor) <- paste("Dataset", ds.cur)
-#   ds[[ds.cur]] <<- ds[[ds.old]]
-#   update_ds.df()
-#   ds.gtable[,] <- ds.df
-# }
-  
-delete_dataset_handler <- function(h, ...) {
-  ds.i <- svalue(ds.gtable, index = TRUE)
-  ws$delete_ds(ds.i)
+add_dataset <- function(ds.new) {
+  ws$add_ds(list(ds.new))
+  ds.cur <<- ds.new
   update_ds.df()
+  update_ds_editor()
+  p.modified <<- TRUE
 }
 
 new_dataset_handler <- function(h, ...) {
   ds.new <- ds.empty
   ds.new$title <- "New dataset"
-  ws$add_ds(list(ds.new))
-  ds.i <- length(ws$ds)
-  ds.cur <<- ws$ds[[ds.i]]
+  add_dataset(ds.new)
+}
+
+copy_dataset_handler <- function(h, ...) {
+  ds.new <- ds.cur
+  ds.new$title <- paste("Copy of ", ds.cur$title)
+  add_dataset(ds.new)
+}
+  
+delete_dataset_handler <- function(h, ...) {
+  ds.i <- svalue(ds.gtable, index = TRUE)
+  ws$delete_ds(ds.i)
   update_ds.df()
-  ds.gtable[,] <- ds.df
-  update_ds_editor()
+  p.modified <<- TRUE
 }
 
 # tmptextheader <- character(0)
