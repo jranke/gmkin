@@ -4,6 +4,8 @@
 
 - Completely rewritten user interface with a three column layout 
 
+- Introduction of a workspace object as an R6 class
+
 ## gmkin 0.5-10 (2015-05-08)
 
 ### Minor changes
