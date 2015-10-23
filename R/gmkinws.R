@@ -3,7 +3,7 @@
 
 # This file is part of the R package gmkin
 
-# mkin is free software: you can redistribute it and/or modify it under the
+# gmkin is free software: you can redistribute it and/or modify it under the
 # terms of the GNU General Public License as published by the Free Software
 # Foundation, either version 3 of the License, or (at your option) any later
 # version.
@@ -18,9 +18,11 @@
 
 #' A workspace class for gmkin
 #'
+#' Datasets, models and fits are stored in lists.
+#'
 #' @docType class
 #' @importFrom R6 R6Class
-#' @importFrom mkin mkinws
+#' @importFrom plyr compact
 #' @export
 #' @format An \code{\link{R6Class}} generator object.
 #' @field observed Names of the observed variables in the datasets, named
@@ -28,36 +30,33 @@
 #' @field ds A list of datasets compatible with mkinfit (long format)
 #' @field m A list of mkinmod models
 #' @field f A list of mkinfit objects
-#' @field s The summaries of the mkinfit objects in field f
 
 gmkinws <- R6Class("gmkinws", 
   public = list(
     observed = NULL,
-    ds = list(),
-    m = list(),
-    f = list(),
-    s = NA,
+    ds = NA,
+    m = NA,
+    f = NA,
 
-    initialize = function(ds, m, f, ds.cur = NA, m.cur = NA, f.cur = NA) {
+    initialize = function(ds, m, f) {
 
       ## Datasets
       if (!missing(ds)) {
         self$check_ds(ds)
-        self$ds = ds
+        self$ds = plyr::compact(ds)
 
-        # Collect names of observed variables
-        self$observed <- unique(sapply(ds, function(x) x$observed))
+        self$update_observed()
       }
 
       ## Models
       if (!missing(m)) {
         self$check_m(m)
-        self$m <- m
+        self$m <- plyr::compact(m)
       }
 
       ## Fits
       if (!missing(f)) {
-        self$f <- f
+        self$f <- plyr::compact(f)
       }
 
       invisible(self)
@@ -75,14 +74,27 @@ gmkinws <- R6Class("gmkinws",
 
     add_ds = function(ds) {
       self$check_ds(ds)
-      common_names = intersect(names(self$ds), names(ds))
-      if (length(common_names) > 0) stop("Dataset name(s) ", paste(common_names, collapse = ", "), " already used.")
-      else self$ds <- append(self$ds, ds)
+      if (is.na(self$ds)) self$ds <- plyr::compact(ds)
+      else self$ds <- append(self$ds, plyr::compact(ds))
 
-      # Update names of observed variables
-      observed <- unique(sapply(ds, function(x) x$observed))
-      self$observed <- union(self$observed, observed)
+      self$update_observed()
 
+      invisible(self)
+    },
+
+    update_observed = function() {
+      if (is.na(self$ds[1])) self$observed = NULL
+      else self$observed = na.omit(unique(unlist(sapply(self$ds, function(x)
+                                                        x$observed))))
+    },
+
+    delete_ds = function(i) {
+      if (any(sapply(self$ds[i], is.null))) 
+        stop("Could not delete dataset(s) ", paste(i, collapse = ", "))
+
+      self$ds <- self$ds[-i] 
+      if (length(self$ds) == 0) self$ds <- NA
+      self$update_observed()
       invisible(self)
     },
 
@@ -98,9 +110,26 @@ gmkinws <- R6Class("gmkinws",
 
     add_m = function(m) {
       self$check_m(m)
-      common_names = intersect(names(self$m), names(m))
-      if (length(common_names) > 0) stop("Model name(s) ", paste(common_names, collapse = ", "), " already used.")
-      else self$m = c(self$m, m)
+      if (is.na(self$m)) self$m <- plyr::compact(m)
+      else self$m = append(self$m, plyr::compact(m))
+      invisible(self)
+    },
+
+    delete_m = function(i) {
+      if (any(sapply(self$m[i], is.null))) 
+        stop("Could not delete model(s) ", paste(i, collapse = ", "))
+
+      self$m <- self$m[-i] 
+      if (length(self$m) == 0) self$m <- NA
+      invisible(self)
+    },
+
+    delete_f = function(i) {
+      if (any(sapply(self$f[i], is.null))) 
+        stop("Could not delete fit(s) ", paste(i, collapse = ", "))
+
+      self$f <- self$f[-i] 
+      if (length(self$f) == 0) self$f <- NA
       invisible(self)
     }
   )   
@@ -109,10 +138,13 @@ gmkinws <- R6Class("gmkinws",
 #' @export
 print.gmkinws <- function(x, ...) {
   cat("<gmkinws> workspace object\n")
+  cat("Observed variables:\n")
+  print(x$observed)
   cat("\nDatasets:\n")
   print(x$ds)
   cat("\nModels:\n")
   print(x$m)
   cat("\nNames of fits:\n")
-  print(names(x$f))
+  if (is.na(x$f[1])) print(NA)
+  else print(sapply(x$f, function(x) x$name))
 }

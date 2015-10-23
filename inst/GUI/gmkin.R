@@ -24,7 +24,7 @@
 left_width = 250
 right_width = 500
 save_keybinding = "Ctrl-X"
-# Widgets {{{2
+# Three panel layout {{{2
 window_title <- paste0("gmkin ", packageVersion("gmkin"),
                        "- Browser based GUI for kinetic evaluations using mkin")
 w  <- gwindow(window_title)
@@ -68,14 +68,21 @@ update_p.df <- function() {
   } else {
     p.df <<- p.df.package
   }
+  p.gtable[,] <- p.df
+  p.line.import.p[,] <- c("", p.df$Name)
 }
 # Update dataframe with datasets {{{2
 update_ds.df <- function() {
-  ds.df <<- data.frame(Title = sapply(ws$ds, function(x) x$title))
+  if (is.na(ws$ds[1])) ds.df <<- ds.df.empty
+  else ds.df <<- data.frame(Title = sapply(ws$ds, function(x) x$title))
+  ds.gtable[,] <- ds.df
+  update_ds_editor()
+  ds.delete$call_Ext("disable")  
 }
 # Update dataframe with models {{{2
 update_m.df <- function() {
-  m.df <<- data.frame(Name = names(ws$m))
+  if (is.na(ws$m[1])) m.df <<- m.df.empty
+  else m.df <<- data.frame(Name = sapply(ws$m, function(x) x$name))
 }
 # Update dataframe with fits {{{2
 update_f.df <- function() {
@@ -84,12 +91,14 @@ update_f.df <- function() {
     f.df[1, "Name"] <- c("Temporary (not fitted)")
   }
   if (!is.na(ws$f[1])) {
-    f.df.ws <- data.frame(Name = names(ws$f), stringsAsFactors = FALSE)
+    f.df.ws <- data.frame(Name = sapply(ws$f, function(x) x$name),
+                          stringsAsFactors = FALSE)
     f.df <- rbind(f.df, f.df.ws)
   }
   f.df <<- f.df
 }
 # Generate the initial workspace {{{1
+# Project workspace {{{2
 ws <- gmkinws$new()
 ws.import <- NA
 # Initialise meta data objects so assignments within functions using <<- will {{{2
@@ -97,10 +106,19 @@ ws.import <- NA
 # Also create initial versions of meta data in order to be able to clear the workspace
 p.df <- p.df.package <- data.frame(Name = c("FOCUS_2006", "FOCUS_2006_Z"),
                                    Source = rep("gmkin package", 2), stringsAsFactors = FALSE)
-
-update_p.df()
+# Datasets {{{2
+ds.cur <- ds.empty <- mkinds$new(
+  title = "", time_unit = "", unit = "",
+  data = data.frame(
+    name = "parent",
+    time = c(0, 1),
+    value = c(100, NA),
+    override = "NA", err = 1,
+    stringsAsFactors = FALSE))
 ds.df <- ds.df.empty <- data.frame(Title = "", stringsAsFactors = FALSE)
+# Models {{{2
 m.df <- m.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
+# Fits {{{2
 f.df <- f.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
 ftmp <- NA
 # left: Explorer tables {{{1
@@ -116,31 +134,58 @@ f.gf <-  gframe("Results", cont = left)
 # The former must be manually amended if additional workspaces should be available
 p.gtable <- gtable(p.df, cont = p.gf, width = left_width - 10, height = 120)
 size(p.gtable) <- list(columnWidths = c(130, 100))
+p.loaded <- NA # The index of the loaded project. We reset the selection to this when the user 
+               # does not confirm
+p.modified <- TRUE # Keep track of modifications after loading
 p.switcher <- function(h, ...) {
-  p.cur <- h$row_index
-  Name <- p.df[p.cur, "Name"]
-  if (p.df[p.cur, "Source"] == "working directory") {
-    load(paste0(Name, ".gmkinws"))
-    ws <<- ws
-  } else {
-    ws <<-  get(Name)
+  p.cur <- h$row_index # h$row_index for clicked or doubleclick handlers, h$value for change
+  project_switched <- FALSE
+  switch_project <- function() {
+    Name <- p.df[p.cur, "Name"]
+    if (p.df[p.cur, "Source"] == "working directory") {
+      load(paste0(Name, ".gmkinws"))
+      ws <<- ws
+    } else {
+      ws <<-  get(Name)
+    }
+    svalue(center) <- 1
+    svalue(c.ds) <- empty_conf_labels[1]
+    svalue(c.m) <- empty_conf_labels[2]
+    update_p_editor(p.cur)
+    update_ds.df()
+    update_m.df()
+    m.gtable[,] <<- m.df
+    update_f.df()
+    f.gtable[,] <<- f.df
+    p.loaded <<- p.cur
+    project_switched <- TRUE
+    p.gtable$set_index(p.cur)
   }
-  svalue(center) <- 1
-  svalue(c.ds) <- empty_conf_labels[1]
-  svalue(c.m) <- empty_conf_labels[2]
-  update_p_editor(p.cur)
-  update_ds.df()
-  ds.gtable[,] <<- ds.df
-  update_m.df()
-  m.gtable[,] <<- m.df
-  update_f.df()
-  f.gtable[,] <<- f.df
+  if (p.modified) {
+    gconfirm("When you switch projects, you loose any unsaved changes. Proceed to switch?",
+             handler = function(h, ...) { 
+      switch_project()
+    })
+  } else {
+    switch_project()
+  }
+  # We can reset the selection only if the project was not
+  # switched. The following code gets executed during the confirmation dialogue,
+  # i.e. before the potential switching
+  if (!project_switched) {
+    if (is.na(p.loaded)) {
+      p.gtable$clear_selection()
+    } else {
+      p.gtable$set_index(p.loaded)
+    }
+  }
 }
 addHandlerClicked(p.gtable, p.switcher)
 # Dataset explorer {{{2
 ds.switcher <- function(h, ...) {
-  ws$ds.cur <<- h$row_index
-  svalue(c.ds) <- ds.df[ws$ds.cur, "Title"]
+  ds.i <- h$row_index
+  svalue(c.ds) <- ds.df[ds.i, "Title"]
+  ds.cur <<- ws$ds[[ds.i]]
   update_ds_editor()
   svalue(center) <- 2
 }
@@ -148,8 +193,8 @@ ds.gtable <- gtable(ds.df, cont = ds.gf, width = left_width - 10, height = 160)
 addHandlerClicked(ds.gtable, ds.switcher)
 # Model explorer {{{2
 m.switcher <- function(h, ...) {
-  ws$m.cur <<- h$row_index
-  svalue(c.m) <- m.df[ws$m.cur, "Name"]
+  m.i <- h$row_index
+  svalue(c.m) <- m.df[m.i, "Name"]
   #update_m_editor()
   svalue(center) <- 3
 }
@@ -157,8 +202,8 @@ m.gtable <- gtable(m.df, cont = m.gf, width = left_width - 10, height = 160)
 addHandlerClicked(m.gtable, m.switcher)
 # Fit explorer {{{2
 f.switcher <- function(h, ...) {
-  ws$f.cur <<- h$row_index - 1
-  if (ws$f.cur > 0) {
+  f.cur <<- h$row_index - 1
+  if (f.cur > 0) {
     ftmp <<- ws$f[[ws$f.cur]]
     stmp <<- ws$s[[ws$f.cur]]
     c.ds$call_Ext("setText", 
@@ -181,8 +226,8 @@ c.conf <- gbutton("Configure fit", cont = c.gf, handler = function(h, ...) svalu
 p.editor  <- gframe("", horizontal = FALSE, cont = center, 
                      label = "Project")
 # New project {{{2
-p.line.clear <- ggroup(cont = p.editor, horizontal = TRUE)
-p.line.clear.b <- gbutton("New project", cont = p.line.clear,
+p.line.buttons <- ggroup(cont = p.editor, horizontal = TRUE)
+p.new <- gbutton("New project", cont = p.line.buttons,
   handler = function(h, ...) {
     project_name <- "New project"
     svalue(p.name) <- project_name
@@ -190,77 +235,11 @@ p.line.clear.b <- gbutton("New project", cont = p.line.clear,
     p.delete$call_Ext("disable")
     ws <<- gmkinws$new()
     update_ds.df()
-    ds.gtable[,] <- ds.df
     update_m.df()
     m.gtable[,] <- m.df
     update_f.df()
     f.gtable[,] <- f.df
   })
-# Working directory {{{2
-p.line.wd <- ggroup(cont = p.editor, horizontal = TRUE)
-wd_handler <- function(h, ...) {
- target_wd <- svalue(p.wde)
- wd <- try(setwd(target_wd))
- if (inherits(wd, "try-error")) {
-   gmessage(paste("Could not set working directory to", target_wd), parent = w)
- } else {
-   svalue(sb) <- paste("Changed working directory to", wd)
-   update_p.df()
-   p.gtable[,] <- p.df
-   p.line.import.p[,] <- c("", p.df$Name)
- }
-}
-p.wde <- gedit(getwd(), cont = p.line.wd, label = "Working directory", width = 50)
-p.wde$add_handler_enter(wd_handler)
-p.wdb <- gbutton("Change", cont = p.line.wd, handler = wd_handler)
-tooltip(p.wdb) <- "Edit the box on the left and press enter to change"
-# Project name {{{2
-p.line.name <- ggroup(cont = p.editor, horizontal = TRUE)
-p.name  <- gedit("New project", label = "Project name",
-                 width = 50, cont = p.line.name)
-p.save <- gaction("Save", parent = w,
-                  handler = function(h, ...) {
-                    filename <- paste0(svalue(p.name), ".gmkinws")
-                    try_to_save <- function (filename) {
-                      if (!inherits(try(save(ws, file = filename)),
-                                    "try-error")) {
-                        svalue(sb) <- paste("Saved project to file", filename,
-                                            "in working directory", getwd())
-                        update_p.df()
-                        p.gtable[,] <- p.df
-                      } else {
-                        gmessage("Saving failed for an unknown reason", parent = w)
-                      }
-                    }
-                    if (file.exists(filename)) {
-                      gconfirm(paste("File", filename, "exists. Overwrite?"),
-                               parent = w, 
-                               handler = function(h, ...) {
-                        try_to_save(filename)
-                      })
-                    } else {
-                      try_to_save(filename)
-                    }
-                  })
-p.save.button <- gbutton(action = p.save, cont = p.line.name)
-p.save$add_keybinding(save_keybinding)
-tooltip(p.save.button) <- paste("Press", save_keybinding, "to save")
-
-update_p_editor <- function(p.cur) {
-  project_name <-  as.character(p.df[p.cur, "Name"])
-  svalue(p.name)  <- project_name
-  if (p.df[p.cur, "Source"] == "gmkin package") {
-    svalue(p.filename) <- ""
-    p.delete$call_Ext("disable")
-  } else {
-    svalue(p.filename) <- file.path(getwd(), paste0(project_name, ".gmkinws"))
-    p.delete$call_Ext("enable")
-  }
-}
-# File name {{{2
-p.line.file <- ggroup(cont = p.editor, horizontal = TRUE)
-p.filename.gg  <- ggroup(width = 400, cont = p.line.file)
-p.filename  <- glabel("", cont = p.filename.gg)
 p.delete.handler = function(h, ...) {
   filename <- file.path(getwd(), paste0(svalue(p.name), ".gmkinws"))
   gconfirm(paste0("Are you sure you want to delete ", filename, "?"),
@@ -273,13 +252,75 @@ p.delete.handler = function(h, ...) {
                svalue(p.filename) <- ""
                p.delete$call_Ext("disable")
                update_p.df()
-               p.gtable[,] <- p.df
              }
            })
 }
-p.delete <- gbutton("Delete", cont = p.line.file,
-                    handler = p.delete.handler)
-p.delete$call_Ext("disable")
+p.delete <- gbutton("Delete project", cont = p.line.buttons,
+                    handler = p.delete.handler,
+                    ext.args = list(disabled = TRUE))
+# Project name {{{2
+p.line.name <- ggroup(cont = p.editor, horizontal = TRUE)
+p.name  <- gedit("New project", label = "<b>Project name</b>",
+                 width = 50, cont = p.line.name)
+p.save.action <- gaction("Save", parent = w,
+  handler = function(h, ...) {
+    filename <- paste0(svalue(p.name), ".gmkinws")
+    try_to_save <- function (filename) {
+      if (!inherits(try(save(ws, file = filename)),
+                    "try-error")) {
+        svalue(sb) <- paste("Saved project to file", filename,
+                            "in working directory", getwd())
+        update_p.df()
+      } else {
+        gmessage("Saving failed for an unknown reason", parent = w)
+      }
+    }
+    if (file.exists(filename)) {
+      gconfirm(paste("File", filename, "exists. Overwrite?"),
+               parent = w, 
+               handler = function(h, ...) {
+        try_to_save(filename)
+      })
+    } else {
+      try_to_save(filename)
+    }
+  })
+p.save.action$add_keybinding(save_keybinding)
+p.save <- gbutton(action = p.save.action, cont = p.line.name)
+tooltip(p.save) <- paste("Press", save_keybinding, "to save")
+
+update_p_editor <- function(p.cur) {
+  project_name <-  as.character(p.df[p.cur, "Name"])
+  svalue(p.name)  <- project_name
+  if (p.df[p.cur, "Source"] == "gmkin package") {
+    svalue(p.filename) <- ""
+    p.delete$call_Ext("disable")
+  } else {
+    svalue(p.filename) <- file.path(getwd(), paste0(project_name, ".gmkinws"))
+    p.delete$call_Ext("enable")
+  }
+}
+# Working directory {{{2
+p.line.wd <- ggroup(cont = p.editor, horizontal = TRUE)
+wd_handler <- function(h, ...) {
+ target_wd <- svalue(p.wde)
+ wd <- try(setwd(target_wd))
+ if (inherits(wd, "try-error")) {
+   gmessage(paste("Could not set working directory to", target_wd), parent = w)
+ } else {
+   svalue(sb) <- paste("Changed working directory to", wd)
+   update_p.df()
+ }
+}
+p.wde <- gedit(getwd(), cont = p.line.wd, label = "Working directory", width = 50)
+p.wde$add_handler_enter(wd_handler)
+p.wdb <- gbutton("Change", cont = p.line.wd, handler = wd_handler)
+tooltip(p.wdb) <- "Edit the box on the left and press enter to change"
+# File name {{{2
+p.line.file <- ggroup(cont = p.editor, horizontal = TRUE)
+p.filename.gg  <- ggroup(width = 105, cont = p.line.file) # for spacing
+p.filename.label <- glabel("Project file:", cont = p.filename.gg)
+p.filename  <- glabel("", cont = p.line.file)
 # Import {{{2
 p.line.import <- ggroup(cont = p.editor, horizontal = TRUE)
 p.line.import.p <- gcombobox(c("", p.df$Name), label = "Import from", cont = p.line.import,
@@ -294,54 +335,41 @@ p.line.import.p <- gcombobox(c("", p.df$Name), label = "Import from", cont = p.l
     }
     p.line.import.dst[,] <- data.frame(Title = sapply(ws.import$ds, function(x) x$title),
                                        stringsAsFactors = FALSE)
-    p.line.import.mt[,] <- data.frame(Name = names(ws.import$m),
+    p.line.import.mt[,] <- data.frame(Name = sapply(ws.import$m, function(x) x$name),
                                       stringsAsFactors = FALSE)
   })
 p.line.import.frames <- ggroup(cont = p.editor, horizontal = TRUE)
 
 p.line.import.dsf <- gframe("Datasets for import", cont = p.line.import.frames, horizontal = FALSE)
 p.line.import.dst <- gtable(ds.df.empty, cont = p.line.import.dsf, multiple = TRUE,
-                            width = left_width - 10, height = 160)
+                            width = left_width - 10, height = 160,
+                            handler = function(h, ...) p.line.import.dsb$call_Ext("enable"))
 p.line.import.dsb <- gbutton("Import selected", cont = p.line.import.dsf,
+  ext.args = list(disabled = TRUE),
   handler = function(h, ...) {
     i <- svalue(p.line.import.dst, index = TRUE)
-    ws$ds <<- append(ws$ds, ws.import$ds[i])
+    ws$add_ds(ws.import$ds[i])
     update_ds.df()
-    ds.gtable[,] <- ds.df
   }
 )
 
 p.line.import.mf <- gframe("Models for import", cont = p.line.import.frames, horizontal = FALSE)
 p.line.import.mt <- gtable(m.df.empty, cont = p.line.import.mf, multiple = TRUE,
-                            width = left_width - 10, height = 160)
+                            width = left_width - 10, height = 160,
+                            handler = function(h, ...) p.line.import.mb$call_Ext("enable"))
 p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
+  ext.args = list(disabled = TRUE),
   handler = function(h, ...) {
     i <- svalue(p.line.import.mt, index = TRUE)
-    ws$m <<- append(ws$m, ws.import$m[i])
+    ws$add_m(ws.import$m[i])
     update_m.df()
     m.gtable[,] <- m.df
   }
 )
 # center: Dataset editor {{{1
 ds.editor <- gframe("", horizontal = FALSE, cont = center, 
-                     label = "Dataset editor")
-# # Handler functions {{{2
-# ds.empty <- list(
-#                  study_nr = 1,
-#                  title = "",
-#                  sampling_times = c(0, 1),
-#                  time_unit = "",
-#                  observed = "parent",
-#                  unit = "",
-#                  replicates = 1,
-#                  data = data.frame(
-#                                    name = "parent",
-#                                    time = c(0, 1),
-#                                    value = c(100, NA),
-#                                    override = "NA",
-#                                    err = 1,
-#                                    stringsAsFactors = FALSE))
-
+                     label = "Dataset")
+# Handler functions {{{2
 # copy_dataset_handler <- function(h, ...) {
 #   ds.old <- ds.cur
 #   ds.cur <<- as.character(1 + length(ds))
@@ -350,27 +378,23 @@ ds.editor <- gframe("", horizontal = FALSE, cont = center,
 #   update_ds.df()
 #   ds.gtable[,] <- ds.df
 # }
-#  
-# delete_dataset_handler <- function(h, ...) {
-#   if (length(ds) > 1) {
-#     ds[[ds.cur]] <<- NULL
-#     names(ds) <<- as.character(1:length(ds))
-#     ds.cur <<- names(ds)[[1]]
-#     update_ds.df()
-#     ds.gtable[,] <- ds.df
-#     update_ds_editor()
-#   } else {
-#     galert("Deleting the last dataset is not supported", parent = w)
-#   }
-# }
-#  
-# new_dataset_handler <- function(h, ...) {
-#   ds.cur <<- as.character(1 + length(ds))
-#   ds[[ds.cur]] <<- ds.empty
-#   update_ds.df()
-#   ds.gtable[,] <- ds.df
-#   update_ds_editor()
-# }
+  
+delete_dataset_handler <- function(h, ...) {
+  ds.i <- svalue(ds.gtable, index = TRUE)
+  ws$delete_ds(ds.i)
+  update_ds.df()
+}
+
+new_dataset_handler <- function(h, ...) {
+  ds.new <- ds.empty
+  ds.new$title <- "New dataset"
+  ws$add_ds(list(ds.new))
+  ds.i <- length(ws$ds)
+  ds.cur <<- ws$ds[[ds.i]]
+  update_ds.df()
+  ds.gtable[,] <- ds.df
+  update_ds_editor()
+}
 
 # tmptextheader <- character(0)
 # load_text_file_with_data <- function(h, ...) {
@@ -471,15 +495,17 @@ ds.editor <- gframe("", horizontal = FALSE, cont = center,
 #  
 # Widget setup {{{2
 # Line 1 {{{3
-ds.e.1 <- ggroup(cont = ds.editor, horizontal = TRUE)
-ds.title.ge <- gedit("", label = "Title", width = 50, cont = ds.e.1) 
+ds.e.buttons <- ggroup(cont = ds.editor, horizontal = TRUE)
+ds.e.new <- gbutton("New dataset", cont = ds.e.buttons, handler = new_dataset_handler)
+#gbutton("Copy dataset", cont = ds.e.1, handler = copy_dataset_handler)
+ds.delete <- gbutton("Delete dataset", cont = ds.e.buttons, 
+  handler = delete_dataset_handler, ext.args = list(disabled = TRUE))
+ds.e.2 <- ggroup(cont = ds.editor, horizontal = TRUE)
+ds.title.ge <- gedit("", label = "<b>Dataset title</b>", width = 50, cont = ds.e.2)
 
 # # Line 2 {{{3
 # ds.e.2 <- ggroup(cont = ds.editor, horizontal = TRUE)
 # ds.e.2a <- ggroup(cont = ds.e.2, horizontal = FALSE)
-# gbutton("Copy dataset", cont = ds.e.2a, handler = copy_dataset_handler)
-# gbutton("Delete dataset", cont = ds.e.2a, handler = delete_dataset_handler)
-# gbutton("New dataset", cont = ds.e.2a, handler = new_dataset_handler)
 
 # ds.e.2b <- ggroup(cont = ds.e.2)
 # tmptextfile <- "" # Initialize file name for imported data
@@ -557,7 +583,8 @@ ds.title.ge <- gedit("", label = "Title", width = 50, cont = ds.e.1)
 
 # # Update the dataset editor {{{3
 update_ds_editor <- function() {
-  svalue(ds.title.ge) <- ws$ds[[ws$ds.cur]]$title
+  svalue(ds.title.ge) <- ds.cur$title
+  ds.delete$call_Ext("enable")  
 #   svalue(ds.study.gc, index = TRUE) <- ds[[ds.cur]]$study_nr
 
 #   svalue(ds.e.st) <- paste(ds[[ds.cur]]$sampling_times, collapse = ", ")
@@ -570,13 +597,13 @@ update_ds_editor <- function() {
 }
 # center: Model editor {{{1
 m.editor  <- gframe("", horizontal = FALSE, cont = center, 
-                    label = "Model editor")
+                    label = "Model")
 # center: Fit configuration {{{1
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
-                    label = "Fit configuration")
+                    label = "Configuration")
 # center: Results viewer {{{1
 r.viewer  <- gframe("", horizontal = FALSE, cont = center, 
-                    label = "Result viewer")
+                    label = "Result")
 svalue(center) <- 1
 # right: Viewing area {{{1
 # Workflow {{{2
@@ -652,5 +679,6 @@ changes.gh <- ghtml(label = "Changes", paste0("<div class = 'news' style = 'marg
 
 svalue(right) <- 1
 
-
+# Update meta objects and their depending widgets
+update_p.df()
 # vim: set foldmethod=marker ts=2 sw=2 expandtab: {{{1
