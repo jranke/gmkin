@@ -4,6 +4,12 @@
 
 - Completely rewritten user interface with a three column layout 
 
+- Introduce project management with the possibility to move datasets and models
+
+- Tabbed viewing area on the right, with workflow graph, data editor, the manual and changes in gmkin (this file)
+
+- Simplify model specification by using a combobox with multiple selection for specifiying target variables (metabolites, target compartments)
+
 - Introduction of a workspace object as an R6 class
 
 ## gmkin 0.5-10 (2015-05-08)
