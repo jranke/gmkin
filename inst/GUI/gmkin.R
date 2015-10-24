@@ -19,11 +19,16 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>
 
-# Set the GUI title and create the basic widget layout {{{1
-# Configuration {{{2
+# Configuration {{{1
 left_width = 250
 right_width = 500
 save_keybinding = "Ctrl-X"
+gcb_observed_width = 100
+gcb_type_width = 70
+gcb_to_width = 160 
+gcb_sink_width = 70
+
+# Set the GUI title and create the basic widget layout {{{1
 # Three panel layout {{{2
 window_title <- paste0("gmkin ", packageVersion("gmkin"),
                        "- Browser based GUI for kinetic evaluations using mkin")
@@ -84,6 +89,10 @@ update_ds.df <- function() {
 update_m.df <- function() {
   if (is.na(ws$m[1])) m.df <<- m.df.empty
   else m.df <<- data.frame(Name = sapply(ws$m, function(x) x$name))
+  m.gtable[,] <- m.df
+  update_m_editor()
+  m.delete$call_Ext("disable")  
+  m.copy$call_Ext("disable")  
 }
 # Update dataframe with fits {{{2
 update_f.df <- function() {
@@ -119,7 +128,10 @@ ds.empty <- mkinds$new(
 ds.cur <- ds.empty$clone()
 ds.df <- ds.df.empty <- data.frame(Title = "", stringsAsFactors = FALSE)
 # Models {{{2
-m.cur <- m.empty <- mkinmod(parent = mkinsub("SFO"))
+m.empty <- mkinmod(parent = mkinsub("SFO"))
+m.empty$name <- ""
+m.empty$spec <- list()
+m.cur <- m.empty
 m.df <- m.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
 # Fits {{{2
 f.df <- f.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
@@ -202,7 +214,10 @@ addHandlerClicked(ds.gtable, ds.switcher)
 m.switcher <- function(h, ...) {
   m.i <- h$row_index
   svalue(c.m) <- m.df[m.i, "Name"]
-  #update_m_editor()
+  m.cur <<- ws$m[[m.i]] 
+  update_m_editor()
+  m.delete$call_Ext("enable")  
+  m.copy$call_Ext("enable")  
   svalue(center) <- 3
   svalue(right) <- 3
 }
@@ -519,6 +534,7 @@ update_ds_editor <- function() {
   svalue(ds.e.obu) <- ds.cur$unit
   svalue(ds.e.rep) <- ds.cur$replicates
   ds.e.gdf[,] <- ds.cur$data
+  ds.keep$call_Ext("enable")
   visible(ds.e.import) <- FALSE
   svalue(ds.e.up.text) <- "<pre></pre>"
 }
@@ -531,6 +547,7 @@ ds.copy <- gbutton("Copy dataset", cont = ds.e.buttons,
 ds.delete <- gbutton("Delete dataset", cont = ds.e.buttons, 
   handler = delete_dataset_handler, ext.args = list(disabled = TRUE))
 ds.keep <- gbutton("Keep changes", cont = ds.e.buttons, handler = keep_ds_changes_handler)
+ds.keep$call_Ext("disable")
 
 # Formlayout for meta data {{{3
 ds.e.gfl <- gformlayout(cont = ds.editor)
@@ -622,12 +639,73 @@ delete_model_handler <- function(h, ...) {
 }
 
 keep_m_changes_handler <- function(h, ...) {
-  add_model(
-            )
-  update_m.df()
-  m.gtable$set_index(length(ws$m))
-  update_m_editor()
+  spec <- list()
+  for (obs.i in 1:length(m.e.rows)) {
+    to_string <- svalue(m.e.to[[obs.i]])
+    if (length(to_string) == 0) to_vector = NULL
+    else to_vector = strsplit(svalue(m.e.to[[obs.i]]), ", ")[[1]]
+    spec[[obs.i]] <- mkinsub(svalue(m.e.type[[obs.i]]),
+                          to = to_vector,
+                          sink = svalue(m.e.sink[[obs.i]]))
+    names(spec)[[obs.i]] <- svalue(m.e.obs[[obs.i]])
+  }
+  m.cur <<- mkinmod(use_of_ff = svalue(m.ff.gc), 
+                    speclist = spec)
+  m.cur$name <<- svalue(m.name.ge) 
+  add_model(m.cur)
   svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+}
+# Add and remove observed variables {{{3
+add_observed <- function(obs.i) {
+  if (obs.i == length(ws$observed)) {
+    m.add_observed$call_Ext("disable")
+  }
+  m.e.rows[[obs.i]] <<- ggroup(cont = m.editor, horizontal = TRUE)
+  m.e.obs[[obs.i]] <<- gcombobox(ws$observed, 
+                                 selected = obs.i, 
+                                 width = gcb_observed_width,
+                                 cont = m.e.rows[[obs.i]])
+  obs.types <- if (obs.i == 1) c("SFO", "FOMC", "DFOP", "HS", "SFORB")
+    else c("SFO", "SFORB")
+  m.e.type[[obs.i]] <<- gcombobox(obs.types, width = gcb_type_width,
+                                  selected = 0L, cont = m.e.rows[[obs.i]])
+  glabel("to", cont = m.e.rows[[obs.i]]) 
+  m.e.to[[obs.i]] <<- gcombobox(ws$observed, selected = 0L,
+                                width = gcb_to_width,
+                                ext.args = list(multiSelect = TRUE),
+                                cont = m.e.rows[[obs.i]])
+  m.e.sink[[obs.i]] <<- gcheckbox("Sink", width = gcb_sink_width,
+                                  checked = TRUE, cont = m.e.rows[[obs.i]]) 
+  if (obs.i > 1) {
+    gbutton("Remove observed variable", handler = remove_observed_handler, 
+            action = obs.i, cont = m.e.rows[[obs.i]])
+  }
+}
+
+add_observed_handler <- function(h, ...) {
+  obs.i <- length(m.e.rows) + 1
+  add_observed(obs.i)
+}
+
+remove_observed_handler <- function(h, ...) {
+  m.cur$spec[[h$action]] <<- NULL
+  update_m_editor()
+}
+# Update the model editor {{{3
+update_m_editor <- function() {
+  svalue(m.name.ge) <- m.cur$name
+  svalue(m.ff.gc) <- m.cur$use_of_ff
+  for (oldrow.i in seq_along(m.e.rows)) {
+    delete(m.editor, m.e.rows[[oldrow.i]])
+  }
+  m.keep$call_Ext("enable")
+  m.e.rows <<- m.e.obs <<- m.e.type <<- m.e.to <<- m.e.sink <<- list()
+  if (length(m.cur$spec) == length(ws$observed)) {
+    m.add_observed$call_Ext("disable")
+  } else {
+    m.add_observed$call_Ext("enable")
+  }
+  show_m_spec()
 }
 # Widget setup {{{2
 # Line 1 with buttons {{{3
@@ -638,6 +716,7 @@ m.copy <- gbutton("Copy model", cont = m.e.buttons,
 m.delete <- gbutton("Delete model", cont = m.e.buttons, 
   handler = delete_model_handler, ext.args = list(disabled = TRUE))
 m.keep <- gbutton("Keep changes", cont = m.e.buttons, handler = keep_m_changes_handler)
+m.keep$call_Ext("disable")
 
 # Formlayout for meta data {{{3
 m.e.gfl <- gformlayout(cont = m.editor)
@@ -645,6 +724,33 @@ m.name.ge <- gedit(label = "<b>Model name</b>", width = 60, cont = m.e.gfl)
 m.ff.gc <- gcombobox(c("min", "max"), label = "Use of formation fractions", 
                      cont = m.e.gfl)
 svalue(m.ff.gc) <- m.cur$use_of_ff
+m.add_observed <- gbutton("Add observed variable", cont = m.editor,
+  handler = add_observed_handler)
+m.add_observed$call_Ext("disable")
+
+
+# Model specification {{{3
+m.e.rows <- m.e.obs <- m.e.type <- m.e.to <- m.e.sink <- list()
+
+# Show the model specification {{{4
+show_m_spec <- function() {
+  for (obs.i in seq_along(m.cur$spec)) {
+    obs.name <- names(m.cur$spec)[[obs.i]]
+
+    add_observed(obs.i)
+
+    svalue(m.e.obs[[obs.i]]) <<- obs.name
+    svalue(m.e.type[[obs.i]]) <<- m.cur$spec[[obs.i]]$type
+    obs.to = m.cur$spec[[obs.i]]$to
+    obs.to_string_R = paste(obs.to, collapse = ", ")
+    obs.to_string_JS = paste0("['", paste(obs.to, collapse = "', '"), "']")
+    # Set R and Ext values separately, as multiple selections are not supported
+    svalue(m.e.to[[obs.i]]) <<- obs.to_string_R
+    m.e.to[[obs.i]]$call_Ext("select", String(obs.to_string_JS))
+  }
+}
+show_m_spec()
+
 
 # center: Fit configuration {{{1
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
