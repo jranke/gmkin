@@ -119,6 +119,7 @@ ds.empty <- mkinds$new(
 ds.cur <- ds.empty$clone()
 ds.df <- ds.df.empty <- data.frame(Title = "", stringsAsFactors = FALSE)
 # Models {{{2
+m.cur <- m.empty <- mkinmod(parent = mkinsub("SFO"))
 m.df <- m.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
 # Fits {{{2
 f.df <- f.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
@@ -203,6 +204,7 @@ m.switcher <- function(h, ...) {
   svalue(c.m) <- m.df[m.i, "Name"]
   #update_m_editor()
   svalue(center) <- 3
+  svalue(right) <- 3
 }
 m.gtable <- gtable(m.df, cont = m.gf, width = left_width - 10, height = 160)
 addHandlerClicked(m.gtable, m.switcher)
@@ -231,13 +233,14 @@ c.conf <- gbutton("Configure fit", cont = c.gf, handler = function(h, ...) svalu
 # center: Project editor {{{1
 p.editor  <- gframe("", horizontal = FALSE, cont = center, 
                      label = "Project")
-# New project {{{2
+# Line with buttons {{{2
 p.line.buttons <- ggroup(cont = p.editor, horizontal = TRUE)
 p.new <- gbutton("New project", cont = p.line.buttons,
   handler = function(h, ...) {
     project_name <- "New project"
     svalue(p.name) <- project_name
     svalue(p.filename) <- file.path(getwd(), paste0(project_name, ".gmkinws"))
+    svalue(p.observed) <- ""
     p.delete$call_Ext("disable")
     ws <<- gmkinws$new()
     update_ds.df()
@@ -256,6 +259,7 @@ p.delete.handler = function(h, ...) {
              } else {
                svalue(sb) <- paste("Deleted", filename)
                svalue(p.filename) <- ""
+               svalue(p.observed) <- ""
                p.delete$call_Ext("disable")
                update_p.df()
              }
@@ -306,6 +310,7 @@ update_p_editor <- function(p.cur) {
     svalue(p.filename) <- file.path(getwd(), paste0(project_name, ".gmkinws"))
     p.delete$call_Ext("enable")
   }
+  svalue(p.observed) <- paste(ws$observed, collapse = ", ")
 }
 # Working directory {{{2
 p.line.wd <- ggroup(cont = p.editor, horizontal = TRUE)
@@ -325,9 +330,14 @@ p.wdb <- gbutton("Change", cont = p.line.wd, handler = wd_handler)
 tooltip(p.wdb) <- "Edit the box on the left and press enter to change"
 # File name {{{2
 p.line.file <- ggroup(cont = p.editor, horizontal = TRUE)
-p.filename.gg  <- ggroup(width = 105, cont = p.line.file) # for spacing
+p.filename.gg  <- ggroup(width = 135, cont = p.line.file) # for spacing
 p.filename.label <- glabel("Project file:", cont = p.filename.gg)
 p.filename  <- glabel("", cont = p.line.file)
+# Observed variables {{{2
+p.line.observed <- ggroup(cont = p.editor, horizontal = TRUE)
+p.observed.gg  <- ggroup(width = 135, cont = p.line.observed) # for spacing
+p.observed.label <- glabel("Observed variables:", cont = p.observed.gg)
+p.observed  <- glabel("", cont = p.line.observed)
 # Import {{{2
 p.line.import <- ggroup(cont = p.editor, horizontal = TRUE)
 p.line.import.p <- gcombobox(c("", p.df$Name), label = "Import from", cont = p.line.import,
@@ -357,6 +367,7 @@ p.line.import.dsb <- gbutton("Import selected", cont = p.line.import.dsf,
     i <- svalue(p.line.import.dst, index = TRUE)
     ws$add_ds(ws.import$ds[i])
     update_ds.df()
+    svalue(p.observed) <- paste(ws$observed, collapse = ", ")
     p.modified <<- TRUE
   }
 )
@@ -372,6 +383,7 @@ p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
     ws$add_m(ws.import$m[i])
     update_m.df()
     m.gtable[,] <- m.df
+    svalue(p.observed) <- paste(ws$observed, collapse = ", ")
     p.modified <<- TRUE
   }
 )
@@ -379,6 +391,7 @@ p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
 ds.editor <- gframe("", horizontal = FALSE, cont = center, 
                      label = "Dataset")
 # Handler functions {{{2
+# For top row buttons {{{3
 stage_dataset <- function(ds.new) {
   ds.cur <<- ds.new
   update_ds_editor()
@@ -421,8 +434,28 @@ keep_ds_changes_handler <- function(h, ...) {
   update_ds.df()
   ds.gtable$set_index(length(ws$ds))
   update_ds_editor()
+  svalue(p.observed) <- paste(ws$observed, collapse = ", ")
 }
 
+# For populating the dataset editor {{{3
+empty_grid_handler <- function(h, ...) {
+  obs <- strsplit(svalue(ds.e.obs), ", ")[[1]]
+  sampling_times_to_parse <- paste0("c(", svalue(ds.e.st), ")")
+  sampling_times <- eval(parse(text = sampling_times_to_parse))
+  replicates <- as.numeric(svalue(ds.e.rep))
+  new.data = data.frame(
+    name = rep(obs, each = replicates * length(sampling_times)),
+    time = as.numeric(rep(sampling_times, each = replicates, times = length(obs))),
+    value = as.numeric(NA),
+    override = as.numeric(NA),
+    err = 1,
+    stringsAsFactors = FALSE
+  )
+  ds.e.gdf[,] <- new.data
+  svalue(right) <- 2
+}
+
+# For uploading {{{3
 tmptextheader <- character(0)
 load_text_file_with_data <- function(h, ...) {
   tmptextfile <<- normalizePath(svalue(h$obj), winslash = "/")
@@ -477,23 +510,18 @@ new_ds_from_csv_handler <- function(h, ...) {
   }
 }
 
-empty_grid_handler <- function(h, ...) {
-  obs <- strsplit(svalue(ds.e.obs), ", ")[[1]]
-  sampling_times_to_parse <- paste0("c(", svalue(ds.e.st), ")")
-  sampling_times <- eval(parse(text = sampling_times_to_parse))
-  replicates <- as.numeric(svalue(ds.e.rep))
-  new.data = data.frame(
-    name = rep(obs, each = replicates * length(sampling_times)),
-    time = as.numeric(rep(sampling_times, each = replicates, times = length(obs))),
-    value = as.numeric(NA),
-    override = as.numeric(NA),
-    err = 1,
-    stringsAsFactors = FALSE
-  )
-  ds.e.gdf[,] <- new.data
-  svalue(right) <- 2
+# Update the dataset editor {{{3
+update_ds_editor <- function() {
+  svalue(ds.title.ge) <- ds.cur$title
+  svalue(ds.e.st) <- paste(ds.cur$sampling_times, collapse = ", ")
+  svalue(ds.e.stu) <- ds.cur$time_unit
+  svalue(ds.e.obs) <- paste(ds.cur$observed, collapse = ", ")
+  svalue(ds.e.obu) <- ds.cur$unit
+  svalue(ds.e.rep) <- ds.cur$replicates
+  ds.e.gdf[,] <- ds.cur$data
+  visible(ds.e.import) <- FALSE
+  svalue(ds.e.up.text) <- "<pre></pre>"
 }
-
 # Widget setup {{{2
 # Line 1 with buttons {{{3
 ds.e.buttons <- ggroup(cont = ds.editor, horizontal = TRUE)
@@ -556,22 +584,68 @@ ds.e.up.long.value <- gedit("value", cont = ds.e.up.long, label = "Value column"
 ds.e.up.long.err <- gedit("err", cont = ds.e.up.long, label = "Relative errors")
 svalue(ds.e.up.wlstack) <- 1
 
-# # Update the dataset editor {{{3
-update_ds_editor <- function() {
-  svalue(ds.title.ge) <- ds.cur$title
-  svalue(ds.e.st) <- paste(ds.cur$sampling_times, collapse = ", ")
-  svalue(ds.e.stu) <- ds.cur$time_unit
-  svalue(ds.e.obs) <- paste(ds.cur$observed, collapse = ", ")
-  svalue(ds.e.obu) <- ds.cur$unit
-  svalue(ds.e.rep) <- ds.cur$replicates
-  ds.e.gdf[,] <- ds.cur$data
-  svalue(right) <- 2
-  visible(ds.e.import) <- FALSE
-  svalue(ds.e.up.text) <- "<pre></pre>"
-}
 # center: Model editor {{{1
 m.editor  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Model")
+# Handler functions {{{2
+# For top row buttons {{{3
+stage_model <- function(m.new) {
+  m.cur <<- m.new
+  update_m_editor()
+  m.copy$call_Ext("disable")
+  m.delete$call_Ext("disable")
+}
+
+add_model <- function(m.new) {
+  ws$add_m(list(m.new))
+  update_m.df()
+  p.modified <<- TRUE
+}
+
+new_model_handler <- function(h, ...) {
+  m.new <- m.empty
+  m.new$name <- "New model"
+  stage_model(m.new)
+}
+
+copy_model_handler <- function(h, ...) {
+  m.new <- m.cur
+  m.new$name <- paste("Copy of ", m.cur$title)
+  stage_model(m.new)
+}
+  
+delete_model_handler <- function(h, ...) {
+  m.i <- svalue(m.gtable, index = TRUE)
+  ws$delete_m(m.i)
+  update_m.df()
+  p.modified <<- TRUE
+}
+
+keep_m_changes_handler <- function(h, ...) {
+  add_model(
+            )
+  update_m.df()
+  m.gtable$set_index(length(ws$m))
+  update_m_editor()
+  svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+}
+# Widget setup {{{2
+# Line 1 with buttons {{{3
+m.e.buttons <- ggroup(cont = m.editor, horizontal = TRUE)
+m.e.new <- gbutton("New model", cont = m.e.buttons, handler = new_model_handler)
+m.copy <- gbutton("Copy model", cont = m.e.buttons,
+  handler = copy_model_handler, ext.args = list(disabled = TRUE))
+m.delete <- gbutton("Delete model", cont = m.e.buttons, 
+  handler = delete_model_handler, ext.args = list(disabled = TRUE))
+m.keep <- gbutton("Keep changes", cont = m.e.buttons, handler = keep_m_changes_handler)
+
+# Formlayout for meta data {{{3
+m.e.gfl <- gformlayout(cont = m.editor)
+m.name.ge <- gedit(label = "<b>Model name</b>", width = 60, cont = m.e.gfl)
+m.ff.gc <- gcombobox(c("min", "max"), label = "Use of formation fractions", 
+                     cont = m.e.gfl)
+svalue(m.ff.gc) <- m.cur$use_of_ff
+
 # center: Fit configuration {{{1
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Configuration")
@@ -590,15 +664,14 @@ workflow.gi <- gimage(workflow.png, size = c(434, 569), label = "Workflow", cont
 
 # # Kinetic Data {{{3
 ds.e.gdf <- gdf(ds.cur$data, label = "Data editor", name = "Kinetic data", 
-                width = 490, height = 600, cont = right)
-# ds.e.gdf$set_column_width(2, 70)
-
-# data_editor <- ggroup(cont = right, label = "Data editor", width = 490,  height = 600,
-#                       ext.args = list(layout = list(type="vbox", align = "center")))
+                width = 488, height = 600, cont = right)
 
 workflow.png <- get_tempfile(ext = ".png")
 file.copy(system.file("GUI/gmkin_workflow_434x569.png", package = "gmkin"), workflow.png)
 workflow.gi <- gimage(workflow.png, size = c(434, 569), label = "Workflow", cont = workflow.gg)
+# Model Gallery {{{3
+m.g.gg <- ggroup(cont = right, label = "Model gallery", width = 480,  height = 570,
+                 ext.args = list(layout = list(type="vbox", align = "center")))
 
 # Manual {{{2
 gmkin_manual <- readLines(system.file("GUI/gmkin_manual.html", package = "gmkin"))
