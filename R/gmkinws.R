@@ -74,7 +74,7 @@ gmkinws <- R6Class("gmkinws",
 
     add_ds = function(ds) {
       self$check_ds(ds)
-      if (is.na(self$ds)) self$ds <- plyr::compact(ds)
+      if (is.na(self$ds[1])) self$ds <- plyr::compact(ds)
       else self$ds <- append(self$ds, plyr::compact(ds))
 
       self$update_observed()
@@ -83,9 +83,13 @@ gmkinws <- R6Class("gmkinws",
     },
 
     update_observed = function() {
-      if (is.na(self$ds[1])) self$observed = NULL
-      else self$observed = na.omit(unique(unlist(sapply(self$ds, function(x)
-                                                        x$observed))))
+      observed_ds <- if (is.na(self$ds[1])) NULL
+        else na.omit(unique(unlist(sapply(self$ds, function(x) x$observed))))
+
+      observed_m <- if (is.na(self$m[1])) NULL
+        else na.omit(unique(unlist(sapply(self$m, function(x) names(x$spec)))))
+
+      self$observed = union(observed_ds, observed_m)
     },
 
     delete_ds = function(i) {
@@ -110,8 +114,11 @@ gmkinws <- R6Class("gmkinws",
 
     add_m = function(m) {
       self$check_m(m)
-      if (is.na(self$m)) self$m <- plyr::compact(m)
+      if (is.na(self$m[1])) self$m <- plyr::compact(m)
       else self$m = append(self$m, plyr::compact(m))
+      
+      self$update_observed()
+
       invisible(self)
     },
 
