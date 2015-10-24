@@ -131,6 +131,13 @@ gmkinws <- R6Class("gmkinws",
       invisible(self)
     },
 
+    add_f = function(f) {
+      if (is.na(self$f[1])) self$f <- plyr::compact(f)
+      else self$f = append(self$f, plyr::compact(f))
+      
+      invisible(self)
+    },
+
     delete_f = function(i) {
       if (any(sapply(self$f[i], is.null))) 
         stop("Could not delete fit(s) ", paste(i, collapse = ", "))
