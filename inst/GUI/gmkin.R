@@ -213,7 +213,9 @@ ds.switcher <- function(h, ...) {
   update_ds_editor()
   ds.delete$call_Ext("enable")  
   ds.copy$call_Ext("enable")  
-  if (!is.na(svalue(m.gtable))) f.conf$call_Ext("enable")
+  if (!is.null(svalue(m.gtable, index = TRUE))) {
+    if (!is.na(svalue(m.gtable))) f.conf$call_Ext("enable")
+  }
   svalue(center) <- 2
   svalue(right) <- 2
 }
@@ -227,7 +229,9 @@ m.switcher <- function(h, ...) {
   update_m_editor()
   m.delete$call_Ext("enable")  
   m.copy$call_Ext("enable")  
-  if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
+  if (!is.null(svalue(ds.gtable, index = TRUE))) {
+    if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
+  }
   svalue(center) <- 3
   svalue(right) <- 3
 }
@@ -247,8 +251,10 @@ f.switcher <- function(h, ...) {
   c.m$call_Ext("setText", 
      paste0("<font color='gray'>", ftmp$mkinmod$name, "</font>"), FALSE)
   f.conf$call_Ext("disable")
-  ds.gtable$clear_selection()
-  m.gtable$clear_selection()
+
+  ds.gtable$set_index(NA)
+  m.gtable$set_index(NA)
+
   show.initial.gb.o$call_Ext("enable")
   update_f_conf()
   show_plot("Optimised")
@@ -1096,7 +1102,7 @@ plot_ftmp <- function() {
   if (length(svalue(f.gg.po.obssel)) == 0) {
     gmessage("Please select more than one variable for plotting.")
   } else {
-    if(svalue(f.gg.po.obssel) != "") {
+    if(svalue(f.gg.po.obssel)[1] != "") {
       obs_vars_plot = svalue(f.gg.po.obssel)
     } else {
       obs_vars_plot = names(ftmp$mkinmod$spec)
