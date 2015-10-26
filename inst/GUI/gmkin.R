@@ -37,7 +37,7 @@ if (exists("win.metafile", "package:grDevices", inherits = FALSE)) {
 plot_format <- plot_formats[[1]]
 # Options (will be reset in the end) {{{2
 old_options <<- options()
-options(width = 90) # For summary
+options(width = 80) # For summary
 # Set the GUI title and create the basic widget layout {{{1
 # Three panel layout {{{2
 window_title <- paste0("gmkin ", packageVersion("gmkin"),
@@ -291,6 +291,21 @@ update_f_conf <- function() { # {{{3
 }
 update_f_results <- function() { # {{{3
   svalue(r.name) <- ftmp$name
+  r.parameters[] <- cbind(rownames(stmp$bpar), stmp$bpar[, c(1, 4, 5, 6)])
+  err.min <- 100 * stmp$errmin$err.min
+  r.frames.chi2.gt[] <- cbind(rownames(stmp$errmin), signif(err.min, 3),
+                              stmp$errmin[, c(2, 3)])
+  if (is.null(stmp$ff)) r.frames.ff.gt[] <- ff.df.empty
+  else r.frames.ff.gt[] <- cbind(names(stmp$ff), round(stmp$ff, 4))
+  distimes <- format(stmp$distimes, digits = 3)
+  delete(r.frames.distimes, r.frames.distimes.gt)
+  delete(r.frames, r.frames.distimes)
+  r.frames.distimes <<- gframe("Disappearance times", cont = r.frames, use.scrollwindow = TRUE,
+                               horizontal = TRUE)
+  r.frames.distimes.gt <<- gtable(cbind(data.frame(Variable = rownames(stmp$distimes)), distimes),
+                                 cont = r.frames.distimes,
+                                 height = 150)
+  size(r.frames.distimes.gt) <- list(columnWidths = c(60, rep(45, ncol(stmp$distimes))))
   svalue(f.gg.summary.filename) <- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
   svalue(f.gg.summary.listing) <- c("<pre>", capture.output(summary(ftmp)), "</pre>")
   svalue(center) <- 5
@@ -1050,18 +1065,54 @@ size(f.gg.parms) <- list(columnWidths = c(220, 50, 65, 50, 65))
 # center: Results viewer {{{1
 r.viewer  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Result")
+# Row with buttons {{{2
 r.buttons <- ggroup(cont = r.viewer, horizontal = TRUE)
 f.delete <- gbutton("Delete fit", cont = r.buttons, 
   handler = delete_fit_handler, ext.args = list(disabled = TRUE))
 f.keep <- gbutton("Keep fit", cont = r.buttons, handler = keep_fit_handler)
 tooltip(f.keep) <- "Store the optimised model with all settings and the current dataset in the fit list"
 f.keep$call_Ext("disable")
+# Result name {{{2
 r.line.name <- ggroup(cont = r.viewer, horizontal = TRUE)
 r.name  <- gedit("", label = "<b>Result name</b>",
                  width = 50, cont = r.line.name)
 
+# Optimised parameter table {{{2
+par.df.empty <- data.frame(
+  Parameter = character(1),
+  Estimate = numeric(1), "Pr(>t)" = numeric(1),
+  Lower = numeric(1), Upper = numeric(1), check.names = FALSE)
+r.par.gf <- gframe("Optimised parameters", cont = r.viewer, horizontal = FALSE)
+r.parameters <- gtable(par.df.empty, cont = r.par.gf, height = 200,
+                       ext.args = list(resizable = TRUE, resizeHandles = 's'))
+
+# Tables with chi2, ff, DT50 {{{2
+r.frames <- ggroup(cont = r.viewer, horizontal = TRUE)
+
+r.frames.chi2 <- gframe("Chi2 errors [%]", cont = r.frames, horizontal = TRUE)
+chi2.df.empty = data.frame(Variable = character(1), Error = character(1),
+                           n.opt = character(1), df = character(1), 
+                           stringsAsFactors = FALSE)
+r.frames.chi2.gt <- gtable(chi2.df.empty, cont = r.frames.chi2,
+                            width = 180, height = 150)
+size(r.frames.chi2.gt) <- list(columnWidths = c(60, 35, 35, 15))
+
+r.frames.ff <- gframe("Formation fractions", cont = r.frames, horizontal = TRUE)
+ff.df.empty = data.frame(Path = character(1), ff = character(1),
+                         stringsAsFactors = FALSE)
+r.frames.ff.gt <- gtable(ff.df.empty, cont = r.frames.ff,
+                         width = 150, height = 150)
+size(r.frames.ff.gt) <- list(columnWidths = c(80, 15))
+
+r.frames.distimes <- gframe("Disappearance times", cont = r.frames, horizontal = TRUE)
+distimes.df.empty = data.frame(Variable = character(1), DT50 = character(1),
+                               stringsAsFactors = FALSE)
+r.frames.distimes.gt <- gtable(distimes.df.empty, cont = r.frames.distimes,
+                               width = 150, height = 150)
+
 # Summary {{{2
-f.gg.summary <- gframe("Summary", height = 400, use.scrollwindow = TRUE, cont = r.viewer, horizontal = FALSE)
+f.gg.summary <- gframe("Summary", height = 400, use.scrollwindow = TRUE, 
+                       cont = r.viewer, horizontal = FALSE)
 f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
 f.gg.summary.filename <- gedit("", width = 40, cont = f.gg.summary.topline)
 f.gg.summary.savebutton <-  gbutton("Save summary", cont = f.gg.summary.topline,
@@ -1242,5 +1293,5 @@ changes.gh <- ghtml(label = "Changes", paste0("<div class = 'news' style = 'marg
 # Update meta objects and their depending widgets
 svalue(right) <- 1
 update_p.df()
-options(old_options)
+#options(old_options)
 # vim: set foldmethod=marker ts=2 sw=2 expandtab: {{{1
