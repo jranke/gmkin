@@ -35,7 +35,9 @@ if (exists("win.metafile", "package:grDevices", inherits = FALSE)) {
   plot_formats = c("wmf", plot_formats)
 }
 plot_format <- plot_formats[[1]]
-
+# Options (will be reset in the end) {{{2
+old_options <<- options()
+options(width = 90) # For summary
 # Set the GUI title and create the basic widget layout {{{1
 # Three panel layout {{{2
 window_title <- paste0("gmkin ", packageVersion("gmkin"),
@@ -103,7 +105,7 @@ update_m.df <- function() {
 }
 # Update dataframe with fits {{{2
 update_f.df <- function() {
-  f.df <- f.df.empty
+  f.df <- data.frame(Name = ws$ftmp$Name, stringsAsFactors = FALSE)
   if (!is.na(ws$f[1])) {
     f.df.ws <- data.frame(Name = sapply(ws$f, function(x) x$name),
                           stringsAsFactors = FALSE)
@@ -141,8 +143,9 @@ m.empty$spec <- list()
 m.cur <- m.empty
 m.df <- m.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
 # Fits {{{2
-f.df <- f.df.empty <- data.frame(Name = "", stringsAsFactors = FALSE)
-ftmp <- stmp <- NA
+f.df <- data.frame(Name = "", stringsAsFactors = FALSE)
+ws$ftmp <- list(Name = "") # For storing the current configured fit
+ftmp <- stmp <- NA         # For storing the currently active fit
 # left: Explorer tables {{{1
 # Frames {{{2
 p.gf  <- gframe("Projects", cont = left, horizontal = FALSE)
@@ -246,11 +249,10 @@ f.switcher <- function(h, ...) {
   f.conf$call_Ext("disable")
   ds.gtable$clear_selection()
   m.gtable$clear_selection()
-  update_f_conf()
-  update_f_results()
   show.initial.gb.o$call_Ext("enable")
+  update_f_conf()
   show_plot("Optimised")
-  svalue(center) <- 5
+  update_f_results()
 }
 f.gtable <- gtable(f.df, cont = f.gf, width = left_width - 10, height = 160)
 addHandlerClicked(f.gtable, f.switcher)
@@ -279,6 +281,9 @@ update_f_conf <- function() { # {{{3
 }
 update_f_results <- function() { # {{{3
   svalue(r.name) <- ftmp$name
+  svalue(f.gg.summary.filename) <- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
+  svalue(f.gg.summary.listing) <- c("<pre>", capture.output(summary(ftmp)), "</pre>")
+  svalue(center) <- 5
 }
 update_plot_obssel <- function() {
    delete(f.gg.plotopts, f.gg.po.obssel)
@@ -293,7 +298,9 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
                             control.modFit = list(maxiter = 0)))
   ftmp$optimised <<- FALSE
   ftmp$ds <<- ds.cur
-  f.gtable[1, "Name"] <- c("Temporary (not fitted)")
+  ws$ftmp <- ftmp
+  ws$ftmp$Name = "Temporary (not fitted)"
+  update_f.df()
   update_f_conf()
 
   svalue(f.gg.opts.method.modFit) <<- "Port"
@@ -349,6 +356,7 @@ p.save.action <- gaction("Save project to project file", parent = w,
   handler = function(h, ...) {
     filename <- paste0(svalue(p.name), ".gmkinws")
     try_to_save <- function (filename) {
+      ws$clear_compiled()
       if (!inherits(try(save(ws, file = filename)),
                     "try-error")) {
         svalue(sb) <- paste("Saved project to file", filename,
@@ -816,7 +824,7 @@ show_m_spec()
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Configuration")
 # Handler functions {{{2
-run_fit <- function() { #{{{3
+run_fit_handler <- function(h, ...) { #{{{3
   Parameters <- f.gg.parms[,]
   Parameters.de <- subset(Parameters, Type == "deparm")
   deparms <- Parameters.de$Initial
@@ -854,19 +862,22 @@ run_fit <- function() { #{{{3
                    maxit.modFit = svalue(f.gg.opts.maxit.modFit)
                    )
   ftmp$optimised <<- TRUE
-  f.gtable[1, "Name"] <<- c("Temporary (fitted)")
   ftmp$ds <<- ds.cur
+  ws$ftmp <<- ftmp
+  ws$ftmp$Name <<- "Temporary (fitted)"
+  ftmp$name <<- paste(m.cur$name, "-", ds.cur$title)
+  update_f.df()
   stmp <<- summary(ftmp)
   f.gg.parms[,] <- get_Parameters(stmp, TRUE)
+
   show_plot("Optimised")
-  svalue(center) <- 5
-  svalue(r.name) <- paste(m.cur$name, "-", ds.cur$title)
+
   f.keep$call_Ext("enable")
   show.initial.gb.o$call_Ext("enable")
   svalue(f.gg.opts.st) <- ftmp$solution_type
   svalue(f.gg.opts.weight) <- ftmp$weight.ini
-#   svalue(f.gg.summary.filename) <<- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
-#   svalue(f.gg.summary.listing) <<- c("<pre>", capture.output(stmp), "</pre>")
+
+  update_f_results()
 }
 delete_fit_handler <- function(h, ...) { # {{{3
   f.i <- svalue(f.gtable, index = TRUE)
@@ -881,6 +892,7 @@ delete_fit_handler <- function(h, ...) { # {{{3
 keep_fit_handler <- function(h, ...) { # {{{3
   ftmp$name <<- svalue(r.name)
   ws$add_f(list(ftmp))
+  ws$ftmp <- list(Name = "")
   update_f.df()
   update_plot_obssel()
 }
@@ -930,7 +942,7 @@ show_plot <- function(type) {
 }
 # Widget setup {{{2
 # Line 1 with buttons {{{3
-f.run <- gbutton("Run fit", cont = f.config, handler = function(h, ...) run_fit(),
+f.run <- gbutton("Run fit", cont = f.config, handler = run_fit_handler,
                  ext.args = list(disabled = TRUE))
 
 
@@ -973,8 +985,9 @@ f.gg.opts.reweight.max.iter <- gedit(10, label = "reweight.max.iter",
 
 f.gg.plotopts <- ggroup(cont = f.gg.opts.g, horizontal = FALSE)
 
-f.gg.po.format <- gcombobox(plot_formats, selected = 1, label = "File format",
-                  cont = f.gg.plotopts, width = 150,
+f.gg.po.format <- gcombobox(plot_formats, selected = 1, 
+                            #label = "File format",
+                  cont = f.gg.plotopts, width = 50,
                   handler = function(h, ...) {
                     plot_format <<- svalue(h$obj)
                     svalue(plot.ftmp.savefile) <<- gsub("...$", plot_format,
@@ -1037,7 +1050,25 @@ r.line.name <- ggroup(cont = r.viewer, horizontal = TRUE)
 r.name  <- gedit("", label = "<b>Result name</b>",
                  width = 50, cont = r.line.name)
 
-
+# Summary {{{2
+f.gg.summary <- gframe("Summary", height = 400, use.scrollwindow = TRUE, cont = r.viewer, horizontal = FALSE)
+f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
+f.gg.summary.filename <- gedit("", width = 40, cont = f.gg.summary.topline)
+f.gg.summary.savebutton <-  gbutton("Save summary", cont = f.gg.summary.topline,
+                                    handler = function(h, ...) {
+                                      filename <- svalue(f.gg.summary.filename)
+                                      if (file.exists(filename))
+                                      {
+                                        gconfirm(paste("File", filename, "exists. Overwrite?"),
+                                                 parent = w,
+                                                 handler = function(h, ...) {
+                                                   capture.output(stmp,  file = filename)
+                                                 })
+                                      } else {
+                                        capture.output(summary(ftmp),  file = filename)
+                                      }
+                                    })
+f.gg.summary.listing <- ghtml("", cont = f.gg.summary)
 
 svalue(center) <- 1
 # right: Viewing area {{{1
@@ -1134,28 +1165,6 @@ plot.ftmp.savebutton <-  gbutton("Save plot", cont = plot.ftmp.saveline,
                                     })
 plot.space <- ggroup(cont = plot.gg, horizontal = TRUE, height = 18)
 plot.confint.gi <- gimage(NA, container = plot.gg, width = 400, height = 400)
-# Summary {{{2
-oldwidth <- options()$width
-options(width = 90)
-f.gg.summary <- ggroup(label = "Summary", cont = right, horizontal = FALSE)
-f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
-f.gg.summary.filename <- gedit("", width = 40, cont = f.gg.summary.topline)
-f.gg.summary.savebutton <-  gbutton("Save summary", cont = f.gg.summary.topline,
-                                    handler = function(h, ...) {
-                                      filename <- svalue(f.gg.summary.filename)
-                                      if (file.exists(filename))
-                                      {
-                                        gconfirm(paste("File", filename, "exists. Overwrite?"),
-                                                 parent = w,
-                                                 handler = function(h, ...) {
-                                                   capture.output(stmp,  file = filename)
-                                                 })
-                                      } else {
-                                        capture.output(summary(ftmp),  file = filename)
-                                      }
-                                    })
-f.gg.summary.listing <- ghtml("", cont = f.gg.summary)
-options(width = oldwidth)
 # Manual {{{2
 gmkin_manual <- readLines(system.file("GUI/gmkin_manual.html", package = "gmkin"))
 gmb_start <- grep("<body>", gmkin_manual)
@@ -1219,8 +1228,9 @@ changes.gh <- ghtml(label = "Changes", paste0("<div class = 'news' style = 'marg
 ", gmkin_news, "
 </div>"), width = 460, cont = right)
 
-# Things to do in the end
+# Things to do in the end {{{1
 # Update meta objects and their depending widgets
 svalue(right) <- 1
 update_p.df()
+options(old_options)
 # vim: set foldmethod=marker ts=2 sw=2 expandtab: {{{1
