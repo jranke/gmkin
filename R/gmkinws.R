@@ -36,6 +36,7 @@ gmkinws <- R6Class("gmkinws",
     observed = NULL,
     ds = NA,
     m = NA,
+    ftmp = list(Name = ""),
     f = NA,
 
     initialize = function(ds, m, f) {
@@ -144,6 +145,17 @@ gmkinws <- R6Class("gmkinws",
 
       self$f <- self$f[-i] 
       if (length(self$f) == 0) self$f <- NA
+      invisible(self)
+    },
+
+    clear_compiled = function() {
+      for (i in seq_along(self$m)) {
+        self$m[[i]]$cf <- NULL
+      }
+      self$ftmp$mkinmod$cf <- NULL
+      for (i in seq_along(self$f)) {
+        self$f[[i]]$mkinmod$cf <- NULL
+      }
       invisible(self)
     }
   )   
