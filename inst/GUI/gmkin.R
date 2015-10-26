@@ -111,6 +111,7 @@ update_f.df <- function() {
   }
   f.df <<- f.df
   f.gtable[,] <- f.df
+  get.initials.gc[,] <- paste("Result", f.df$Name)
   f.delete$call_Ext("disable")  
 }
 # Generate the initial workspace {{{1
@@ -247,6 +248,7 @@ f.switcher <- function(h, ...) {
   m.gtable$clear_selection()
   update_f_conf()
   update_f_results()
+  show.initial.gb.o$call_Ext("enable")
   show_plot("Optimised")
   svalue(center) <- 5
 }
@@ -272,10 +274,16 @@ update_f_conf <- function() { # {{{3
   svalue(f.gg.opts.reweight.max.iter) <<- ftmp$reweight.max.iter
   svalue(f.gg.opts.maxit.modFit) <<- ftmp$maxit.modFit
   svalue(f.gg.opts.method.modFit) <<- ftmp$method.modFit
+  update_plot_obssel()
   f.gg.parms[,] <- get_Parameters(stmp, ftmp$optimised)
 }
 update_f_results <- function() { # {{{3
   svalue(r.name) <- ftmp$name
+}
+update_plot_obssel <- function() {
+   delete(f.gg.plotopts, f.gg.po.obssel)
+   f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), 
+                                     cont = f.gg.plotopts, checked = TRUE)
 }
 configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
   ftmp <<- suppressWarnings(mkinfit(m.cur,
@@ -287,10 +295,6 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
   ftmp$ds <<- ds.cur
   f.gtable[1, "Name"] <- c("Temporary (not fitted)")
   update_f_conf()
-#   delete(f.gg.plotopts, f.gg.po.obssel)
-#   f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), cont = f.gg.plotopts, 
-#                                     checked = TRUE)
-  show_plot("Initial", default = TRUE)
 
   svalue(f.gg.opts.method.modFit) <<- "Port"
   f.run$call_Ext("enable")
@@ -858,6 +862,7 @@ run_fit <- function() { #{{{3
   svalue(center) <- 5
   svalue(r.name) <- paste(m.cur$name, "-", ds.cur$title)
   f.keep$call_Ext("enable")
+  show.initial.gb.o$call_Ext("enable")
   svalue(f.gg.opts.st) <- ftmp$solution_type
   svalue(f.gg.opts.weight) <- ftmp$weight.ini
 #   svalue(f.gg.summary.filename) <<- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
@@ -877,13 +882,7 @@ keep_fit_handler <- function(h, ...) { # {{{3
   ftmp$name <<- svalue(r.name)
   ws$add_f(list(ftmp))
   update_f.df()
-#   delete(f.gg.plotopts, f.gg.po.obssel)
-#   f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), 
-#                                     cont = f.gg.plotopts, 
-#                                     checked = TRUE)
-#   delete(f.gg.buttons, get.initials.gc)
-#   get.initials.gc <<- gcombobox(paste("Fit", f.df$Fit), 
-#                                 cont = f.gg.buttons)
+  update_plot_obssel()
 }
 get_Parameters <- function(stmp, optimised) # {{{3
 {
@@ -905,13 +904,13 @@ get_Parameters <- function(stmp, optimised) # {{{3
   }
   return(Parameters)
 }
-show_plot <- function(type, default = FALSE) {
+show_plot <- function(type) {
   Parameters <- f.gg.parms[,]
   Parameters.de <- subset(Parameters, Type == "deparm", type)
   stateparms <- subset(Parameters, Type == "state")[[type]]
   deparms <- as.numeric(Parameters.de[[type]])
   names(deparms) <- rownames(Parameters.de)
-  if (type == "Initial" & default == FALSE) {
+  if (type == "Initial") {
     ftmp <<- suppressWarnings(mkinfit(m.cur, 
                                       override(ds.cur$data),
                                       parms.ini = deparms,
@@ -939,7 +938,7 @@ f.run <- gbutton("Run fit", cont = f.config, handler = function(h, ...) run_fit(
 f.gg.opts.g <- ggroup(cont = f.config)
 f.gg.opts.1 <- gformlayout(cont = f.gg.opts.g)
 solution_types <- c("auto", "analytical", "eigen", "deSolve")
-f.gg.opts.plot <- gcheckbox("plot",
+f.gg.opts.plot <- gcheckbox("Plot during the fit",
                          cont = f.gg.opts.1, checked = FALSE)
 f.gg.opts.st <- gcombobox(solution_types, selected = 1,
                           label = "solution_type", width = 200,
@@ -983,17 +982,33 @@ f.gg.po.format <- gcombobox(plot_formats, selected = 1, label = "File format",
                   })
 plot_format <- svalue(f.gg.po.format)
 f.gg.po.legend <- gcheckbox("legend", cont = f.gg.plotopts, checked = TRUE)
-# f.gg.po.update <- gbutton("Update plot",
-#                           handler = function(h, ...) show_plot("Optimised"), 
-#                           cont = f.gg.plotopts)
-# f.gg.po.obssel <- gcheckboxgroup(names(m.cur$spec), cont = f.gg.plotopts, 
-#                                  checked = TRUE)
+f.gg.po.obssel <- gcheckboxgroup("", cont = f.gg.plotopts, 
+                                 checked = TRUE)
+visible(f.gg.po.obssel) <- FALSE
 # Parameter table {{{3
 f.parameters.line <- ggroup(cont = f.config, horizontal = TRUE)
-show.initial.gb <- gbutton("Show initial", 
-                           handler = function(h, ...) show_plot("Initial"),
-                           cont = f.parameters.line)
-tooltip(show.initial.gb) <- "Show model with inital parameters shown below"
+get_initials_handler <- function(h, ...)
+{
+  f.i <- svalue(get.initials.gc, index = TRUE)
+  fit <- if (f.i == 1) ftmp
+    else ws$f[[f.i - 1]]
+  got_initials <- c(fit$bparms.fixed, fit$bparms.optim)
+  parnames <- f.gg.parms[,"Name"]
+  newparnames <- names(got_initials)
+  commonparnames <- intersect(parnames, newparnames)
+  f.gg.parms[commonparnames, "Initial"] <- got_initials[commonparnames]
+}
+get.initials.gb <- gbutton("Get starting parameters from", cont = f.parameters.line,
+                           handler = get_initials_handler)
+get.initials.gc <- gcombobox(paste("Result", f.df$Name), width = 250, cont = f.parameters.line)
+show.initial.gb.u <- gbutton("Plot unoptimised", 
+                             handler = function(h, ...) show_plot("Initial"),
+                             cont = f.parameters.line)
+tooltip(show.initial.gb.u) <- "Show model with inital parameters shown below"
+show.initial.gb.o <- gbutton("Plot optimised", ext.args = list(disabled = TRUE),
+                             handler = function(h, ...) show_plot("Optimised"),
+                             cont = f.parameters.line)
+tooltip(show.initial.gb.o) <- "Show model with optimised parameters shown below"
 
 # Empty parameter table
 Parameters <- Parameters.empty <- data.frame(
@@ -1035,7 +1050,7 @@ file.copy(system.file("GUI/gmkin_workflow_434x569.png", package = "gmkin"), work
 workflow.gi <- gimage(workflow.png, size = c(434, 569), label = "Workflow", cont = workflow.gg)
 
 # Data editor {{{2
-ds.e.gdf <- gdf(ds.cur$data, label = "Data editor", name = "Kinetic data", 
+ds.e.gdf <- gdf(ds.cur$data, label = "Data", name = "Kinetic data", 
                 width = 488, height = 600, cont = right)
 
 # Model Gallery {{{2
@@ -1047,24 +1062,28 @@ plot.gg <- ggroup(cont = right, label = "Plot", width = 480,  height = 900,
                       ext.args = list(layout = list(type="vbox", align = "center")))
 
 plot_ftmp <- function() {
-  if(exists("f.gg.po.obssel")) {
-    obs_vars_plot = svalue(f.gg.po.obssel)
+  if (length(svalue(f.gg.po.obssel)) == 0) {
+    gmessage("Please select more than one variable for plotting.")
   } else {
-    obs_vars_plot = names(ftmp$mkinmod$spec)
+    if(svalue(f.gg.po.obssel) != "") {
+      obs_vars_plot = svalue(f.gg.po.obssel)
+    } else {
+      obs_vars_plot = names(ftmp$mkinmod$spec)
+    }
+    if(exists("f.gg.po.legend")) {
+      plot_legend = svalue(f.gg.po.legend)
+    } else {
+      plot_legend = TRUE
+    }
+    plot(ftmp, main = paste(ftmp$mkinmod$name, "-", ftmp$ds$title), 
+         obs_vars = obs_vars_plot,
+         xlab = ifelse(ftmp$ds$time_unit == "", "Time", 
+                       paste("Time in", ftmp$ds$time_unit)),
+         ylab = ifelse(ftmp$ds$unit == "", "Observed", 
+                       paste("Observed in", ftmp$ds$unit)),
+         legend = plot_legend,
+         show_residuals = TRUE)
   }
-  if(exists("f.gg.po.legend")) {
-    plot_legend = svalue(f.gg.po.legend)
-  } else {
-    plot_legend = TRUE
-  }
-  plot(ftmp, main = paste(ftmp$mkinmod$name, "-", ftmp$ds$title), 
-       obs_vars = obs_vars_plot,
-       xlab = ifelse(ftmp$ds$time_unit == "", "Time", 
-                     paste("Time in", ftmp$ds$time_unit)),
-       ylab = ifelse(ftmp$ds$unit == "", "Observed", 
-                     paste("Observed in", ftmp$ds$unit)),
-       legend = plot_legend,
-       show_residuals = TRUE)
 }
 
 plot_ftmp_png <- function() {
@@ -1115,7 +1134,28 @@ plot.ftmp.savebutton <-  gbutton("Save plot", cont = plot.ftmp.saveline,
                                     })
 plot.space <- ggroup(cont = plot.gg, horizontal = TRUE, height = 18)
 plot.confint.gi <- gimage(NA, container = plot.gg, width = 400, height = 400)
-
+# Summary {{{2
+oldwidth <- options()$width
+options(width = 90)
+f.gg.summary <- ggroup(label = "Summary", cont = right, horizontal = FALSE)
+f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
+f.gg.summary.filename <- gedit("", width = 40, cont = f.gg.summary.topline)
+f.gg.summary.savebutton <-  gbutton("Save summary", cont = f.gg.summary.topline,
+                                    handler = function(h, ...) {
+                                      filename <- svalue(f.gg.summary.filename)
+                                      if (file.exists(filename))
+                                      {
+                                        gconfirm(paste("File", filename, "exists. Overwrite?"),
+                                                 parent = w,
+                                                 handler = function(h, ...) {
+                                                   capture.output(stmp,  file = filename)
+                                                 })
+                                      } else {
+                                        capture.output(summary(ftmp),  file = filename)
+                                      }
+                                    })
+f.gg.summary.listing <- ghtml("", cont = f.gg.summary)
+options(width = oldwidth)
 # Manual {{{2
 gmkin_manual <- readLines(system.file("GUI/gmkin_manual.html", package = "gmkin"))
 gmb_start <- grep("<body>", gmkin_manual)
