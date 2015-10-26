@@ -148,7 +148,7 @@ ws$ftmp <- list(Name = "") # For storing the current configured fit
 ftmp <- stmp <- NA         # For storing the currently active fit
 # left: Explorer tables {{{1
 # Frames {{{2
-p.gf  <- gframe("Projects", cont = left, horizontal = FALSE)
+p.gf  <- gexpandgroup("Projects", cont = left, horizontal = FALSE)
 ds.gf <- gframe("Datasets", cont = left)
 m.gf <-  gframe("Models", cont = left)
 c.gf <-  gframe("Configuration", cont = left, horizontal = FALSE)
@@ -157,7 +157,8 @@ f.gf <-  gframe("Results", cont = left)
 # Project explorer {{{2
 # Initialize project list from the gmkin package and the current working directory
 # The former must be manually amended if additional workspaces should be available
-p.gtable <- gtable(p.df, cont = p.gf, width = left_width - 10, height = 120)
+p.gtable <- gtable(p.df, cont = p.gf, width = left_width - 10, height = 120,
+                   ext.args = list(resizable = TRUE, resizeHandles = 's'))
 size(p.gtable) <- list(columnWidths = c(130, 100))
 p.loaded <- NA # The index of the loaded project. We reset the selection to this when the user 
                # does not confirm
@@ -219,7 +220,8 @@ ds.switcher <- function(h, ...) {
   svalue(center) <- 2
   svalue(right) <- 2
 }
-ds.gtable <- gtable(ds.df, cont = ds.gf, width = left_width - 10, height = 160)
+ds.gtable <- gtable(ds.df, cont = ds.gf, width = left_width - 10, height = 160,
+                    ext.args = list(resizable = TRUE, resizeHandles = 's'))
 addHandlerClicked(ds.gtable, ds.switcher)
 # Model explorer {{{2
 m.switcher <- function(h, ...) {
@@ -235,7 +237,8 @@ m.switcher <- function(h, ...) {
   svalue(center) <- 3
   svalue(right) <- 3
 }
-m.gtable <- gtable(m.df, cont = m.gf, width = left_width - 10, height = 160)
+m.gtable <- gtable(m.df, cont = m.gf, width = left_width - 10, height = 160,
+                   ext.args = list(resizable = TRUE, resizeHandles = 's'))
 addHandlerClicked(m.gtable, m.switcher)
 # Fit explorer {{{2
 f.switcher <- function(h, ...) {
@@ -260,7 +263,8 @@ f.switcher <- function(h, ...) {
   show_plot("Optimised")
   update_f_results()
 }
-f.gtable <- gtable(f.df, cont = f.gf, width = left_width - 10, height = 160)
+f.gtable <- gtable(f.df, cont = f.gf, width = left_width - 10, height = 160,
+                   ext.args = list(resizable = TRUE, resizeHandles = 's'))
 addHandlerClicked(f.gtable, f.switcher)
 # Configuration {{{2
 empty_conf_labels <- paste0("<font color='gray'>Current ", c("dataset", "model"), "</font>")
@@ -981,7 +985,7 @@ weights <- c("manual", "none", "std", "mean")
 f.gg.opts.weight <- gcombobox(weights, selected = 1, label = "weight",
                               width = 200, cont = f.gg.opts.2)
 f.gg.opts.reweight.method <- gcombobox(c("none", "obs"), selected = 1,
-                                       label = "reweight.method",
+                                       label = "IRLS",
                                        width = 200,
                                        cont = f.gg.opts.2)
 f.gg.opts.reweight.tol <- gedit(1e-8, label = "reweight.tol",
