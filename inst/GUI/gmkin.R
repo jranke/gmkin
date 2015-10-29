@@ -333,6 +333,7 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
 
   svalue(f.gg.opts.method.modFit) <<- "Port"
   f.run$call_Ext("enable")
+  svalue(f.running.label) <- "Fit configured and ready to run"
   svalue(center) <- 4
 }
 f.conf <- gbutton("Configure fit", 
@@ -852,66 +853,68 @@ show_m_spec()
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Configuration")
 # Handler functions {{{2
+run_confirm_message <- paste("The progress of the fit is shown in the R console.",
+                            "To cancel, switch to the window of the R console and press Esc (on Windows)",
+                            "or Ctrl-C (on Linux/Unix). Proceed to start the fit?")
 run_fit_handler <- function(h, ...) { #{{{3
-  Parameters <- f.gg.parms[,]
-  Parameters.de <- subset(Parameters, Type == "deparm")
-  deparms <- Parameters.de$Initial
-  names(deparms) <- Parameters.de$Name
-  defixed <- names(deparms[Parameters.de$Fixed])
-  Parameters.ini <- subset(Parameters, Type == "state")
-  iniparms <- Parameters.ini$Initial
-  names(iniparms) <- sub("_0", "", Parameters.ini$Name)
-  inifixed <- names(iniparms[Parameters.ini$Fixed])
-  weight <- svalue(f.gg.opts.weight)
-  if (weight == "manual") {
-    err = "err"
-  } else {
-    err = NULL
-  }
-  reweight.method <- svalue(f.gg.opts.reweight.method)
-  if (reweight.method == "none") reweight.method = NULL
-#  fit_progress_handler = function(x, y) {
-    #  svalue(sb) <- x
-    #  f.progress.evaluations$call_Ext("setText", x, FALSE)
-    #  f.progress.evaluations$parent$do_layout()
-#  }
-  ftmp <<- mkinfit(m.cur, override(ds.cur$data),
-                   state.ini = iniparms,
-                   fixed_initials = inifixed,
-                   parms.ini = deparms, 
-                   fixed_parms = defixed,
-                   plot = svalue(f.gg.opts.plot),
-                   solution_type = svalue(f.gg.opts.st),
-                   atol = as.numeric(svalue(f.gg.opts.atol)),
-                   rtol = as.numeric(svalue(f.gg.opts.rtol)),
-                   transform_rates = svalue(f.gg.opts.transform_rates),
-                   transform_fractions = svalue(f.gg.opts.transform_fractions),
-                   weight = weight,
-                   err = err,
-                   reweight.method = reweight.method,
-                   reweight.tol = as.numeric(svalue(f.gg.opts.reweight.tol)),
-                   reweight.max.iter = as.numeric(svalue(f.gg.opts.reweight.max.iter)),
-                   method.modFit = svalue(f.gg.opts.method.modFit),
-                   maxit.modFit = svalue(f.gg.opts.maxit.modFit)
-#                   progress_handler = fit_progress_handler
-                   )
-  ftmp$optimised <<- TRUE
-  ftmp$ds <<- ds.cur
-  ws$ftmp <<- ftmp
-  ws$ftmp$Name <<- "Temporary (fitted)"
-  ftmp$name <<- paste(m.cur$name, "-", ds.cur$title)
-  update_f.df()
-  stmp <<- summary(ftmp)
-  f.gg.parms[,] <- get_Parameters(stmp, TRUE)
+  gconfirm(run_confirm_message, handler = function(h, ...) 
+    {
+      Parameters <- f.gg.parms[,]
+      Parameters.de <- subset(Parameters, Type == "deparm")
+      deparms <- Parameters.de$Initial
+      names(deparms) <- Parameters.de$Name
+      defixed <- names(deparms[Parameters.de$Fixed])
+      Parameters.ini <- subset(Parameters, Type == "state")
+      iniparms <- Parameters.ini$Initial
+      names(iniparms) <- sub("_0", "", Parameters.ini$Name)
+      inifixed <- names(iniparms[Parameters.ini$Fixed])
+      weight <- svalue(f.gg.opts.weight)
+      if (weight == "manual") {
+        err = "err"
+      } else {
+        err = NULL
+      }
+      reweight.method <- svalue(f.gg.opts.reweight.method)
+      if (reweight.method == "none") reweight.method = NULL
+      ftmp <<- mkinfit(m.cur, override(ds.cur$data),
+                       state.ini = iniparms,
+                       fixed_initials = inifixed,
+                       parms.ini = deparms, 
+                       fixed_parms = defixed,
+                       plot = svalue(f.gg.opts.plot),
+                       solution_type = svalue(f.gg.opts.st),
+                       atol = as.numeric(svalue(f.gg.opts.atol)),
+                       rtol = as.numeric(svalue(f.gg.opts.rtol)),
+                       transform_rates = svalue(f.gg.opts.transform_rates),
+                       transform_fractions = svalue(f.gg.opts.transform_fractions),
+                       weight = weight,
+                       err = err,
+                       reweight.method = reweight.method,
+                       reweight.tol = as.numeric(svalue(f.gg.opts.reweight.tol)),
+                       reweight.max.iter = as.numeric(svalue(f.gg.opts.reweight.max.iter)),
+                       method.modFit = svalue(f.gg.opts.method.modFit),
+                       maxit.modFit = svalue(f.gg.opts.maxit.modFit)
+                       )
+      ftmp$optimised <<- TRUE
+      ftmp$ds <<- ds.cur
+      ws$ftmp <<- ftmp
+      ws$ftmp$Name <<- "Temporary (fitted)"
+      ftmp$name <<- paste(m.cur$name, "-", ds.cur$title)
+      update_f.df()
+      stmp <<- summary(ftmp)
+      f.gg.parms[,] <- get_Parameters(stmp, TRUE)
 
-  show_plot("Optimised")
+      show_plot("Optimised")
 
-  f.keep$call_Ext("enable")
-  show.initial.gb.o$call_Ext("enable")
-  svalue(f.gg.opts.st) <- ftmp$solution_type
-  svalue(f.gg.opts.weight) <- ftmp$weight.ini
+      f.keep$call_Ext("enable")
+      show.initial.gb.o$call_Ext("enable")
+      svalue(f.gg.opts.st) <- ftmp$solution_type
+      svalue(f.gg.opts.weight) <- ftmp$weight.ini
 
-  update_f_results()
+      svalue(f.running.label) <- "Terminated"
+      update_f_results()
+    })
+  svalue(f.running.label) <- "Running..."
 }
 delete_fit_handler <- function(h, ...) { # {{{3
   f.i <- svalue(f.gtable, index = TRUE)
@@ -976,13 +979,13 @@ show_plot <- function(type) {
 }
 # Widget setup {{{2
 # Line 1 with buttons {{{3
-f.run <- gbutton("Run fit", cont = f.config, handler = run_fit_handler,
+f.run <- gbutton("Run fit", 
+                 cont = f.config, 
+                 handler = run_fit_handler,
                  ext.args = list(disabled = TRUE))
-f.progress.line <- ggroup(cont = f.config)
-f.progress.label <- glabel("Number of model evaluations:", 
-                           cont = f.progress.line)
-f.progress.evaluations <- glabel("0", cont = f.progress.line)
 
+f.running.line <- ggroup(cont = f.config)
+f.running.label <- glabel("No fit configured", cont = f.running.line)
 
 # Fit options forms {{{3
 f.gg.opts.g <- ggroup(cont = f.config)
