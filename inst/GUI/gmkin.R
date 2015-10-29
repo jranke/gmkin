@@ -57,6 +57,9 @@ bl$set_panel_size("east", right_width)
 center <- gnotebook(cont = bl, where = "center")
 left   <- gvbox(cont = bl, use.scrollwindow = TRUE, where = "west")
 right   <- gnotebook(cont = bl, use.scrollwindow = TRUE, where = "east")
+# right$add_handler("tabchange", handler = function(h, ...) {
+#   if (svalue(h$obj) == 3) bl$set_panel_size("east", 1000)
+# })
 
 # Helper functions {{{1
 # Override function for making it possible to override original data points using the GUI {{{2
@@ -867,6 +870,11 @@ run_fit_handler <- function(h, ...) { #{{{3
   }
   reweight.method <- svalue(f.gg.opts.reweight.method)
   if (reweight.method == "none") reweight.method = NULL
+#  fit_progress_handler = function(x, y) {
+    #  svalue(sb) <- x
+    #  f.progress.evaluations$call_Ext("setText", x, FALSE)
+    #  f.progress.evaluations$parent$do_layout()
+#  }
   ftmp <<- mkinfit(m.cur, override(ds.cur$data),
                    state.ini = iniparms,
                    fixed_initials = inifixed,
@@ -885,6 +893,7 @@ run_fit_handler <- function(h, ...) { #{{{3
                    reweight.max.iter = as.numeric(svalue(f.gg.opts.reweight.max.iter)),
                    method.modFit = svalue(f.gg.opts.method.modFit),
                    maxit.modFit = svalue(f.gg.opts.maxit.modFit)
+#                   progress_handler = fit_progress_handler
                    )
   ftmp$optimised <<- TRUE
   ftmp$ds <<- ds.cur
@@ -969,6 +978,10 @@ show_plot <- function(type) {
 # Line 1 with buttons {{{3
 f.run <- gbutton("Run fit", cont = f.config, handler = run_fit_handler,
                  ext.args = list(disabled = TRUE))
+f.progress.line <- ggroup(cont = f.config)
+f.progress.label <- glabel("Number of model evaluations:", 
+                           cont = f.progress.line)
+f.progress.evaluations <- glabel("0", cont = f.progress.line)
 
 
 # Fit options forms {{{3
@@ -1137,18 +1150,54 @@ svalue(center) <- 1
 workflow.gg <- ggroup(cont = right, label = "Workflow", width = 480,  height = 570,
                       ext.args = list(layout = list(type="vbox", align = "center")))
 
-workflow.png <- get_tempfile(ext = ".png")
-file.copy(system.file("GUI/gmkin_workflow_434x569.png", package = "gmkin"), workflow.png)
-workflow.gi <- gimage(workflow.png, size = c(434, 569), label = "Workflow", cont = workflow.gg)
+workflow_url <- "/custom/gmkin_png/workflow/gmkin_workflow_434x569.png"
+workflow.gi <- gimage(workflow_url, size = c(434, 569), label = "Workflow", cont = workflow.gg)
 
 # Data editor {{{2
 ds.e.gdf <- gdf(ds.cur$data, label = "Data", name = "Kinetic data", 
                 width = 488, height = 600, cont = right)
 
 # Model Gallery {{{2
-m.g.gg <- ggroup(cont = right, label = "Model gallery", width = 480,  height = 570,
+m.g.gg <- ggroup(cont = right, label = "Model gallery", 
                  ext.args = list(layout = list(type="vbox", align = "center")))
 
+m.g.rows <- list()
+m.g.buttonrows <- list()
+m.g.fields <- list()
+m.g.buttons <- list()
+add_gallery_model_handler <- function(h, ...) {
+  i_j <- h$action
+  ws$add_m(UBA_model_gallery[[i_j[1]]][i_j[2]])
+  update_m.df()
+  m.i <- nrow(m.df)
+  svalue(c.m) <- m.df[m.i, "Name"]
+  m.cur <<- ws$m[[m.i]] 
+  update_m_editor()
+  m.delete$call_Ext("enable")  
+  m.copy$call_Ext("enable")  
+  if (!is.null(svalue(ds.gtable, index = TRUE))) {
+    if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
+  }
+  svalue(center) <- 3
+}
+for (i in 1:9) {
+  m.g.rows[[i]] <- ggroup(cont = m.g.gg, horizontal = TRUE)
+  m.g.buttonrows[[i]] <- ggroup(cont = m.g.gg, horizontal = TRUE)
+  m.g.fields[[i]] <- list()
+  m.g.buttons[[i]] <- list()
+  for (j in 1:4) {
+    model <- UBA_model_gallery[[i]][[j]]
+    m.url = paste0("/custom/gmkin_png/", gsub(" ", "_", model$name), ".png")
+    m.g.fields[[i]][[j]] <- gimage(m.url, width = 110, 
+                                   height = if (i == 1) 135 else 220,
+                                   cont = m.g.rows[[i]])
+    m.g.buttons[[i]][[j]] <- gbutton(model$name, width = 110, 
+                                     cont = m.g.buttonrows[[i]],
+                                     handler = add_gallery_model_handler,
+                                     action = c(i, j))
+    tooltip(m.g.buttons[[i]][[j]]) <- model$name
+  }
+}
 # Plots {{{2
 plot.gg <- ggroup(cont = right, label = "Plot", width = 480,  height = 900,
                       ext.args = list(layout = list(type="vbox", align = "center")))
