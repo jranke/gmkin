@@ -1311,9 +1311,9 @@ manual.gh <- ghtml(label = "Manual", paste0("<div class = 'manual' style = 'marg
 </div>"), width = 460, cont = right)
 
 # Changes {{{2
-gmkin_news <- markdownToHTML(system.file("NEWS.md", package = "gmkin"), 
-                             fragment.only = TRUE,
-                             )
+gmkin_news <- markdown::markdownToHTML(system.file("NEWS.md", 
+                                                   package = "gmkin"),
+                                       fragment.only = TRUE)
 
 changes.gh <- ghtml(label = "Changes", paste0("<div class = 'news' style = 'margin: 20px'>
 <style>
