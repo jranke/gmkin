@@ -23,9 +23,21 @@
 }
 \examples{
   \dontrun{gmkin()} # Start the gmkin GUI
+  \dontrun{
+    g <- gmkin()
+
+    # Only for debugging or other advanced usage:
+    session <- gmkin:::get_current_session(g)
+    session$p.df
+    session$ds.df
+    session$ds.cur
+    session$m.cur
+    session$ws
+  } 
 }
 \value{
-  The function is called for its side effect, namely starting the GUI in a browser.
+  The function is called for its side effect, namely starting the GUI in a browser. 
+  For the curious, the desperate or the adventurous, the gmkin app (a GWidgetsApp object) is returned.
 }
 \author{
   Johannes Ranke
