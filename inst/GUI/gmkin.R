@@ -1294,35 +1294,16 @@ plot.ftmp.savebutton <-  gbutton("Save plot", cont = plot.ftmp.saveline,
 plot.space <- ggroup(cont = plot.gg, horizontal = FALSE, height = 18)
 plot.confint.gi <- gimage(NA, container = plot.gg, width = 400, height = 400)
 # Manual {{{2
-gmkin_manual <- readLines(system.file("GUI/gmkin_manual.html", package = "gmkin"))
-gmb_start <- grep("<body>", gmkin_manual)
-gmb_end <- grep("</body>", gmkin_manual)
-gmkin_manual_body <- gmkin_manual[gmb_start:gmb_end]
+manual_html <- readLines(system.file("GUI/manual.html", package = "gmkin"))
 
-manual.gh <- ghtml(label = "Manual", paste0("<div class = 'manual' style = 'margin: 20px'>
+manual.gh <- ghtml(label = "Manuals", paste0("<div class = 'manual' style = 'margin: 20px'>
 <style>
 .manual h1{
   font-size: 14px;
   line-height: 20px;
 }
-.manual h2{
-  font-size: 14px;
-  line-height: 20px;
-}
-.manual h3{
-  font-size: 12px;
-  line-height: 18px;
-}
-.manual ul{
-  font-size: 12px;
-  line-height: 12px;
-}
-.manual li{
-  font-size: 12px;
-  line-height: 12px;
-}
 </style>
-", paste(gmkin_manual_body, collapse = '\n'), "
+", paste(manual_html, collapse = '\n'), "
 </div>"), width = 460, cont = right)
 
 # Changes {{{2
