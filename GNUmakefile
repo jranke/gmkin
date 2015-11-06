@@ -1,15 +1,15 @@
 PKGNAME := $(shell sed -n "s/Package: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
-PKGSRC  := $(shell basename $(PWD))
-TGZ     := ../$(PKGSRC)_$(PKGVERS).tar.gz
-TGZVNR  := ../$(PKGSRC)_$(PKGVERS)-vignettes-not-rebuilt.tar.gz
+PKGDIR  := $(PWD)
+TGZ     := $(PKGNAME)_$(PKGVERS).tar.gz
+TGZVNR  := $(PKGNAME)_$(PKGVERS)-vignettes-not-rebuilt.tar.gz
 
 # Specify the directory holding R binaries. To use an alternate R build (say a
 # pre-prelease version) use `make RBIN=/path/to/other/R/` or `export RBIN=...`
 # If no alternate bin folder is specified, the default is to use the folder
 # containing the first instance of R on the PATH.
 RBIN ?= $(shell dirname "`which R`")
-#
+
 # Specify static documentation directories for subversion on r-forge
 RFSVN ?= $(HOME)/svn/kinfit.r-forge
 RFDIR ?= $(RFSVN)/pkg/gmkin
@@ -19,9 +19,11 @@ pkgfiles = NEWS.md \
 	data/* \
 	DESCRIPTION \
 	inst/GUI/* \
+	inst/GUI/png* \
 	man/* \
 	NAMESPACE \
 	R/* \
+	man/* \
 	README.html \
 	TODO \
 	vignettes/gmkin_manual.html
@@ -29,13 +31,10 @@ pkgfiles = NEWS.md \
 all: check clean
 
 $(TGZ): $(pkgfiles)
-	cd ..;\
-		"$(RBIN)/R" CMD build $(PKGSRC)
+	"$(RBIN)/R" CMD build .
 
 $(TGZVNR): $(pkgfiles)
-	cd ..;\
-		"$(RBIN)/R" CMD build $(PKGSRC) --no-build-vignettes;\
-		cd $(PKGSRC);\
+	"$(RBIN)/R" CMD build --no-build-vignettes . ;\
 	mv $(TGZ) $(TGZVNR)
                 
 build: $(TGZ)
@@ -84,8 +83,8 @@ sd:
 	git commit -m 'Vignettes rebuilt by staticdocs::build_site() for static documentation on r-forge' -e
 
 r-forge: sd
-	git archive master > $(HOME)/gmkin.tar;\
-	cd $(RFDIR) && rm -r `ls` && tar -xf $(HOME)/gmkin.tar;\
+	git archive master > $(PKGDIR)/gmkin.tar;\
+	cd $(RFDIR) && rm -r `ls` && tar -xf $(PKGDIR)/gmkin.tar;\
 	svn add --force .; cd $(RFSVN) && svn commit -m 'update gmkin from github repository'
 
 clean: 

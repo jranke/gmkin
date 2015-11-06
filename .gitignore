@@ -1,8 +1,9 @@
 NEWS
 cache/*
 gmkin.Rcheck/*
+gmkin*.tar
+gmkin*.tar.gz
 inst/web*
-inst/GUI/old.R
 vignettes/cache
 vignettes/gmkin_manual_cache
 *.swp
