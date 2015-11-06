@@ -66,11 +66,7 @@ vignettes/gmkin_manual.md: vignettes/gmkin_manual.Rmd
 	cd vignettes; \
 		"$(RBIN)/Rscript" -e "knitr::knit('gmkin_manual.Rmd', out = 'gmkin_manual.md')"; \
 
-inst/GUI/gmkin_manual.html: vignettes/gmkin_manual.md
-	cd vignettes; \
-		pandoc -o ../inst/GUI/gmkin_manual.html gmkin_manual.md --toc --self-contained
-
-manual: vignettes/gmkin_manual.html inst/GUI/gmkin_manual.html
+manual: vignettes/gmkin_manual.html
 
 vignettes: vignettes/gmkin_manual.html
 
