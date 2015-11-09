@@ -538,7 +538,7 @@ p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
   }
 )
 # center: Dataset editor {{{1
-ds.editor <- gframe("", horizontal = FALSE, cont = center, 
+ds.editor <- gframe("", horizontal = FALSE, cont = center, width = 580,
                      label = "Dataset")
 # Handler functions {{{2
 # For top row buttons {{{3
@@ -707,9 +707,9 @@ upload_dataset.gf <- gfile(text = "Upload text file", cont = ds.editor,
 # Import options {{{3
 ds.e.import <- ggroup(cont = ds.editor, horizontal = FALSE)
 visible(ds.e.import) <- FALSE
-ds.e.preview <- ggroup(cont = ds.e.import, width = 480,  height = 150,
+ds.e.preview <- ggroup(cont = ds.e.import, width = 400,  height = 150,
                       ext.args = list(layout = list(type="vbox", align = "center")))
-ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.preview, width = 400, height = 150)
+ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.preview, width = 380, height = 150)
 ds.e.up.import <- gbutton("Import using options specified below", cont = ds.e.import,
                           handler = new_ds_from_csv_handler)
 ds.e.up.options <- ggroup(cont = ds.e.import, width = 200, horizontal = FALSE)
@@ -718,7 +718,7 @@ ds.e.up.header <- gcheckbox(cont = ds.e.up.options, label = "Column names",
                             checked = TRUE)
 ds.e.up.sep <- gcombobox(c("whitespace", ";", ","), cont = ds.e.up.options, width = 50,
                          selected = 1, label = "Separator")
-ds.e.up.dec <- gcombobox(c(".", ","), cont = ds.e.up.options, width = 100,
+ds.e.up.dec <- gcombobox(c(".", ","), cont = ds.e.up.options, width = 50,
                          selected = 1, label = "Decimal")
 ds.e.up.widelong <- gradio(c("wide", "long"), horizontal = TRUE, width = 100,
                            label = "Format", cont = ds.e.up.options,
