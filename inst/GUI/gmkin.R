@@ -1218,7 +1218,8 @@ add_gallery_model_handler <- function(h, ...) {
   svalue(center) <- 3
 }
 model_gallery_created <- FALSE
-m.g.loading <- glabel("Loading the model gallery, please wait...", cont = m.g.gg)
+m.g.loading <- glabel("Loading the model gallery, please wait...<br />
+  If nothing happens, please try switching to the Data tab and back here.", cont = m.g.gg)
 create_model_gallery <- function() {
   delete(m.g.gg, m.g.loading)
   for (i in 1:9) {
