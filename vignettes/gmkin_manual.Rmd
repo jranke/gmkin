@@ -382,10 +382,13 @@ R console in a way that you can see everything at the same time:
 ## Results and summary
 
 Once a fit has successfully been completed, the most important results are shown in several
-tables in the "Result" area a shown above. The detailed summary can be accessed below
-these tables.
+tables in the "Result" area as shown below. 
 
-![summary](img/summary.png)
+![Screenshot of the results](img/results.png)
+
+The detailed summary can be accessed below these tables.
+
+![Screenshot of the summary](img/summary.png)
 
 The complete summary can be saved into a text file by specifying a suitable file name
 and pressing the button "Save summary".
