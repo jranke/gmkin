@@ -1,47 +1,51 @@
 ---
 title: "Manual for gmkin"
+author: "Johannes Ranke"
+date: "`r Sys.Date()`"
 output:
   html_document:
     css: gmkin_manual.css
     toc: true
+    mathjax: null
     theme: united
+vignette: >
+  %\VignetteIndexEntry{Manual for gmkin}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
-<!--
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{Manual for gmkin}
--->
 
 ```{r, include = FALSE}
 library(knitr)
-opts_chunk$set(tidy = FALSE, cache = TRUE)
+opts_chunk$set(tidy = FALSE, cache = FALSE)
 ```
 ## Introduction
 
 The R add-on package gmkin provides a browser based graphical interface for
-performing kinetic evaluations of degradation data using the mkin package.
+performing kinetic evaluations of degradation data using the 
+[mkin package](http://kinfit.r-forge.r-project.org/mkin_static).
 While the use of gmkin should be largely self-explanatory, this manual may serve
 as a functionality overview and reference.
 
 For system requirements and installation instructions, please refer to the 
-[gmkin homepage](http://kinfit.r-forge.r-project.org/gmkin_static)
+[gmkin homepage](http://kinfit.r-forge.r-project.org/gmkin_static).
 
 ## Starting gmkin
 
 As gmkin is an R package, you need to start R and load the gmkin package before you can run gmkin. 
-This can be achieved by entering the command
+The latter can be achieved by entering the command
 
 ```{r, eval = FALSE}
 library(gmkin)
 ```
 
 into the R console. This will also load the packages that gmkin depends on,
-most notably gWidgetsWWW2 and mkin.  Loading the package only has to be done
+most notably gWidgetsWWW2 and mkin. Loading the package only has to be done
 once after you have started R. 
 
 Before you start gmkin, you should make sure that R is using the working
 directory that you would like to keep your gmkin project file(s) in. If you use
-the standard R application on windows, you can change the working directory
-from the File menu.
+the standard R GUI application on windows, you can change the working directory
+from the File menu ('File' -> 'Change dir...').
 
 Once you are sure that the working directory is what you want it to be, gmkin
 can be started by entering the R command
@@ -53,108 +57,100 @@ gmkin()
 This will cause the default browser to start up or, if it is already running, to
 pop up and open a new tab for displaying the gmkin user interface.
 
-In the R console, you should see some messages, telling you if the local R help
-server, which also serves the gmkin application, has been started, which port it is
-using and that it is starting an app called gmkin.
-
-Finally, it should give a message like
-
-```{r, eval = FALSE}
-Model cost at call 1: 2388.077
-```
-
-which means that the first kinetic evaluation has been configured for fitting.
+In the R console, you should see a message that the httpd help server is started, if it wasn't
+already started before.
 
 In the browser, you should see something like the screenshot below.
 
-![gmkin start](img/gmkin_start.png)
+![Screenshot of the newly started gmkin GUI](img/gmkin_start.png)
 
 The statusbar at the bottom of the gmkin window shows, among others, the
 working directory that gmkin uses.
 
-Note that the project file management area described below can be minimized by clicking on 
-the arrows on the right hand side of its title bar. This may be helpful if the vertical
-size of your browser window is restricted.
+If the browser only shows "Loading ExtJS..." and nothing else happens for about 10 to 15 seconds,
+please enter the `gmkin()` command again in the R console. If this still does not bring up the
+gmkin GUI, please close the browser and try again.
+
+## Three column layout
+
+Since version 0.6.1, gmkin adheres to a three column layout. To the left, there are explorer
+areas for the available projects, datasets, kinetic models and the completed fits.
+
+In the central, tabbed area, the projects, datasets, models and fits are defined. The area
+to the right is mainly for showing information intended to support the user, and results.
+However, it also contains a tab 'Data' for editing kinetic data.
 
 ## Project file management
 
-At startup, gmkin loads a project called "FOCUS\_2006\_gmkin" which is distributed
-with the gmkin package. A gmkin project contains datasets, kinetic models for
-fitting, and so-called fits, i.e. the results of fitting models to data. These
-gmkin projects can be saved and restored using the project file management area in the
-top left.
+At startup, the project explorer to the left shows the two project workspaces 'FOCUS_2006' and 
+'FOCUS_2006_Z' delivered with the package. The project manangement area in the
+center gives the possibility to save these projects under a new name, or to
+start a new, empty project.
 
-![projects](img/projects.png)
+A gmkin project workspace contains datasets, kinetic models for fitting, and
+so-called fits, i.e. the results of fitting models to data. The project area also shows the current
+working directory, where project workspace files are saved using the file extension `.gmkinws`.
 
-If you would like to save these items for reference or for the purpose of continuing 
-your work at a later time, you can modify the project name and press the button below it.
-The full name of the project file created and the working directory will be displayed 
-in the gmkin status bar.
+Once a project has been saved by the user, the project explorer to the left will show it in the 
+project list.
 
-For restoring a previously saved project file, use the Browse button to locate
-it, and the "Upload" button to load its contents into gmkin.
+![Screenshot of saving a new project](img/new_project.png)
 
-## Studies
+The current state of a project should repeatedly be saved during the work in order to avoid
+loosing data. This can be achieved by selecting the 'Project' tab in the center and pressing 
+the 'Save project to project file' button. More conveniently, the keyboard shortcut Ctrl-X
+can be used to save the current status of the project.
 
-The "Studies" area directly below the "Project file management" area can be expanded by clicking
-on the arrows on the right hand side of its title bar. Studies in gmkin are
-simply a numbered list of sources for the datasets in a project. You can edit the titles 
-directly by clicking on them. If you would like to add a new data source, use the "Add"
-button above the table containing the list. If there are more than one studies in the list,
-you can also remove them using the "Remove" button.
+In the project file management area, datasets and models can be imported from 
+one of the projects in the project list, once it has been selected in the 
+droplist labelled 'Import from:'.
 
-![studies](img/studies.png)
+![Screenshot of importing datasets and models](img/import.png)
 
-Note that the user is responsible to keep the study list consistent with the numbers that are 
-used in the list of datasets described below.
+Once the project has been set up, you may want to minimize the project explorer, especially
+if you are limited in vertical screen space.
 
-## Datasets and Models
-The project loaded at the start of gmkin contains two datasets and four kinetic models. These 
-are listed to the left under the heading "Datasets and Models", together with a button for 
-setting up fits as shown below.
-
-![datasets and models](img/datasetsnmodels.png)
-
-For editing, adding or removing datasets or models, you need to double-click on an
-entry in the respective list. 
-
-For setting up a fit of a specific model to a specific dataset, the model and
-the dataset should be selected by clicking on them. If they are compatible, clicking
-the button "Configure fit for selected dataset and model" will set up the fit and 
-open the "Plotting and Fitting" tab to the right.
+![Screenshot of minimized project explorer](img/projects_min.png)
 
 ## Dataset editor
 
-The dataset editor allows for editing datasets, entering new datasets, uploading
-data from text files and deleting datasets.
+When you select one of the datasets in the dataset explorer to the left, some 
+summary information about the dataset is shown in the center, and the data itself
+is loaded into the data editor to the right.
 
-![dataset editor](img/dataseteditor.png)
+![Screenshot of the GUI after loading a dataset](img/dataset_Z.png)
 
-If you want to create (enter or load) a new dataset, it is wise to first edit
-the list of data sources in the "Studies" area as described above.
+When you have added information about the units, or edited the data to the right, you should hit
+the button 'Keep changes'. This will add a new entry in the dataset explorer.
+
+In the dataset editor to the right, you can override original data (for example in order to 
+follow FOCUS recommendations for time zero samples or values below the limit of detection) 
+by entering numbers in the override column.
+
+When saving a dataset, the sampling times, the number of replicates and the list of observed
+variables will be computed from the current data in the data editor.
+
+However, entering data in these fields is a prerequisite for entering a new dataset directly
+in the dataset editor.
 
 ### Entering data directly
 
-For entering new data manually, click on "New dataset", enter a title and select
-the study from which the dataset is taken. At this stage, you may already want
-to press "Keep changes", so the dataset appears in the list of datasets.
+For entering new data manually, there are two possibilities. You can either
+change the Dataset title of the current dataset and edit the data in the Data
+editor to the right. Or, if the new data should have a different structure, e.g.
+different sampling times, observed variables and replicates, click on "New
+dataset", edit the dataset title, sampling times, number of replicates and the list of
+observed variables, and press the button 'Generate grid for entering kinetic data', in
+order to prepare the Data editor to the right.
 
-In order to generate a table suitable for entering the data, enter a comma separated
-list of sampling times, optionally the time unit, and the number of replicate measurements
-at each sampling time. Also, add a comma separated list of short names of the
-relevant compounds in your dataset. A unit can be specified for the observed 
-values. An example of filling out the respective fields is shown below.
+For sampling times and short names of the relevant compounds, a comma separated
+list must be entered, with a space after each comma.  An example of filling out
+the respective fields is shown below.
 
-![generate data grid](img/generatedatagrid.png)
+![Screenshot of generating a data grid](img/generatedatagrid.png)
 
-Once everyting is filled out to your satisfaction, press the button "Generate empty grid
-for kinetic data". In our example, this would result in the data grid shown below. You 
-can enter the observed data into the value column, as shown in the screenshot below.
-
-![data grid](img/datagrid.png)
-
-The column with title override serves to override data points from the original
-datasets, without loosing the information which value was originally reported.
+After that, the actual measurements can be entered into the Data editor to the right, in the
+column 'value'.
 
 If everything is OK, press "Keep changes" to save the dataset in the current
 workspace. Note that you need to save the project file (see above) in order to
@@ -178,11 +174,14 @@ write.table(schaefer07_complex_case, sep = ",", dec = ".",
 
 This produces a text file with comma separated values in the current working directory of R. 
 
-Loading this text file into gmkin using the "Browse" and "Upload" buttons results in 
-an import configuration area like this, with the uploaded text file displayed to the left,
-and the import options to the right.
+Loading this text file into gmkin using the "Browse" and "Upload" buttons 
 
-![upload area](img/uploadarea.png)
+![Screenshot of the browse and upload dialogue](img/upload_dialogue.png)
+
+results in an an import configuration area showing the top lines of the imported file, and
+giving the possibility to chose the import options matching the file format.
+
+![Screenshot of the import configuration area](img/uploadarea.png)
 
 In the import configuration area, the following options can be specified. In the field
 "Comment lines", the number of lines in the beginning of the file that should be ignored
@@ -206,29 +205,28 @@ columns containing the observed variables (default is "name"), the sampling time
 the relative errors (default is "err") can be adapted. The default settings appearing if
 the long format is selected are shown below.
 
-![long](img/long.png)
+![Screenshot of the default variable names for data in long format](img/long.png)
 
 In our example we have data in the wide format, and after adapting the
 "Separator" to a comma, we can press the button "Import using options specified
-below", and the data should be imported.  If successful, the data editor should
-show the sampling times and the names of the observed variables, as well as the
-imported data in a grid for further editing or specifying overrides.
+below", and the data should be imported.  If successful, the dataset editor should
+show the sampling times and the names of the observed variables, and the Data editor
+should show the imported data in a grid for further editing or specifying
+overrides.
 
-After editing the title of the dataset and selecting the correct study as 
-the source of the data, the dataset editor should look like shown below.
+![Screenshot of a successful upload](img/successfulupload.png)
 
-![successful upload](img/successfulupload.png)
-
-If everything is OK, press "Keep changes" to save the dataset in the current
-workspace. Again, you need to save the project file in order to be able to use
-the dataset that you created in a future gmkin session.
+After adapting the dataset title and possibly the units, press
+"Keep changes" to save the dataset in the current workspace. Again, you need to
+save the project file in order to be able to use the dataset that you created
+in a future gmkin session.
 
 ## Model editor
 
-The following screenshot shows the model editor for the model number 4 in 
-the list of models that are in the initial workspace.
+The following screenshot shows the model editor for the model 'Z.2a.ff' from 
+the project workspace 'FOCUS_2006_Z' provided with the gmkin package.
 
-![model editor](img/modeleditor.png)
+![Screenshot of the model editor](img/modeleditor.png)
 
 In the first line the name of the model can be edited. You can also specify "min" or
 "max" for minimum or maximum use of formation fractions. Maximum use of formation
@@ -236,72 +234,47 @@ fractions means that the differential equations in the degradation model are for
 using formation fractions. When you specify "min", then formation fractions are only used
 for the parent compound when you use the FOMC, DFOP or the HS model for it.
 
-Pressing "Copy model" keeps the model name, so you should change it for the newly generated copy.
 Pressing "Add observed variable" adds a line in the array of state variable specifications below.
 The observed variables to be added are usually transformation products (usually termed metabolites),
 but can also be the parent compound in a different compartment (e.g. "parent\_sediment").
 
-Only observed variable names that occur in previously defined datasets can be selected. For any observed 
-variable other than the first one, only the SFO or the SFORB model can be selected. For each 
-observed variables, a comma separated list of target variables can be specified. In addition, a pathway
-to the sink compartment can be selected. If too many observed variables have been added, complete lines
-can be removed from the model definition by pressing the button "Remove observed variable".
+Only observed variable names that occur in previously defined datasets or
+models can be selected. For any observed variable other than the first one,
+only the SFO or the SFORB model can be selected. For each observed variables, a
+comma separated list of target variables can be specified. In addition, a
+pathway to the sink compartment can be selected. If too many observed variables
+have been added, complete lines can be removed from the model definition by
+pressing the button "Remove observed variable".
 
 If the model definition is supposedly correct, press "Keep changes" to make it possible to select
 it for fitting in the listing of models to the left.
 
-## Plotting and fitting
+## Configuring the fit
 
-If the dataset(s) to be used in a project are created, and suitable kinetic models have been defined,
-kinetic evaluations can be configured by selecting one dataset and one model in the lists to the left,
-and the pressing the button "Configure fit for selected dataset and model" below these lists.
+If a dataset and a kinetic model are selected, the button "Configure fit" below
+in the Explorer window "Configuration" becomes active. Pressing it opens the "Configuration"
+area in the center and loads the dataset into the Data editor to the right, for viewing only.
 
-This opens the "Plotting and fitting" tab area to the right, consisting of a graphical window
-showing the data points in the selected dataset and the model, evaluated with the initial parameters
-defined by calling `mkinfit` without defining starting parameters. The value of the objective function
-to be minimized for these default parameters can be seen in the R console, e.g. as
+After pressing the button 'Plot unoptimised', the data and the kinetic model with default 
+starting parameters are plotted in the 'Plot' area to the right.
 
-```{r, eval = FALSE}
-Model cost at call 1: 15156.12
-```
-
-for the example shown below, where the FOCUS example dataset D and the model SFO\_SFO were selected.
-
-![plotting and fitting](img/plottingnfitting.png)
-
-### Parameters
-
-In the right hand area, initially the tab with the parameter list is displayed. While 
-name and type of the parameters should not be edited, their initial values can be edited
-by clicking on a row. Also, it can be specified if the parameters should be fixed
-in the optimisation process. 
-
-If the initial values for the parameters were changed, the resulting model solution
-can be visually checked by pressing the button "Show initial". This will update the 
-plot of the model and the data using the specified initial parameter values.
-
-If a similar model with a partially overlapping model definition has already be fitted, 
-initial values for parameters with the same name in both models can also be retrieved
-from previous fits by selecting the fit and pressing the button "Get initials
-from". This facilitates stepwise fitting of more complex degradation pathways.
-
-After the model has been successfully fitted by pressing the "Run" button, the optimised
-parameter values are added to the parameter table.
+![Screenshot of the fit configuration area](img/configuration.png)
 
 ### Fit options
 
 The most important fit options of the `mkinfit` function can be set via the 
-"Fit option" tab shown below. If the "plot" checkbox is checked, an R graphics device
-started via the R console shows the fitting progress, i.e. the change of the model
-solution together with the data during the optimisation.
-
-![fit options](img/fitoptions.png)
+controls in the fit configuration area shown above. If the "plot" checkbox is
+checked (and on Windows, the R GUI is used for running gmkin), an R graphics
+device started via the R console shows the fitting progress, i.e. the change of
+the model solution together with the data during the optimisation.
 
 The "solution\_type" can either be "auto", which means that the most effective solution
 method is chosen for the model, in the order of "analytical" (for parent only degradation
 data), "eigen" (for differential equation models with only linear terms, i.e. without 
 FOMC, DFOP or HS submodels) or "deSolve", which can handle all model definitions generated
-by the `mkin` package.
+by the `mkin` package. If a compiler (gcc, on Windows install the 'Rtools' software package),
+then the "deSolve" solution method is alway chosen when there are more than one
+variables in the model.
 
 The parameters "atol" and "rtol" are only effective if the solution type is "deSolve". They
 control the precision of the iterative numerical solution of the differential equation model.
@@ -323,10 +296,11 @@ gives lower weight and vice versa. If "none" is chosen, observed
 values are not weighted. Please refer to the documentation of the `modFit` function from
 the `FME` package for the meaning of options "std" and "mean".
 
-The options "reweight.method", "reweight.tol" and "reweight.max.iter" enable the use of
-iteratively reweighted least squares fitting, if the reweighting method is set to "obs". Please
-refer to the `mkinfit` [documentation](http://kinfit.r-forge.r-project.org/mkin_static/mkinfit.html) 
-for more details.
+If the "IRLS" option is set to "obs", then we make use of iteratively
+reweighted least squares fitting.  Please refer to the `mkinfit`
+[documentation](http://kinfit.r-forge.r-project.org/mkin_static/mkinfit.html)
+for more details. IRLS fitting can be configured using the options
+"reweight.tol" and "reweight.max.iter".
 
 The drop down box "method.modFit" makes it possible to choose between the optimisation
 algorithms "Port" (the default in mkin versions > 0.9-33, a local optimisation
@@ -338,12 +312,43 @@ a convergence criterion).
 Finally, the maximum number of iterations for the optimisation can be adapted using the
 "maxit.modFit" field.
 
+### Plot options
+
+In the right part of the fit configuration area, the file format can be chosen,
+the legend can be turned off, and the observed variables for which the data and
+the model fit should be plotted can be selected as shown below.
+
+![plot options](img/plotoptions.png)
+
+On systems running the Windows operating system, the windows metafile (wmf) format
+can be additionally chosen. Changing the file format for plotting will also change 
+the extension of the proposed filename for saving the plot.
+
+### Parameters
+
+Below the fit control area, a table with the Starting parameter list is displayed. While 
+name and type of the parameters should not be edited, their initial values can be edited
+by clicking on a row. Also, it can be specified if the parameters should be fixed
+in the optimisation process. 
+
+If the initial values for the parameters were changed, the resulting model solution
+can be visually checked by pressing the button "Plot unoptimised". This will update the 
+plot of the model and the data using the specified initial parameter values.
+
+If a similar model with a partially overlapping model definition has already be fitted, 
+initial values for parameters with the same name in both models can also be retrieved
+from previous fits by selecting the fit and pressing the button "Get starting parameters
+from". This facilitates stepwise fitting of more complex degradation pathways.
+
+After the model has been successfully fitted by pressing the "Run fit" button, the optimised
+parameter values are added to the parameter table.
+
 ### Fitting the model
 
 In many cases the starting parameters and the fit options do not need to be modified
-and the model fitting process can simply be started by pressing the "Run" button.
+and the model fitting process can simply be started by pressing the "Run fit" button.
 In the R console, the progressive reduction in the model cost can be monitored and will 
-be displayed like this:
+be displayed in the following way:
 
 ```{r, eval = FALSE}
 Model cost at call  1 :  15156.12 
@@ -362,33 +367,28 @@ Model cost at call  28 :  371.2135
 Model cost at call  32 :  371.2134 
 Model cost at call  36 :  371.2134 
 Model cost at call  37 :  371.2134 
+Optimisation by method Port successfully terminated.
 ```
 
-If plotting of the fitting progress was selecte in the "Fit options" tab, a
-new separate graphics window should either pop up, or a graphics window previously
-started for this purpose will be reused.
+If plotting of the fitting progress was selected, a new separate graphics
+window should either pop up, or a graphics window previously started for this
+purpose will be reused.
 
-### Summary
+If your screen size allows for it, you can arrange the R plotting window and the 
+R console in a way that you can see everything at the same time:
 
-Once a fit has successfully been performed by pressing the "Run" button, the summary
-as displayed below can be accessed via the "Summary" tab.
+![Screenshot of arrangement of plot window and console](img/arrangement.png)
+
+## Results and summary
+
+Once a fit has successfully been completed, the most important results are shown in several
+tables in the "Result" area a shown above. The detailed summary can be accessed below
+these tables.
 
 ![summary](img/summary.png)
 
 The complete summary can be saved into a text file by specifying a suitable file name
 and pressing the button "Save summary".
-
-### Plot options
-
-In the tab "Plot options", the file format can be chosen, the legend can be
-turned off, and the observed variables for which the data and the model fit
-should be plotted can be selected as shown below.
-
-![plot options](img/plotoptions.png)
-
-On systems running the Windows operating system, the windows metafile (wmf) format
-can be additionally chosen. Chaning the file format for plotting will also change 
-the extension of the proposed filename for saving the plot.
 
 ### Confidence interval plots
 
