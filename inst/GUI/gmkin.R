@@ -38,8 +38,7 @@ if (exists("win.metafile", "package:grDevices", inherits = FALSE)) {
   plot_formats = c("wmf", plot_formats)
 }
 plot_format <- plot_formats[[1]]
-# Options (will be reset in the end) {{{2
-old_options <<- options()
+# Options {{{2
 options(width = 80) # For summary
 # Set the GUI title and create the basic widget layout {{{1
 # Three panel layout {{{2
@@ -60,6 +59,12 @@ bl$set_panel_size("east", right_width)
 center <- gnotebook(cont = bl, where = "center")
 left   <- gvbox(cont = bl, use.scrollwindow = TRUE, where = "west", spacing = 0)
 right   <- gnotebook(cont = bl, use.scrollwindow = TRUE, where = "east")
+right$add_handler("tabchange", 
+                  function(h, ...) {
+                    if (svalue(h$obj) == 3 && ! model_gallery_created) {
+                      create_model_gallery()
+                    }
+                  })
 # })
 
 # Helper functions {{{1
@@ -251,7 +256,7 @@ addHandlerClicked(m.gtable, m.switcher)
 # Fit explorer {{{2
 f.switcher <- function(h, ...) {
   if (h$row_index > 1) {
-    f.i <<- h$row_index - 1
+    f.i <- h$row_index - 1
     ftmp <<- ws$f[[f.i]]
     if (is.null(ftmp$optimised)) ftmp$optimised <<- TRUE
     f.delete$call_Ext("enable")
@@ -1205,23 +1210,29 @@ add_gallery_model_handler <- function(h, ...) {
   }
   svalue(center) <- 3
 }
-for (i in 1:9) {
-  m.g.rows[[i]] <- ggroup(cont = m.g.gg, horizontal = TRUE)
-  m.g.buttonrows[[i]] <- ggroup(cont = m.g.gg, horizontal = TRUE)
-  m.g.fields[[i]] <- list()
-  m.g.buttons[[i]] <- list()
-  for (j in 1:4) {
-    model <- UBA_model_gallery[[i]][[j]]
-    m.url = paste0("/custom/gmkin_png/", gsub(" ", "_", model$name), ".png")
-    m.g.fields[[i]][[j]] <- gimage(m.url, width = 110, 
-                                   height = if (i == 1) 135 else 220,
-                                   cont = m.g.rows[[i]])
-    m.g.buttons[[i]][[j]] <- gbutton(model$name, width = 110, 
-                                     cont = m.g.buttonrows[[i]],
-                                     handler = add_gallery_model_handler,
-                                     action = c(i, j))
-    tooltip(m.g.buttons[[i]][[j]]) <- model$name
+model_gallery_created <- FALSE
+m.g.loading <- glabel("Loading the model gallery, please wait...", cont = m.g.gg)
+create_model_gallery <- function() {
+  delete(m.g.gg, m.g.loading)
+  for (i in 1:9) {
+    m.g.rows[[i]] <<- ggroup(cont = m.g.gg, horizontal = TRUE)
+    m.g.buttonrows[[i]] <<- ggroup(cont = m.g.gg, horizontal = TRUE)
+    m.g.fields[[i]] <<- list()
+    m.g.buttons[[i]] <<- list()
+    for (j in 1:4) {
+      model <- UBA_model_gallery[[i]][[j]]
+      m.url = paste0("/custom/gmkin_png/", gsub(" ", "_", model$name), ".png")
+      m.g.fields[[i]][[j]] <<- gimage(m.url, width = 110, 
+                                     height = if (i == 1) 135 else 220,
+                                     cont = m.g.rows[[i]])
+      m.g.buttons[[i]][[j]] <<- gbutton(model$name, width = 110, 
+                                       cont = m.g.buttonrows[[i]],
+                                       handler = add_gallery_model_handler,
+                                       action = c(i, j))
+      tooltip(m.g.buttons[[i]][[j]]) <<- model$name
+    }
   }
+  model_gallery_created <<- TRUE
 }
 # Plots {{{2
 plot.gg <- ggroup(cont = right, label = "Plot", width = 460,
@@ -1348,5 +1359,4 @@ changes.gh <- ghtml(label = "Changes", paste0("<div class = 'news' style = 'marg
 # Update meta objects and their depending widgets
 svalue(right) <- 1
 update_p.df()
-#options(old_options)
 # vim: set foldmethod=marker ts=2 sw=2 expandtab: {{{1
