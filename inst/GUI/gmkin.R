@@ -105,7 +105,10 @@ update_ds.df <- function() {
 }
 # Update dataframe with models {{{2
 update_m.df <- function() {
-  if (is.na(ws$m[1])) m.df <<- m.df.empty
+  if (length(ws$m) == 0) {
+    m.df <<- m.df.empty
+    m.cur <<- m.empty
+  }
   else m.df <<- data.frame(Name = sapply(ws$m, function(x) x$name), stringsAsFactors = FALSE)
   m.gtable[,] <- m.df
   update_m_editor()
@@ -115,7 +118,7 @@ update_m.df <- function() {
 # Update dataframe with fits {{{2
 update_f.df <- function() {
   f.df <- data.frame(Name = ws$ftmp$Name, stringsAsFactors = FALSE)
-  if (!is.na(ws$f[1])) {
+  if (length(ws$f) > 0) {
     f.df.ws <- data.frame(Name = sapply(ws$f, function(x) x$name),
                           stringsAsFactors = FALSE)
     f.df <- rbind(f.df, f.df.ws)
@@ -337,26 +340,36 @@ update_plot_obssel <- function() {
                                      cont = f.gg.plotopts, checked = TRUE)
 }
 configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
-  if (is.null(m.cur$cf) && Sys.which("gcc") != "") {
-    mtmp <- mkinmod(speclist = m.cur$spec)
-    mtmp$name <- m.cur$name
-    m.cur <<- mtmp
-  }
-  ftmp <<- suppressWarnings(mkinfit(m.cur,
-                            override(ds.cur$data),
-                            method.modFit = "Marq",
-                            err = "err", quiet = TRUE,
-                            control.modFit = list(maxiter = 0)))
-  ftmp$optimised <<- FALSE
-  ftmp$ds <<- ds.cur
-  ws$ftmp <<- ftmp
-  ws$ftmp$Name <<- "Temporary (not fitted)"
-  update_f.df()
-  update_f_conf()
+  if (length(intersect(names(m.cur$spec), ds.cur$observed)) > 0) {
+    if (is.null(m.cur$cf) && Sys.which("gcc") != "") {
+      mtmp <- mkinmod(speclist = m.cur$spec)
+      mtmp$name <- m.cur$name
+      m.cur <<- mtmp
+    }
+    ftmp <<- suppressWarnings(mkinfit(m.cur,
+                              override(ds.cur$data),
+                              method.modFit = "Marq",
+                              err = "err", quiet = TRUE,
+                              control.modFit = list(maxiter = 0)))
+    ftmp$optimised <<- FALSE
+    ftmp$ds <<- ds.cur
+    ws$ftmp <<- ftmp
+    ws$ftmp$Name <<- "Temporary (not fitted)"
+    update_f.df()
+    update_f_conf()
 
-  svalue(f.gg.opts.method.modFit) <<- "Port"
-  f.run$call_Ext("enable")
-  svalue(f.running.label) <- "Fit configured and ready to run"
+    svalue(f.gg.opts.method.modFit) <<- "Port"
+    f.run$call_Ext("enable")
+    svalue(f.running.label) <- "Fit configured and ready to run"
+  } else {
+    svalue(f.running.label) <- paste("No fit configured:",
+                                     "The model and the dataset you selected do",
+                                     "not share names for observed variables!")
+    f.run$call_Ext("disable")
+    show.initial.gb.u$call_Ext("disable")
+    show.initial.gb.o$call_Ext("disable")
+    f.gg.parms[,] <- Parameters.empty
+  }
   svalue(center) <- 4
 }
 f.conf <- gbutton("Configure fit", 
@@ -369,8 +382,7 @@ p.editor  <- gframe("", horizontal = FALSE, cont = center,
                      label = "Project")
 # Line with buttons {{{2
 p.line.buttons <- ggroup(cont = p.editor, horizontal = TRUE)
-p.new <- gbutton("New project", cont = p.line.buttons,
-  handler = function(h, ...) {
+p.new.handler <- function(h, ...) {
     project_name <- "New project"
     svalue(p.name) <- project_name
     svalue(p.filename) <- file.path(getwd(), paste0(project_name, ".gmkinws"))
@@ -380,7 +392,8 @@ p.new <- gbutton("New project", cont = p.line.buttons,
     update_ds.df()
     update_m.df()
     update_f.df()
-  })
+}
+p.new <- gbutton("New project", cont = p.line.buttons, handler = p.new.handler)
 p.delete.handler = function(h, ...) {
   filename <- file.path(getwd(), paste0(svalue(p.name), ".gmkinws"))
   gconfirm(paste0("Are you sure you want to delete ", filename, "?"),
@@ -957,6 +970,7 @@ keep_fit_handler <- function(h, ...) { # {{{3
   ws$ftmp <<- list(Name = "")
   update_f.df()
   update_plot_obssel()
+  p.modified <<- TRUE
 }
 get_Parameters <- function(stmp, optimised) # {{{3
 {
@@ -1211,7 +1225,9 @@ add_gallery_model_handler <- function(h, ...) {
   m.delete$call_Ext("enable")  
   m.copy$call_Ext("enable")  
   if (!is.null(svalue(ds.gtable, index = TRUE))) {
-    if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
+    if (length(svalue(ds.gtable)) > 0) {
+      if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
+    }
   }
   svalue(center) <- 3
 }

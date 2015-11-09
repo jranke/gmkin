@@ -34,10 +34,10 @@
 gmkinws <- R6Class("gmkinws", 
   public = list(
     observed = NULL,
-    ds = NA,
-    m = NA,
+    ds = list(),
+    m = list(),
     ftmp = list(Name = ""),
-    f = NA,
+    f = list(),
 
     initialize = function(ds, m, f) {
 
