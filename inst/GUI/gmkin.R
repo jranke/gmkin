@@ -538,7 +538,7 @@ p.line.import.mb <- gbutton("Import selected", cont = p.line.import.mf,
   }
 )
 # center: Dataset editor {{{1
-ds.editor <- gframe("", horizontal = FALSE, cont = center, width = 580,
+ds.editor <- gframe("", horizontal = FALSE, cont = center, width = 540,
                      label = "Dataset")
 # Handler functions {{{2
 # For top row buttons {{{3
