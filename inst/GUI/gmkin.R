@@ -39,7 +39,7 @@ if (exists("win.metafile", "package:grDevices", inherits = FALSE)) {
 }
 plot_format <- plot_formats[[1]]
 # Options {{{2
-options(width = 80) # For summary
+options(width = 75) # For summary
 # Set the GUI title and create the basic widget layout {{{1
 # Three panel layout {{{2
 window_title <- paste0("gmkin ", packageVersion("gmkin"),
@@ -322,7 +322,14 @@ update_f_results <- function() { # {{{3
                                  height = 150)
   size(r.frames.distimes.gt) <- list(columnWidths = c(60, rep(45, ncol(stmp$distimes))))
   svalue(f.gg.summary.filename) <- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".txt", sep = "")
-  svalue(f.gg.summary.listing) <- c("<pre>", capture.output(summary(ftmp)), "</pre>")
+  svalue(f.gg.summary.listing) <- c("<style>
+.summary pre{
+  font-size: 11px;
+  line-height: 16px;
+}
+</style>
+<div class='summary'>
+<pre> ", capture.output(summary(ftmp)), "</pre></div>")
   ds.e.gdf[,] <- ftmp$ds$data
   svalue(center) <- 5
 }
