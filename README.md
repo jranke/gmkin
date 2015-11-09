@@ -144,7 +144,7 @@ gmkin()
 into an `.Rprofile` file in the working directory where you would like to work
 with gmkin and create a shortcut to start R and gmkin in this directory. For
 your convenience, you can find such a file
-[here](http://github.com/jranke/mkin/Rprofile?raw=true).
+[here](http://github.com/jranke/gmkin/master/Rprofile?raw=true).
 On Windows, you can save this file to the directory where you would like to
 start gmkin by right clicking on the link to this file, choose 'save target as'
 or similar, and choose `.Rprofile.` as the name (yes, there are two dots, one in the beginning,
