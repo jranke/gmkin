@@ -256,6 +256,8 @@ f.switcher <- function(h, ...) {
     if (is.null(ftmp$optimised)) ftmp$optimised <<- TRUE
     f.delete$call_Ext("enable")
     f.keep$call_Ext("disable")
+  } else {
+    ftmp <<- ws$ftmp
   }
   c.ds$call_Ext("setText", 
      paste0("<font color='gray'>", ftmp$ds$title, "</font>"), FALSE)
@@ -325,6 +327,11 @@ update_plot_obssel <- function() {
                                      cont = f.gg.plotopts, checked = TRUE)
 }
 configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
+  if (is.null(m.cur$cf) && Sys.which("gcc") != "") {
+    mtmp <- mkinmod(speclist = m.cur$spec)
+    mtmp$name <- m.cur$name
+    m.cur <<- mtmp
+  }
   ftmp <<- suppressWarnings(mkinfit(m.cur,
                             override(ds.cur$data),
                             method.modFit = "Marq",
@@ -332,8 +339,8 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
                             control.modFit = list(maxiter = 0)))
   ftmp$optimised <<- FALSE
   ftmp$ds <<- ds.cur
-  ws$ftmp <- ftmp
-  ws$ftmp$Name = "Temporary (not fitted)"
+  ws$ftmp <<- ftmp
+  ws$ftmp$Name <<- "Temporary (not fitted)"
   update_f.df()
   update_f_conf()
 
@@ -732,7 +739,7 @@ new_model_handler <- function(h, ...) {
 
 copy_model_handler <- function(h, ...) {
   m.new <- m.cur
-  m.new$name <- paste("Copy of ", m.cur$title)
+  m.new$name <- paste("Copy of ", m.cur$name)
   stage_model(m.new)
 }
   
@@ -773,7 +780,7 @@ add_observed <- function(obs.i) {
   obs.types <- if (obs.i == 1) c("SFO", "FOMC", "DFOP", "HS", "SFORB")
     else c("SFO", "SFORB")
   m.e.type[[obs.i]] <<- gcombobox(obs.types, width = gcb_type_width,
-                                  selected = 0L, cont = m.e.rows[[obs.i]])
+                                  selected = 1L, cont = m.e.rows[[obs.i]])
   glabel("to", cont = m.e.rows[[obs.i]]) 
   m.e.to[[obs.i]] <<- gcombobox(ws$observed, selected = 0L,
                                 width = gcb_to_width,
@@ -937,7 +944,7 @@ delete_fit_handler <- function(h, ...) { # {{{3
 keep_fit_handler <- function(h, ...) { # {{{3
   ftmp$name <<- svalue(r.name)
   ws$add_f(list(ftmp))
-  ws$ftmp <- list(Name = "")
+  ws$ftmp <<- list(Name = "")
   update_f.df()
   update_plot_obssel()
 }
