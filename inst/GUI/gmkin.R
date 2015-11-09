@@ -192,9 +192,7 @@ p.switcher <- function(h, ...) {
     update_f.df()
     p.loaded <<- p.cur
     project_switched <- TRUE
-    p.gtable$set_index(p.cur)
     p.modified <<- FALSE
-    visible(p.gf) <- FALSE
   }
   if (p.modified) {
     gconfirm("When you switch projects, you loose any unsaved changes. Proceed to switch?",
