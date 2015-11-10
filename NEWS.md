@@ -1,6 +1,16 @@
 # NEWS for package 'gmkin'
 
-## gmkin 0.6-1
+## gmkin 0.6-2 (2015-11-10)
+
+- Make it possible to export model predictions as CSV
+
+- Bugfix on windows: Start a windows graphics device for plotting during the fit if none is active
+  to avoid an error
+
+- Only tell the user that the fit can be aborted in the R console when gmkin is running in an interactive
+  R session
+
+## gmkin 0.6-1 (2015-11-10)
 
 - Completely rewritten user interface with a three column layout 
 
