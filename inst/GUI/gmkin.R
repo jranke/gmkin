@@ -891,9 +891,12 @@ show_m_spec()
 f.config  <- gframe("", horizontal = FALSE, cont = center, 
                     label = "Configuration")
 # Handler functions {{{2
-run_confirm_message <- paste("The progress of the fit is shown in the R console.",
-                            "To cancel, switch to the window of the R console and press Esc (on Windows)",
-                            "or Ctrl-C (on Linux/Unix). Proceed to start the fit?")
+run_confirm_message <- paste("The progress of the fit is shown in the R console. ",
+                             if (interactive()) { paste("You can cancel",
+                               "the optimisation by switching to the window running R",
+                               "and pressing Ctrl-C (in terminals) or Escape (in",
+                               "the Windows R GUI). " ) } else "",
+                             "Proceed to start the fit?", sep = "")
 run_fit_handler <- function(h, ...) { #{{{3
   gconfirm(run_confirm_message, handler = function(h, ...) 
     {
