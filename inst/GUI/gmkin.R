@@ -982,6 +982,35 @@ keep_fit_handler <- function(h, ...) { # {{{3
   update_plot_obssel()
   p.modified <<- TRUE
 }
+export_csv_handler <- function(h, ...) { # {{{3
+  csv_file <- paste(ftmp$ds$title, "_", ftmp$mkinmod$name, ".csv", sep = "")
+
+  solution_type = ftmp$solution_type
+  parms.all <- c(ftmp$bparms.optim, ftmp$bparms.fixed)
+
+  ininames <- c(
+    rownames(subset(ftmp$start, type == "state")),
+    rownames(subset(ftmp$fixed, type == "state")))
+  odeini <- parms.all[ininames]
+
+  # Order initial state variables
+  names(odeini) <- sub("_0", "", names(odeini))
+  odeini <- odeini[names(ftmp$mkinmod$diffs)]
+
+  xlim = range(ftmp$data$time)
+  outtimes <- seq(xlim[1], xlim[2], length.out=200)
+
+  odenames <- c(
+    rownames(subset(ftmp$start, type == "deparm")),
+    rownames(subset(ftmp$fixed, type == "deparm")))
+  odeparms <- parms.all[odenames]
+
+  out <- mkinpredict(ftmp$mkinmod, odeparms, odeini, outtimes, 
+          solution_type = solution_type, atol = ftmp$atol, rtol = ftmp$rtol)
+
+  write.csv(out, csv_file)
+  svalue(sb) <- paste("Wrote model predictions to", file.path(getwd(), csv_file))
+}
 get_Parameters <- function(stmp, optimised) # {{{3
 {
   pars <- rbind(stmp$start[1:2], stmp$fixed)
@@ -1140,6 +1169,8 @@ f.delete <- gbutton("Delete fit", cont = r.buttons,
 f.keep <- gbutton("Keep fit", cont = r.buttons, handler = keep_fit_handler)
 tooltip(f.keep) <- "Store the optimised model with all settings and the current dataset in the fit list"
 f.keep$call_Ext("disable")
+f.csv <- gbutton("Export csv", cont = r.buttons, handler = export_csv_handler)
+tooltip(f.csv) <- "Save model predictions in a text file as comma separated values for plotting"
 # Result name {{{2
 r.line.name <- ggroup(cont = r.viewer, horizontal = TRUE)
 r.name  <- gedit("", label = "<b>Result name</b>",
