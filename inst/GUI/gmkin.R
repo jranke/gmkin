@@ -913,6 +913,13 @@ run_fit_handler <- function(h, ...) { #{{{3
         err = NULL
       }
       reweight.method <- svalue(f.gg.opts.reweight.method)
+      if (svalue(f.gg.opts.plot)) {
+        if (.Platform$OS.type == "windows") {
+          # When on windows, check for an active windows device. If not present,
+          # open one
+          if (attr(dev.cur(), "names") != "windows") windows()
+        }
+      }
       if (reweight.method == "none") reweight.method = NULL
       ftmp <<- mkinfit(m.cur, override(ds.cur$data),
                        state.ini = iniparms,
@@ -1032,8 +1039,8 @@ f.gg.opts.g <- ggroup(cont = f.config)
 # First group {{{4
 f.gg.opts.1 <- gformlayout(cont = f.gg.opts.g)
 solution_types <- c("auto", "analytical", "eigen", "deSolve")
-f.gg.opts.plot <- gcheckbox("Plot during the fit",
-                         cont = f.gg.opts.1, checked = FALSE)
+f.gg.opts.plot <- gcheckbox("Plot during the fit", 
+                            cont = f.gg.opts.1, checked = FALSE)
 f.gg.opts.st <- gcombobox(solution_types, selected = 1,
                           label = "solution_type", width = 160,
                           cont = f.gg.opts.1)
