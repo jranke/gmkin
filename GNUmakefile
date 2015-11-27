@@ -62,7 +62,7 @@ README.html: README.md
 vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
 	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
 
-vignettes/gmkin_manual.md: vignettes/gmkin_manual.Rmd
+vignettes/gmkin_manual.md: vignettes/gmkin_manual.Rmd vignettes/img/*
 	cd vignettes; \
 		"$(RBIN)/Rscript" -e "knitr::knit('gmkin_manual.Rmd', out = 'gmkin_manual.md')"; \
 

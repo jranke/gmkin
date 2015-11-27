@@ -663,6 +663,9 @@ new_ds_from_csv_handler <- function(h, ...) {
                           stringsAsFactors = FALSE))
   if(svalue(ds.e.up.widelong) == "wide") {
     tmpdl <- mkin_wide_to_long(tmpd, time = as.character(svalue(ds.e.up.wide.time)))
+    tmpdl$name <- as.character(tmpdl$name)
+    tmpdl$override <- NA
+    tmpdl$err <- 1
   } else {
     tmpdl <- data.frame(
       name = tmpd[[svalue(ds.e.up.long.name)]],
@@ -736,8 +739,10 @@ visible(ds.e.import) <- FALSE
 ds.e.preview <- ggroup(cont = ds.e.import, width = 400,  height = 150,
                       ext.args = list(layout = list(type="vbox", align = "center")))
 ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.preview, width = 380, height = 150)
-ds.e.up.import <- gbutton("Import using options specified below", cont = ds.e.import,
-                          handler = new_ds_from_csv_handler)
+
+ds.e.up.import.line <- ggroup(cont = ds.e.import)
+ds.e.up.import <- gbutton("Import using options specified below", cont = ds.e.up.import.line,
+                          width = 250, handler = new_ds_from_csv_handler)
 ds.e.up.options <- ggroup(cont = ds.e.import, width = 200, horizontal = FALSE)
 ds.e.up.skip <- gedit(tmptextskip, label = "Comment lines", width = 20, cont = ds.e.up.options)
 ds.e.up.header <- gcheckbox(cont = ds.e.up.options, label = "Column names",
