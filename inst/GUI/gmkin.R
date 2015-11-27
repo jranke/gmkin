@@ -57,6 +57,12 @@ bl$set_panel_size("west", left_width)
 bl$set_panel_size("east", right_width)
 
 center <- gnotebook(cont = bl, where = "center")
+center$add_handler("tabchange", 
+                  function(h, ...) {
+                    if (svalue(h$obj) == 1) {
+                      svalue(right) <<- 1
+                    }
+                  })
 left   <- gvbox(cont = bl, use.scrollwindow = TRUE, where = "west", spacing = 0)
 right   <- gnotebook(cont = bl, use.scrollwindow = TRUE, where = "east")
 right$add_handler("tabchange", 
@@ -99,7 +105,6 @@ update_ds.df <- function() {
   if (is.na(ws$ds[1])) ds.df <<- ds.df.empty
   else ds.df <<- data.frame(Title = sapply(ws$ds, function(x) x$title), stringsAsFactors = FALSE)
   ds.gtable[,] <- ds.df
-  update_ds_editor()
   ds.delete$call_Ext("disable")  
   ds.copy$call_Ext("disable")  
 }
@@ -204,6 +209,7 @@ p.switcher <- function(h, ...) {
     })
   } else {
     switch_project()
+    svalue(right) <<- 1
   }
   # We can reset the selection only if the project was not
   # switched. The following code gets executed during the confirmation dialogue,
@@ -372,8 +378,11 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
   }
   svalue(center) <- 4
 }
-f.conf <- gbutton("Configure fit", 
-                  cont = c.gf, # cont = f.buttons,
+f.conf.line <- ggroup(cont = c.gf, 
+                      ext.args = list(layout = list(type = "vbox", align = "center")))
+f.conf <- gbutton("<b>Configure fit</b>", 
+                  width = 100,
+                  cont = f.conf.line,
                   handler = configure_fit_handler,
                   ext.args = list(disabled = TRUE))
 
@@ -464,15 +473,19 @@ update_p_editor <- function(p.cur) {
 p.line.wd <- ggroup(cont = p.editor, horizontal = TRUE)
 wd_handler <- function(h, ...) {
  target_wd <- svalue(p.wde)
- wd <- try(setwd(target_wd))
- if (inherits(wd, "try-error")) {
-   gmessage(paste("Could not set working directory to", target_wd), parent = w)
+ if (!dir.exists(target_wd)) {
+   gmessage(paste("Directory", target_wd, "does not exist"), parent = w)
  } else {
-   svalue(sb) <- paste("Changed working directory to", wd)
-   update_p.df()
+   wd <- try(setwd(target_wd))
+   if (inherits(wd, "try-error")) {
+     gmessage(paste("Could not set working directory to", target_wd), parent = w)
+   } else {
+     svalue(sb) <- paste("Changed working directory to", wd)
+     update_p.df()
+   }
  }
 }
-p.wde <- gedit(getwd(), cont = p.line.wd, label = "Working directory", width = 50)
+p.wde <- gedit(getwd(), cont = p.line.wd, label = "<b>Working directory</b>", width = 50)
 p.wde$add_handler_enter(wd_handler)
 p.wdb <- gbutton("Change", cont = p.line.wd, handler = wd_handler)
 tooltip(p.wdb) <- "Edit the box on the left and press enter to change"
@@ -549,12 +562,6 @@ stage_dataset <- function(ds.new) {
   ds.delete$call_Ext("disable")
 }
 
-add_dataset <- function(ds.new) {
-  ws$add_ds(list(ds.new))
-  update_ds.df()
-  p.modified <<- TRUE
-}
-
 new_dataset_handler <- function(h, ...) {
   ds.new <- ds.empty$clone()
   ds.new$title <- "New dataset"
@@ -575,16 +582,34 @@ delete_dataset_handler <- function(h, ...) {
 }
 
 keep_ds_changes_handler <- function(h, ...) {
-  add_dataset(
-    mkinds$new(
-      title = svalue(ds.title.ge),
-      data = ds.e.gdf[,], 
-      time_unit = svalue(ds.e.stu),
-      unit = svalue(ds.e.obu)))
-  update_ds.df()
-  ds.gtable$set_index(length(ws$ds))
-  update_ds_editor()
-  svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+  ds.i <- svalue(ds.gtable, index = TRUE)
+  if (is.null(ds.i)) ds.i <- 1
+
+  editor_title <- svalue(ds.title.ge)
+  editor_ds <- mkinds$new(
+    title = editor_title,
+    data = ds.e.gdf[,], 
+    time_unit = svalue(ds.e.stu),
+    unit = svalue(ds.e.obu))
+
+  if (ws$ds[[ds.i]]$title == editor_title) {
+    gconfirm(paste("Do you want to overwrite dataset", editor_title, "?"), parent = w,
+             handler = function(h, ...) {
+               ws$ds[[ds.i]] <<- editor_ds
+               ds.cur <<- editor_ds
+               update_ds.df()
+               svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+               p.modified <<- TRUE
+               update_ds_editor()
+             })
+  } else {
+    ws$add_ds(list(editor_ds))
+    ds.cur <<- editor_ds
+    update_ds.df()
+    svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+    ds.gtable$set_index(length(ws$ds))
+    update_ds_editor()
+  }
 }
 
 # For populating the dataset editor {{{3
@@ -692,8 +717,9 @@ ds.e.stu    <- gedit(width = 20, label = "Unit", cont = ds.e.gfl)
 ds.e.rep    <- gedit(width = 20, label = "Replicates", cont = ds.e.gfl)
 ds.e.obs    <- gedit(width = 60, label = "Observed", cont = ds.e.gfl)
 ds.e.obu    <- gedit(width = 20, label = "Unit", cont = ds.e.gfl)
-generate_grid.gb <- gbutton("Generate grid for entering kinetic data", cont = ds.editor, 
-        handler = empty_grid_handler)
+generate_grid.gb.line <- ggroup(cont = ds.editor)
+generate_grid.gb <- gbutton("Generate grid for entering kinetic data", cont = generate_grid.gb.line,
+  width = 250, handler = empty_grid_handler)
 tooltip(generate_grid.gb) <- "Overwrites the kinetic data shown to the right"
 
 # Data upload area {{{3
@@ -737,7 +763,7 @@ ds.e.up.long.err <- gedit("err", cont = ds.e.up.long, label = "Relative errors")
 svalue(ds.e.up.wlstack) <- 1
 
 # center: Model editor {{{1
-m.editor  <- gframe("", horizontal = FALSE, cont = center, 
+m.editor  <- gframe("", horizontal = FALSE, cont = center, width = 600,
                     label = "Model")
 # Handler functions {{{2
 # For top row buttons {{{3
@@ -746,12 +772,6 @@ stage_model <- function(m.new) {
   update_m_editor()
   m.copy$call_Ext("disable")
   m.delete$call_Ext("disable")
-}
-
-add_model <- function(m.new) {
-  ws$add_m(list(m.new))
-  update_m.df()
-  p.modified <<- TRUE
 }
 
 new_model_handler <- function(h, ...) {
@@ -774,6 +794,7 @@ delete_model_handler <- function(h, ...) {
 }
 
 keep_m_changes_handler <- function(h, ...) {
+
   spec <- list()
   for (obs.i in 1:length(m.e.rows)) {
     to_string <- svalue(m.e.to[[obs.i]])
@@ -784,11 +805,27 @@ keep_m_changes_handler <- function(h, ...) {
                           sink = svalue(m.e.sink[[obs.i]]))
     names(spec)[[obs.i]] <- svalue(m.e.obs[[obs.i]])
   }
+
   m.cur <<- mkinmod(use_of_ff = svalue(m.ff.gc), 
                     speclist = spec)
   m.cur$name <<- svalue(m.name.ge) 
-  add_model(m.cur)
-  svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+
+  m.i <- svalue(m.gtable, index = TRUE)
+  if (is.null(m.i)) m.i <- 1
+  if (ws$m[[m.i]]$name == m.cur$name) {
+    gconfirm(paste("Do you want to overwrite model", m.cur$name, "?"), parent = w,
+      handler = function(h, ...) {
+        ws$m[[m.i]] <- m.cur
+        update_m.df()
+        p.modified <<- TRUE
+        svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+      })
+  } else {
+    ws$add_m(list(m.cur))
+    update_m.df()
+    p.modified <<- TRUE
+    svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+  }
 }
 # Add and remove observed variables {{{3
 add_observed <- function(obs.i) {
@@ -807,6 +844,7 @@ add_observed <- function(obs.i) {
   glabel("to", cont = m.e.rows[[obs.i]]) 
   m.e.to[[obs.i]] <<- gcombobox(ws$observed, selected = 0L,
                                 width = gcb_to_width,
+                                editable = TRUE,
                                 ext.args = list(multiSelect = TRUE),
                                 cont = m.e.rows[[obs.i]])
   m.e.sink[[obs.i]] <<- gcheckbox("Sink", width = gcb_sink_width,
@@ -859,7 +897,10 @@ m.name.ge <- gedit(label = "<b>Model name</b>", width = 60, cont = m.e.gfl)
 m.ff.gc <- gcombobox(c("min", "max"), label = "Use of formation fractions", 
                      cont = m.e.gfl)
 svalue(m.ff.gc) <- m.cur$use_of_ff
-m.add_observed <- gbutton("Add observed variable", cont = m.editor,
+m.add_observed.line <- ggroup(cont = m.editor)
+m.add_observed <- gbutton("Add observed variable", 
+  width = 150,
+  cont = m.add_observed.line,
   handler = add_observed_handler)
 m.add_observed$call_Ext("disable")
 
@@ -1057,8 +1098,10 @@ show_plot <- function(type) {
 }
 # Widget setup {{{2
 # Line 1 with buttons {{{3
-f.run <- gbutton("Run fit", 
-                 cont = f.config, 
+f.run.line <- ggroup(cont = f.config)
+f.run <- gbutton("<b>Run fit</b>",
+                 width = 100,
+                 cont = f.run.line, 
                  handler = run_fit_handler,
                  ext.args = list(disabled = TRUE))
 
@@ -1245,6 +1288,7 @@ workflow.gi <- gimage(workflow_url, size = c(434, 569), label = "Workflow", cont
 
 # Data editor {{{2
 ds.e.gdf <- gdf(ds.cur$data, label = "Data", name = "Kinetic data", 
+                do_add_remove_buttons = FALSE,
                 width = 488, height = 577, cont = right)
 
 # Model Gallery {{{2
@@ -1286,7 +1330,7 @@ create_model_gallery <- function() {
       model <- UBA_model_gallery[[i]][[j]]
       m.url = paste0("/custom/gmkin_png/", gsub(" ", "_", model$name), ".png")
       m.g.fields[[i]][[j]] <<- gimage(m.url, width = 110, 
-                                     height = if (i == 1) 135 else 220,
+                                     height = if (i == 1) 80 else if (i == 2) 160 else 220,
                                      cont = m.g.rows[[i]])
       m.g.buttons[[i]][[j]] <<- gbutton(model$name, width = 110, 
                                        cont = m.g.buttonrows[[i]],
@@ -1372,7 +1416,8 @@ plot.ftmp.savebutton <-  gbutton("Save plot", cont = plot.ftmp.saveline,
                                         plot_ftmp_save(filename)
                                       }
                                     })
-plot.space <- ggroup(cont = plot.gg, horizontal = FALSE, height = 18)
+plot.space <- ggroup(cont = plot.gg, horizontal = FALSE, height = 8)
+plot.confint.label <- glabel("<b>Parameter confidence intervals</b>", cont = plot.gg)
 plot.confint.gi <- gimage(NA, container = plot.gg, width = 400, height = 400)
 # Manual {{{2
 manual_html <- readLines(system.file("GUI/manual.html", package = "gmkin"))
