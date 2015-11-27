@@ -147,20 +147,25 @@ You can put the commands
 
 ```s
 require(gmkin)
-require(utils)
 gmkin()
+while (TRUE) {
+  Sys.sleep(10)
+}
 ```
 
-into an `.Rprofile` file in the working directory where you would like to work
-with gmkin and create a shortcut to start R and gmkin in this directory. For
-your convenience, you can find such a file
-[here](http://raw.githubusercontent.com/jranke/gmkin/master/Rprofile).
-On Windows, you can save this file to the directory where you would like to
-start gmkin by right clicking on the link to this file, choose 'save target as'
-or similar, and choose `.Rprofile.` as the name (yes, there are two dots, one in the beginning,
-one in the end). This will lead to the creation of a file named `.Rprofile`
-which will be executed when you start R within this directory, e.g. by creating
-a shortcut that starts R in this directory (see [How do I install R for
-Windows?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-install-R-for-Windows_003f),
-and [How do I run
-it?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-run-it_003f)).
+into an R script (e.g. under `C:\Users\<your username>\AppData\Roaming\gmkin_start.R`),
+and create a Windows shortcut, e.g. on the Desktop, with the target
+`"C:\Program Files\R\R-3.x.y\bin\R.exe" --slave -f c:\Users\<your username>\AppData\Roaming\gmkin_start.R`,
+where R.x.y is the version of R that you would like to use with gmkin.  This
+will start a non-interactive R console that runs the gmkin GUI. In the
+properties dialogue of the shortcut, you can also set the working directory in
+which it starts gmkin.  Thanks to Jonas Klein of the Umweltbundesamt for the
+trick with using Sys.sleep in a while loop and for suggesting the AppData
+directory for the start script.
+
+## Acknowledgements
+
+Financial support, feedback and suggestions by the German Federal Environmental
+Agency ([Umweltbundesamt](http://www.umweltbundesamt.de)) in two projects in
+2014 and 2015 was crucial for reaching version 0.6.3 in November 2015 and is
+gratefully acknowledged.
