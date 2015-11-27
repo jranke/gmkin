@@ -39,8 +39,18 @@ respective
 ### Installing gmkin and gWidgetsWWW2
 
 Windows and Linux users running R 3.1.0 or later can make use of the 
-package repository on R-Forge. For installing or upgrading to the latest released
-version, please start R and paste the command
+package repository on R-Forge. Before installing gmkin, you should update 
+your R packages already installed, e.g. by starting R, and pasting the 
+command
+
+```s
+update.packages()
+```
+
+or similar, depending on your R installation.
+
+For installing gmkin or upgrading to the latest released version, please 
+use the command
 
 ```s
 install.packages("gmkin", repos = c("http://r-forge.r-project.org", getOption("repos")))

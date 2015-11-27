@@ -77,7 +77,10 @@ img {
 </div>
 <div id="installing-gmkin-and-gwidgetswww2" class="section level3">
 <h3>Installing gmkin and gWidgetsWWW2</h3>
-<p>Windows and Linux users running R 3.1.0 or later can make use of the package repository on R-Forge. For installing or upgrading to the latest released version, please start R and paste the command</p>
+<p>Windows and Linux users running R 3.1.0 or later can make use of the package repository on R-Forge. Before installing gmkin, you should update your R packages already installed, e.g. by starting R, and pasting the command</p>
+<pre class="s"><code>update.packages()</code></pre>
+<p>or similar, depending on your R installation.</p>
+<p>For installing gmkin or upgrading to the latest released version, please use the command</p>
 <pre class="s"><code>install.packages(&quot;gmkin&quot;, repos = c(&quot;http://r-forge.r-project.org&quot;, getOption(&quot;repos&quot;)))</code></pre>
 <p>If you have not set your CRAN mirror yet, you may have to select one from the list that appears.</p>
 <p>The above command temporarily adds the R-Forge repository to your package sources. It should pull the gmkin package and its dependencies, notably the gWidgetsWWW2 package which is not available from the CRAN archive (see below). Mac users that have the necessary development files installed can probably install from the source files in this repository (not tested).</p>
