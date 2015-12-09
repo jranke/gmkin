@@ -314,12 +314,14 @@ update_f_conf <- function() { # {{{3
 }
 update_f_results <- function() { # {{{3
   svalue(r.name) <- ftmp$name
-  r.parameters[] <- cbind(rownames(stmp$bpar), stmp$bpar[, c(1, 4, 5, 6)])
+  r.parameters[] <- cbind(Parameter = rownames(stmp$bpar), stmp$bpar[, c(1, 4, 5, 6)])
   err.min <- 100 * stmp$errmin$err.min
-  r.frames.chi2.gt[] <- cbind(rownames(stmp$errmin), signif(err.min, 3),
-                              stmp$errmin[, c(2, 3)])
+  r.frames.chi2.gt[] <- cbind(Variable = rownames(stmp$errmin), 
+                              Error = signif(err.min, 3),
+                              n.opt = stmp$errmin$n.optim,
+                              df = stmp$errmin$df)
   if (is.null(stmp$ff)) r.frames.ff.gt[] <- ff.df.empty
-  else r.frames.ff.gt[] <- cbind(names(stmp$ff), round(stmp$ff, 4))
+  else r.frames.ff.gt[] <- cbind(Path = names(stmp$ff), ff = round(stmp$ff, 4))
   distimes <- format(stmp$distimes, digits = 3)
   delete(r.frames.distimes, r.frames.distimes.gt)
   delete(r.frames, r.frames.distimes)

@@ -1,8 +1,12 @@
 # NEWS for package 'gmkin'
 
+## gmkin 0.6-4 (2015-12-09)
+
+- Various small corrections of unexpected or incorrect GUI behaviour. See git commit logs for details.
+
 ## gmkin 0.6-3 (2015-11-28)
 
-- Various small layout and GUI logic improvements based on the suggestions by Stefan Meinecke (Umweltbundesamt Germany). Thanks!
+- Various small layout and GUI logic improvements based on the suggestions by Stefan Meinecke (Umweltbundesamt Germany). Thanks, also for the financial support from the Umweltbundesamt!
 
 ### Minor changes
 
