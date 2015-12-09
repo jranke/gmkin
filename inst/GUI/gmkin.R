@@ -201,6 +201,7 @@ p.switcher <- function(h, ...) {
     p.loaded <<- p.cur
     project_switched <- TRUE
     p.modified <<- FALSE
+    svalue(p.gtable) <<- p.cur
   }
   if (p.modified) {
     gconfirm("When you switch projects, you loose any unsaved changes. Proceed to switch?",
