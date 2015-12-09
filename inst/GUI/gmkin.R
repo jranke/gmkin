@@ -684,6 +684,7 @@ new_ds_from_csv_handler <- function(h, ...) {
     if (is.null(ds.cur$data$err)) ds.cur$data$err <<- 1
     update_ds.df()
     update_ds_editor()
+    svalue(right) <- 2
   } else {
     galert("Uploading failed", parent = "w")
   }
@@ -737,9 +738,10 @@ upload_dataset.gf <- gfile(text = "Upload text file", cont = ds.editor,
 # Import options {{{3
 ds.e.import <- ggroup(cont = ds.editor, horizontal = FALSE)
 visible(ds.e.import) <- FALSE
-ds.e.preview <- ggroup(cont = ds.e.import, width = 400,  height = 150,
-                      ext.args = list(layout = list(type="vbox", align = "center")))
-ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.preview, width = 380, height = 150)
+ds.e.preview <- ggroup(cont = ds.e.import, 
+                      # width = 540,  height = 150,
+                       ext.args = list(layout = list(type="vbox", align = "center")))
+ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.preview, width = 530, height = 150)
 
 ds.e.up.import.line <- ggroup(cont = ds.e.import)
 ds.e.up.import <- gbutton("Import using options specified below", cont = ds.e.up.import.line,
