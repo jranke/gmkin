@@ -584,7 +584,6 @@ delete_dataset_handler <- function(h, ...) {
 
 keep_ds_changes_handler <- function(h, ...) {
   ds.i <- svalue(ds.gtable, index = TRUE)
-  if (is.null(ds.i)) ds.i <- 1
 
   editor_title <- svalue(ds.title.ge)
   editor_ds <- mkinds$new(
@@ -593,16 +592,16 @@ keep_ds_changes_handler <- function(h, ...) {
     time_unit = svalue(ds.e.stu),
     unit = svalue(ds.e.obu))
 
-  if (ws$ds[[ds.i]]$title == editor_title) {
-    gconfirm(paste("Do you want to overwrite dataset", editor_title, "?"), parent = w,
-             handler = function(h, ...) {
-               ws$ds[[ds.i]] <<- editor_ds
-               ds.cur <<- editor_ds
-               update_ds.df()
-               svalue(p.observed) <- paste(ws$observed, collapse = ", ")
-               p.modified <<- TRUE
-               update_ds_editor()
-             })
+  if (!is.null(ds.i) && !is.na(ds.i) && ws$ds[[ds.i]]$title == editor_title) {
+      gconfirm(paste("Do you want to overwrite dataset", editor_title, "?"), parent = w,
+               handler = function(h, ...) {
+                 ws$ds[[ds.i]] <<- editor_ds
+                 ds.cur <<- editor_ds
+                 update_ds.df()
+                 svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+                 p.modified <<- TRUE
+                 update_ds_editor()
+               })
   } else {
     ws$add_ds(list(editor_ds))
     ds.cur <<- editor_ds
@@ -819,8 +818,7 @@ keep_m_changes_handler <- function(h, ...) {
   m.cur$name <<- svalue(m.name.ge) 
 
   m.i <- svalue(m.gtable, index = TRUE)
-  if (is.null(m.i)) m.i <- 1
-  if (ws$m[[m.i]]$name == m.cur$name) {
+  if (!is.null(m.i) && !is.na(m.i) && ws$m[[m.i]]$name == m.cur$name) {
     gconfirm(paste("Do you want to overwrite model", m.cur$name, "?"), parent = w,
       handler = function(h, ...) {
         ws$m[[m.i]] <- m.cur
