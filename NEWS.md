@@ -4,6 +4,10 @@
 
 - Various small corrections of unexpected or incorrect GUI behaviour. See git commit logs for details.
 
+### Bug fixes
+
+- Unchecking the pathway to sink in the model editor was ignored.
+
 ## gmkin 0.6-3 (2015-11-28)
 
 - Various small layout and GUI logic improvements based on the suggestions by Stefan Meinecke (Umweltbundesamt Germany). Thanks, also for the financial support from the Umweltbundesamt!

@@ -931,6 +931,7 @@ show_m_spec <- function() {
     # Set R and Ext values separately, as multiple selections are not supported
     svalue(m.e.to[[obs.i]]) <<- obs.to_string_R
     m.e.to[[obs.i]]$call_Ext("select", String(obs.to_string_JS))
+    svalue(m.e.sink[[obs.i]]) <<- m.cur$spec[[obs.i]]$sink
   }
 }
 show_m_spec()
