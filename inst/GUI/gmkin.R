@@ -194,6 +194,7 @@ p.switcher <- function(h, ...) {
     svalue(center) <- 1
     svalue(c.ds) <- empty_conf_labels[1]
     svalue(c.m) <- empty_conf_labels[2]
+    f.conf$call_Ext("disable")
     update_p_editor(p.cur)
     update_ds.df()
     update_m.df()
@@ -351,7 +352,7 @@ update_plot_obssel <- function() {
 configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
   if (length(intersect(names(m.cur$spec), ds.cur$observed)) > 0) {
     if (is.null(m.cur$cf) && Sys.which("gcc") != "") {
-      mtmp <- mkinmod(speclist = m.cur$spec)
+      mtmp <- mkinmod(speclist = m.cur$spec, use_of_ff = m.cur$use_of_ff)
       mtmp$name <- m.cur$name
       m.cur <<- mtmp
     }

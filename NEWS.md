@@ -1,5 +1,13 @@
 # NEWS for package 'gmkin'
 
+## gmkin 0.6-5 (2015-12-11)
+
+### Bug fixes
+
+- When configuring a fit using a model with use_of_ff = 'max', this was ignored when the model was loaded from a project file
+
+- The configure button was not disabled when switching a project (which clears model and dataset selections)
+
 ## gmkin 0.6-4 (2015-12-09)
 
 - Various small corrections of unexpected or incorrect GUI behaviour. See git commit logs for details.
