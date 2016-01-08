@@ -97,8 +97,9 @@ project list.
 
 The current state of a project should repeatedly be saved during the work in order to avoid
 loosing data. This can be achieved by selecting the 'Project' tab in the center and pressing 
-the 'Save project to project file' button. More conveniently, the keyboard shortcut Ctrl-X
-can be used to save the current status of the project.
+the 'Save project to project file' button. More conveniently, the keyboard shortcut Shift-F12
+(was Ctrl-X in gmkin < 0.6.6) can be used to save the current status of the
+project.
 
 In the project file management area, datasets and models can be imported from 
 one of the projects in the project list, once it has been selected in the 

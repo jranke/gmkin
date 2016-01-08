@@ -26,7 +26,7 @@ right_width = 500
 ds_height = 142
 m_height = 142
 f_height = 142
-save_keybinding = "Ctrl-X"
+save_keybinding = "Shift-F12"
 gcb_observed_width = 100
 gcb_type_width = 70
 gcb_to_width = 160 
@@ -149,7 +149,7 @@ ds.empty <- mkinds$new(
     name = rep(c("parent", "m1"), each = 5),
     time = rep(c(0, 1, 4, 7, 14), 2),
     value = c(100, rep(NA, 9)),
-    override = "NA", err = 1,
+    override = as.numeric(NA), err = 1,
     stringsAsFactors = FALSE))
 ds.cur <- ds.empty$clone()
 ds.df <- ds.df.empty <- data.frame(Title = "", stringsAsFactors = FALSE)
@@ -395,6 +395,7 @@ p.editor  <- gframe("", horizontal = FALSE, cont = center,
                      label = "Project")
 # Line with buttons {{{2
 p.line.buttons <- ggroup(cont = p.editor, horizontal = TRUE)
+# New {{{3
 p.new.handler <- function(h, ...) {
     project_name <- "New project"
     svalue(p.name) <- project_name
@@ -407,6 +408,8 @@ p.new.handler <- function(h, ...) {
     update_f.df()
 }
 p.new <- gbutton("New project", cont = p.line.buttons, handler = p.new.handler)
+
+# Delete {{{3
 p.delete.handler = function(h, ...) {
   filename <- file.path(getwd(), paste0(svalue(p.name), ".gmkinws"))
   gconfirm(paste0("Are you sure you want to delete ", filename, "?"),
@@ -426,40 +429,52 @@ p.delete.handler = function(h, ...) {
 p.delete <- gbutton("Delete project", cont = p.line.buttons,
                     handler = p.delete.handler,
                     ext.args = list(disabled = TRUE))
-# Project name {{{2
-p.line.name <- ggroup(cont = p.editor, horizontal = TRUE)
-p.name  <- gedit("New project", label = "<b>Project name</b>",
-                 width = 50, cont = p.line.name)
+# Save {{{3
 p.save.action <- gaction("Save project to project file", parent = w,
   handler = function(h, ...) {
     filename <- paste0(svalue(p.name), ".gmkinws")
-    try_to_save <- function (filename) {
-      ws$clear_compiled()
-      if (!inherits(try(save(ws, file = filename)),
-                    "try-error")) {
-        svalue(sb) <- paste("Saved project to file", filename,
-                            "in working directory", getwd())
-        update_p.df()
-        p.modified <<- FALSE
-      } else {
-        gmessage("Saving failed for an unknown reason", parent = w)
-      }
-    }
-    if (file.exists(filename)) {
-      gconfirm(paste("File", filename, "exists. Overwrite?"),
-               parent = w, 
-               handler = function(h, ...) {
-        try_to_save(filename)
-      })
+    if (filename == ".gmkinws") {
+      gmessage("Please enter a project name", parent = w)
     } else {
-      try_to_save(filename)
+      try_to_save <- function (filename) {
+        ws$clear_compiled()
+        if (!inherits(try(save(ws, file = filename)),
+                      "try-error")) {
+          svalue(sb) <- paste("Saved project to file", filename,
+                              "in working directory", getwd())
+          update_p.df()
+          p.modified <<- FALSE
+          p.cur <- nrow(p.df)
+          svalue(p.filename) <<- file.path(getwd(), filename)
+          p.delete$call_Ext("enable")
+          svalue(p.observed) <- paste(ws$observed, collapse = ", ")
+          # gWidgetsWWW2 problem:
+          #svalue(p.gtable) <<- p.cur # does not set the selection
+        } else {
+          gmessage("Saving failed for an unknown reason", parent = w)
+        }
+      }
+      if (file.exists(filename)) {
+        gconfirm(paste("File", filename, "exists. Overwrite?"),
+                 parent = w, 
+                 handler = function(h, ...) {
+          try_to_save(filename)
+        })
+      } else {
+        try_to_save(filename)
+      }
     }
   })
 p.save.action$add_keybinding(save_keybinding)
 p.save <- gbutton(action = p.save.action, 
                   cont = p.line.buttons)
-#                 cont = p.line.name)
 tooltip(p.save) <- paste("Press", save_keybinding, "to save")
+
+# Project name {{{2
+p.line.name <- ggroup(cont = p.editor, horizontal = TRUE)
+p.name  <- gedit(label = "<b>Project name</b>",
+                 initial.msg = "Enter project name",
+                 width = 50, cont = p.line.name)
 
 update_p_editor <- function(p.cur) {
   project_name <-  as.character(p.df[p.cur, "Name"])
@@ -719,6 +734,7 @@ ds.keep$call_Ext("disable")
 # Formlayout for meta data {{{3
 ds.e.gfl <- gformlayout(cont = ds.editor)
 ds.title.ge <- gedit(label = "<b>Dataset title</b>", width = 60, cont = ds.e.gfl)
+addHandlerChanged(ds.title.ge, handler = function(h, ...) ds.keep$call_Ext("enable"))
 ds.e.st     <- gedit(width = 60, label = "Sampling times", cont = ds.e.gfl)
 ds.e.stu    <- gedit(width = 20, label = "Unit", cont = ds.e.gfl)
 ds.e.rep    <- gedit(width = 20, label = "Replicates", cont = ds.e.gfl)

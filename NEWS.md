@@ -1,5 +1,23 @@
 # NEWS for package 'gmkin'
 
+## gmkin 0.6-6 (2016-01-08)
+
+### Bug fixes
+
+- Activate the button "Keep changes" as soon as a dataset title is entered in the dataset editor so entered data can be kept.
+
+- Entering "x" into an input field triggered saving the file due to a peculiarity of the GAction implementation in gWidgetsWWW2. The keybinding was changed to "Shift-F12" (see below).
+
+- When data was entered manually, sometimes it could not be fitted as the override column was of type "character" instead of "numeric".
+
+### Major changes
+
+- Changed the keybinding for saving the current workspace to "Shift-F12"
+
+### Minor changes
+
+- The project file is now immediately shown with its full path in the project editor window after saving a file.
+
 ## gmkin 0.6-5 (2015-12-11)
 
 ### Bug fixes
