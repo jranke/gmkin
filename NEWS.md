@@ -18,6 +18,8 @@
 
 - The project file is now immediately shown with its full path in the project editor window after saving a file.
 
+- Do not show widgets for fit options in 'Configuration' tab when not fit is configured. Also inactivate the run button and show a message telling the user what to do to configure a fit.
+
 ## gmkin 0.6-5 (2015-12-11)
 
 ### Bug fixes

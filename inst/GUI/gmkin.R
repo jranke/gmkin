@@ -199,6 +199,9 @@ p.switcher <- function(h, ...) {
     update_ds.df()
     update_m.df()
     update_f.df()
+    show_fit_option_widgets(FALSE)
+    f.run$call_Ext("disable")
+    svalue(f.running.label) <- f.running_noconf
     p.loaded <<- p.cur
     project_switched <- TRUE
     p.modified <<- FALSE
@@ -310,6 +313,7 @@ update_f_conf <- function() { # {{{3
   svalue(f.gg.opts.reweight.max.iter) <<- ftmp$reweight.max.iter
   svalue(f.gg.opts.maxit.modFit) <<- ftmp$maxit.modFit
   svalue(f.gg.opts.method.modFit) <<- ftmp$method.modFit
+  show_fit_option_widgets(TRUE)
   update_plot_obssel()
   f.gg.parms[,] <- get_Parameters(stmp, ftmp$optimised)
 }
@@ -376,6 +380,7 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
                                      "The model and the dataset you selected do",
                                      "not share names for observed variables!")
     f.run$call_Ext("disable")
+    show_fit_option_widgets(FALSE)
     show.initial.gb.u$call_Ext("disable")
     show.initial.gb.o$call_Ext("disable")
     f.gg.parms[,] <- Parameters.empty
@@ -1132,7 +1137,9 @@ f.run <- gbutton("<b>Run fit</b>",
                  ext.args = list(disabled = TRUE))
 
 f.running.line <- ggroup(cont = f.config)
-f.running.label <- glabel("No fit configured", cont = f.running.line)
+f.running_noconf <- paste("No fit configured. Please select a dataset and a model and", 
+                          "press the button 'Configure fit' on the left.")
+f.running.label <- glabel(f.running_noconf, cont = f.running.line)
 
 # Fit options forms {{{3
 f.gg.opts.g <- ggroup(cont = f.config)
@@ -1227,6 +1234,14 @@ f.gg.parms <- gdf(Parameters, cont = f.config, height = 500,
                   do_add_remove_buttons = FALSE)
 size(f.gg.parms) <- list(columnWidths = c(220, 50, 65, 50, 65))
 
+# Do not show fit option widgets when no fit is configured
+show_fit_option_widgets <- function(show) 
+{
+  visible(f.gg.opts.g) <- show
+  visible(f.parameters.line) <- show
+  visible(f.gg.parms) <- show
+}
+show_fit_option_widgets(FALSE)
 
 # center: Results viewer {{{1
 r.viewer  <- gframe("", horizontal = FALSE, cont = center, 
