@@ -1,5 +1,11 @@
 # NEWS for package 'gmkin'
 
+## gmkin 0.6-7 (2016-01-22)
+
+### Bug fixes
+
+- The compiled versions of the models were removed from the model gallery in order to avoid invalid pointers.
+
 ## gmkin 0.6-6 (2016-01-08)
 
 ### Bug fixes
