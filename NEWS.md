@@ -1,10 +1,14 @@
 # NEWS for package 'gmkin'
 
-## gmkin 0.6-7 (2016-01-22)
+## gmkin 0.6-7 (2016-01-23)
 
 ### Bug fixes
 
 - The compiled versions of the models were removed from the model gallery in order to avoid invalid pointers.
+
+### Major changes
+
+- A howto section was added to the manual. The howtos are also useful as functionality tests.
 
 ## gmkin 0.6-6 (2016-01-08)
 

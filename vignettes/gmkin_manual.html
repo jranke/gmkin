@@ -10,7 +10,7 @@
 
 <meta name="author" content="Johannes Ranke" />
 
-<meta name="date" content="2016-01-08" />
+<meta name="date" content="2016-01-23" />
 
 <title>Manual for gmkin</title>
 
@@ -65,7 +65,7 @@ img {
 <div id="header">
 <h1 class="title">Manual for gmkin</h1>
 <h4 class="author"><em>Johannes Ranke</em></h4>
-<h4 class="date"><em>2016-01-08</em></h4>
+<h4 class="date"><em>2016-01-23</em></h4>
 </div>
 
 <div id="TOC">
@@ -87,6 +87,11 @@ img {
 </ul></li>
 <li><a href="#results-and-summary">Results and summary</a><ul>
 <li><a href="#confidence-interval-plots">Confidence interval plots</a></li>
+</ul></li>
+<li><a href="#howtos">Howtos</a><ul>
+<li><a href="#use-a-model-and-a-dataset-from-a-built-in-workspace">1. Use a model and a dataset from a built-in workspace</a></li>
+<li><a href="#enter-a-simple-dataset-and-evaluate-it-using-a-model-from-the-gallery">2. Enter a simple dataset and evaluate it using a model from the gallery</a></li>
+<li><a href="#load-a-tab-separated-input-file-in-wide-format-and-evaluate-using-a-newly-created-model">3. Load a tab separated input file in wide format and evaluate using a newly created model</a></li>
 </ul></li>
 </ul>
 </div>
@@ -243,6 +248,85 @@ Optimisation by method Port successfully terminated.</code></pre>
 <p>Whenever a new fit has been configured or a run of a fit has been completed, the plotting area is updated with the abovementioned plot of the data and the current model solution.</p>
 <p>In addition, a confidence interval plot is shown below this conventional plot. In case a fit has been run and confidence intervals were successfully calculated for the fit (i.e. if the model was not overparameterised and no other problems occurred), the confidence intervals are graphically displayed as bars as shown below.</p>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXYAAAGaCAIAAACUuv/LAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAgAElEQVR4nO3df1BU9f7H8bOKMIYbv4Qrmr9A0UwBf800q5B5cSgVtEzLO1yjKzT+mvLHVZTViyWJMo1Bc2e8peKvW3mj0tS8jgaIleVgRIQxYKZgskr8klZUYDnfP3buDl+EA7vsZ8+iz8dfu5/zOefzOrD7ds++2VUjy7IEAGL0UjsAgAcZJQaAQJQYAAJRYgAIRIkBIJCLbbtVVlZOnjzZ19fXvmkAOLnff/89Ly/Pz8+vi/NtLDF//PHHjBkzdu/ebdvuAHqouLi4P/74o+slhgslAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgECUGgECUGAACUWIACESJASAQJQaAQJQYAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgECUGgECUGAACUWIACESJASAQJQaAQJQYAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgECUGgECUGAACUWIACESJASDQA1tiIiIiFLbW1tZGRUV5e3tHR0fX1tY6LBXwsHlgS0xWVpbC1u3btw8dOtRgMAwZMiQ1NdVhqQChfv7557feeuv+8W+//Tazlc8++6ypqamL+3aTaiVGo9Gkpqb6+fmFhYVdvXrVPHj06NHQ0FBPT09/f/+3337bMvPgwYMDBgy4cePG/Pnz/fz8AgICFi1aZDAYLBMOHToUEhLi4+OTlpYmSdLcuXMlSQoNDe1o9cOHD69YscLNzW3FihWfffaZ0DMFHObevXvV1dX3jy9fvry2lf3793/11Vdd3Leb1HwVYzQaKyoqwsLCVq1aZR7ZtGlTTExMdXX1iRMn9Hq9Zeb58+ezsrLi4+NfeOGFsrKy/Pz8wMDA+Ph4y4Ty8vKCgoLMzMzExERJko4cOSJJUkFBQUdLX79+fejQoZIkmV/LCDpBwEl4eHi82srEiRMdtrSLw1a6X2xsrIuLy+rVq0eNGmUe+eGHH/Ly8vbv35+bm9vY2GiZmZSU5Ovrm5OTc/z4ccugr6+v5fbSpUs1Gs306dPv3LnTlaVlWdZoNOYbJpPJPucDOIGzZ88uWLCgzeDFixdbD/7888/Z2dn/+te/Ws+pq6tzd3e3ex41S4xZr169LE/yBQsWuLq6Lly4MCUl5cCBA5Y55mri5eVVWFgYEBAgSdLt27dbv6jTarVWLTpw4MBr166NHDny+vXrgwYNssNpAM7hySef3LJlS5vB6Ojo9957z3I3NTX1ySefDA8Pbz2nsLBQxJsGal4o7d27t7m5+Z133rGc6unTp/V6/ezZs0+ePClJUnNzc+v5zz//fEpKSkNDQ2Vl5Zw5c1JSUpSPf/8bWhZRUVEZGRmyLGdkZMyZM6fbpwI4C1dXV6/7uLi4tL7bt29frVbbZs6jjz7au3dvu+dRs8Q0NTUNGDAgOzs7PT3dPLJ169Zp06aNGzeuuro6MjJy8eLFrecnJyebTKbhw4c/8cQTw4YNs7wf3K6ZM2cGBgZ2tPUf//hHYWHh4MGDL168uHHjRrucDuC0/P39J7Vy7Nixxx57zDFLa2RZtmG3y5cvp6Sk7N692/aFNTYuDaAjdXV1ZWVlISEh4vaNi4vbsGGDwr/fbaj/XoxQ5vd026C04UHl6enp6enp+H0VqFZiPvroIwesQjUB1KXaezEvvfSSWksDcJgH9gMEAJwBJQaAQJQYAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgECUGgECUGAACUWIACESJASAQJQaAQJQYAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgECUGgECUGAACUWIACESJASAQJQaAQJQYAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgkIvNe165ciUzM1N5zu3btwsLC21eAoDd+fj4BAUF2bz7lStXrJqvkWXZtpWOHj1648YN5Tkffvihu7u7t7e3bUuopbi4uF+/foMHD1Y7iHXKy8sbGhpGjx6tdhDrVFdXl5WVTZgwQe0g1rl7925eXl5YWJjaQax25syZTZs22by7q6trTEyMi0uXX53IIq1atSo/P1/oEiLs2LHjyJEjaqew2qeffpqenq52Cqvl5eX9/e9/VzuF1SorK+fPn692CltMmzbNkcvxXgwAgSgxAASixAAQiBIDQCBKDACBbG9ad8Vvv/3m7e39yCOPiFtChJs3b7q5uXl6eqodxDp1dXWNjY1+fn5qB7FOQ0NDTU3NY489pnYQ6zQ3N5eXlwcEBKgdxGqlpaXd+bsYa4ktMQAeclwoARCIEgNAIEoMAIEoMQAEosQAEIgSA0AgSgwAgSgxAASixAAQSFSJqa2tjYqK8vb2jo6Orq2tFbSKvXz++edjx4719PQMDw8vLS01D/aUUygqKnJ3d7fcdf7Yzc3Ny5Yt8/X1nTJlyvXr182Dzh87Nzc3NDRUq9WGhoaePXvWPOjMsU0mU5uvQGw3rehTEFVitm/fPnToUIPBMGTIkNTUVEGr2EV5eXlMTMyuXbsMBkN0dPQrr7xiHu8Rp3Dr1q3Y2NiGhgbLiPPHTktLq6+vLysr0+l0SUlJ5kHnjx0TE6PX62tqahITE2NiYsyDThs7PT1dp9OVlJS0Hmw3rfBTEPRtekFBQcXFxbIsFxcXBwUFCVrFLnJycuLi4sy3KysrfXx8zLed/xRaWlrmzp1r/pJ2y6Dzxx4/fnxBQYEsy/X19RcuXDAPOn/sMWPG7Nq1q6amZvfu3Y8//rh50GljZ2dnHzt2rM0TvN20ok9BVIlxd3dvaGiQZbmhoUGr1Qpaxb6am5uXLFmybNky813nP4WUlJQ1a9bIstz6keT8sb29vRMSEry8vCZOnFhYWGgedP7YeXl5ln+Y8/LyzINOHrtNiWk3rehTEHWhJMuyRqMx3zCZTIJWsaMvv/xy8uTJHh4e6enp5hEnP4WcnJyTJ0+mpKS0GXfy2JIk1dfXy7J88eLFZ555Jj4+3jzo/LETEhLWrVtXUVGxdu3a9evXmwedP3Zr7aYVfgp2L1pmI0aMKC0tlWW5tLR05MiRglaxi5aWlvXr14eFhZWUlLQed/JT0Ov1bX6VX331lez0sWVZ9vf3r6iokGXZYDC4u7ubB50/tru7u8FgkGW5qqqqX79+5kEnj93mCd5uWtGnIOpVTFRUVEZGhizLGRkZc+bMEbSKXZw7d+7w4cNHjx4dOHCg0Wg0Go3mcSc/heTk5DaPpKlTp0pOH1uSpMjIyH379t27d+/999+fNGmSedD5YwcHB+/Zs8doNB44cCAkJMQ86PyxW2s3rfBTsHvRMqutrZ05c+agQYOioqLq6uoErWIXycnJ7f5MetAptP49On9sg8EQERHh4eERHh5+6dIl86Dzxy4uLtbpdP369dPpdOb3R2Wnj93mCd5uWtGnwLfeARCIv+4FIBAlBoBAlBgAAlFiAAjkYttuf/zxx/Lly+/evas8raKiwsfHx83NzbZVADibvn37/vOf/9RqtV2cb2OJqayslGX5vffeU56m1+tffPHF4OBg21YB4Gxee+21yspK4SVGkiQ3NzcvLy/lORMmTBg2bFin0wD0FNZelNheYroiLi5O6PEBODne7gUgkNgSs2PHjitXrghdAoAzE1tifvvtt7q6OqFLAHBmXCgBEEhsiRkzZoy3t7fQJQA4MzpKAATiQgmAQHSUAAhERwmAQFwoARCIjhIAgegoARCICyUAAtFRAiAQHSUAAnGhBEAgOkoABKKjBEAgLpQACERHCYBAdJQACMSFEgCB6CgBEIiOEgCBuFACIBAdJQAC0VECIBAXSgAEUq2jpNFohC4NwBmILTFxcXFDhw4VukQ3RUREqB0BeJA97BdKWVlZakfAw6i8vPzHH39UO8X/U1VV9e2339r9sCp3lCorK8ePH79v376OJmg0mtTUVD8/v7CwsKtXr5oHjx49Ghoa6unp6e/v//bbb1tmHjx4cMCAATdu3Jg/f76fn19AQMCiRYsMBoNlwqFDh0JCQnx8fNLS0iRJmjt3riRJoaGhdjhVwBo//fTTqVOnbN49MzNz6tSpM/5n+vTpycnJ3Yx07dq1zMzMbh7kfmp2lAwGQ0RExLp162JjYxUOYjQaKyoqwsLCVq1aZR7ZtGlTTExMdXX1iRMn9Hq9Zeb58+ezsrLi4+NfeOGFsrKy/Pz8wMDA+Ph4y4Ty8vKCgoLMzMzExERJko4cOSJJUkFBQffOEnC0kpKSzZs3n/6fQ4cO/fTTT2qHap/Yv+5VNmvWLHOVUZ4WGxvr4uKyevXqUaNGmUd++OGHvLy8/fv35+bmNjY2WmYmJSX5+vrm5OQcP37cMujr62u5vXTpUo1GM3369Dt37tj1VACr1dbW/vrrrzbvazAYLLtXV1ffvn3b5qOZXb9+vfWzyV7Elhjlzyi9++67H3/88cqVKz/44INOD9WrVy+TyWS+vWDBAldX14ULF6akpBw4cMAyx1xNvLy8CgsLAwICJEm6fft2dXW1ZYJWq7X5XAD7+uabb1o/OK2Sn59fUlLy9ddfm+/euXOnuLh4+/bt3clTVVUly3J3jtA+2Sa//PLL4sWLbdvXzLx0fX394MGDT5w4oTBt48aNTU1NGzdujIqKMg8++uijRUVFLS0te/bskSSpqanJckBZll977bW4uLjbt2/fvHnzz3/+85IlS1qv2Oa2JEmNjY3dORHABsePH09NTbV59y1btpw+fdpy9+bNmwsWLOhmpPz8/FWrVnU6bfHixb/88kvXD6vmhZIkSVqtdufOnUuWLCkqKuroJUZTU9OAAQNGjRr173//2zyydevWadOm/elPf3r55ZcjIyMXL168f/9+y/zk5OTXX399+PDhLS0tc+bMsbwf3K6ZM2cGBgaWl5fb8aQAB/jPf/7z/fffm28bjUZ1wyjQyDa9NLp8+XJKSsru3buVp+3YseO5554bPny4TdkkSZI0GhsTAs7s66+/vnLlyl//+lfbdq+qqmrTphgxYsSwYcO6E6mkpOSLL75YvXq18rS4uLgNGzYEBgZ28bBiX8V0/TNK7f6xL8UFD6qpU6dOnTrV5t379+9v978aHTVqlKWjYkcqXyhZdFRNPvroIwcnAWBHzv6tdy+99JK9wgBwPL71DoBAD/tnlAAIxbfeARCIb70DIBAXSgAEcvaOEoAejY4SAIG4UAIgEB0lAALRUQIgEBdKAASiowRAIDpKAATiQgmAQHSUAAhERwmAQFwoARCIjhIAgegoARCICyUAAtFRAiAQHSUAAnGhBEAgOkoABKKjBEAgLpQACERHCYBAdJQACMSFEgCB6CgBEIiOEgCBuFACIBAdJQAC0VECIBAXSgAEoqMEQCA6SgAE4kIJgEB0lAAIREcJgEBcKAEQiI4SAIHoKAEQiAslAALRUQIgEB0lAAJxoQRAIDpKAASiowRAIC6UAAhERwmAQHSUAAjEhRLg1DQajdoRuoWOEvBQMJlMo0ePdvy6YktMXFzc0KFDleds3ry5pqbm11auXr0qSdKPP/545MgRofGAh0R6erpOpyspKXH80mKb1l2Rm5t74sSJ8ePHW0YKCgq2b99+79694uLiuXPnqpgNcBKVlZWRkZGvv/56bGxsuxM0Gs2GDRv27t27dOnSlpaWDz/88ObNmwkJCYmJiZIkBQcHBwYGRkVFOTS0JEmiS8yOHTuee+654cOHK09zd3d/7733LHe3bdt29+7dnn4JCtiLwWCIjIzcsGHDwoULFaaNGzfu1KlTwcHB77zzTlFRUW5ubnR0tLnEPP30044K25bYEtOVjtKtW7du3bq1fft2y0hubu6lS5ckSfLw8BAaD+gRZs2aZTAYIiIilKfNmzevT58+kiStWLHCxcUlIiLi7t27DgmoRP0LJVdXV61WO3HiRMvIpUuXAgMDNRrNrVu3VAwGOIl33333448/Xrly5QcffKAwzdXV1XzDxcVFcppWlNgS05WOUt++ffv27du6Ql+4cCE0NFSj0eTn5wuNB/QIU6dODQkJeeKJJ/773/8+++yzasexjlN8RqmxsXHGjBmWu2VlZQcOHOAlDGCh1Wp37ty5ZMmSoqIirVardhwrqH+htHDhwldfffX+8dLSUjc3N8fnAZyKLMvmG7NmzSorK+t0muVGm9v333UM9T+j1G59kSQpKCho2rRp9s8E9GSa9qgdSon6HSUAXafKK5Hu4DNKAATiM0oABHKKjhKABxUXSgAEUr+jBOABxrfeARCICyUAAtFRAiAQHSUAAnGhBEAgOkoABKKjBEAgLpQACERHCYBAdJQACMSFEgCB6CgBEIiOEgCBuFACIBAdJQAC0VECIBAXSgAEoqMEQCA6SgAE4kIJgEB0lAAIREcJgEBcKAEQiI4SAIHoKAEQiAslAALZ+Havj4/P77//PmPGDOVpFy9e3LNnj4uL2DeV7ejevXtubm5qp+iqpqam3r179+rVY/6d4McrlIuLS3BwsOhVGhsbPTw8rNhBFmnVqlX5+flCl7Ajo9E4a9YstVNYITEx8ZtvvlE7RVeZTKbp06erncIKb7zxRlZWltoprDBt2jS1I7Sjx1RoAD0RJQaAQJQYAAJRYgAIRIkBIJDYEhMSEuLp6Sl0CTtycXGZOnWq2imsMHbsWB8fH7VTdJVGo3nqqafUTmGFMWPG+Pn5qZ3CCs7549XIsqx2BgAPLC6UAAhEiQEgECUGgECUGAACUWIACESJASAQJQaAQJQYAAJRYgAI1N0SU1tbGxUV5e3tHR0dXVtb25WtyrsIZUPazz//fOzYsZ6enuHh4aWlpY5Ma1tgs6KiInd3dwcm7SRPR1ubm5uXLVvm6+s7ZcqU69evO3/g3Nzc0NBQrVYbGhp69uxZ50krSZLJZBo9erRVuzhAd0vM9u3bhw4dajAYhgwZkpqa2pWtyrsIZW3a8vLymJiYXbt2GQyG6OjoV155xZFpbQhsduvWrdjY2IaGBseGtSVtWlpafX19WVmZTqdLSkpy/sAxMTF6vb6mpiYxMTEmJsZ50qanp+t0upKSkq7v4iDd/Na8oKCg4uJiWZaLi4uDgoK6slV5F6GsTZuTkxMXF2feWllZ6ePj48i07UbqdGtLS8vcuXMzMzO7/8t1QNrx48cXFBTIslxfX3/hwgXH5rUl8JgxY3bt2lVTU7N79+7HH3/cedJmZ2cfO3aszS9dxeeaRXcfhe7u7g0NDbIsNzQ0aLXarmxV3kUoG9KaNTc3L1myZNmyZQ6L2mmkjrampKSsWbNGlmXHlxgb0np7eyckJHh5eU2cOLGwsND5A+fl5Vn+ec7Ly3OetGZtfukqPtcsunuhJMuyRqMx3zCZTF3ZqryLUDaklSTpyy+/nDx5soeHR3p6uiPTKkTqaGtOTs7JkydTUlIcnLOjPJ1ura+vl2X54sWLzzzzTHx8vPMHTkhIWLduXUVFxdq1a9evX+88ae21i911t8QMHDjw2rVrkiRdv3590KBBXdmqvItQ1qaVZXnDhg1vvvnmoUOHtm3b5vj/rcXawFlZWbm5ua6uruYHlkaj+frrr502rSRJvr6+K1eu9Pf3X7FiRVFRkcOi2hz4/Pnzq1at8vf3T0hIOH/+vPOktdcudtfdEhMVFZWRkSHLckZGxpw5c8yDZ86cUdja7qBjWJv23Llzhw8fPnr06MCBA41Go9FodGRaGwInJydbXqBKkiTLsiO/ZMuGB0NkZOS+ffvu3bv3/vvvT5o0yWFRbQ4cHBy8Z88eo9F44MCBkJAQ50nb9V0crZsXWrW1tTNnzhw0aFBUVFRdXV3rB3dHW9sddAxr0yYnJ9v3xyU6cGs9Iq3BYIiIiPDw8AgPD7906ZLzBy4uLtbpdP369dPpdOZ3Up0kbbt3VXyuWfCtdwAE4q97AQhEiQEgECUGgECUGAAC2f6HHufOnXP8p2AAqOuRRx7R6XRdn29jR+nq1asLFiyYN2+eDfsC6Lk+/fTTjz/+eNiwYV2cb+OrGJPJFBwcnJCQoDzt+PHjTz75ZP/+/W1bBYDDVFVVfffdd7Nnz1aedunSJas+iyD2vZjs7Gzz3y8DcHLXrl3Lzs62+2F5uxeAQGJLTO/evR3/0UEANnBxcendu7f9D2v3I7aWnJzs6uoqdAkAdjF27Nj7P5TXfWJLjJubm9DjA7AXjUYj4gkr9kLp+PHjVVVVQpcAYBdVVVXHjx+3+2HpKAGQJDpKAHoiOkoAJImOEgCh6CgBEIiOEgCB6CgBEIiOEoCeh44SAEmiowRAKDpKAASiowRAIDpKAASiowSg56GjBECS6CgBEIqOEgCB6CgBEIiOEgCB6CgB6HnoKAGQJDpKAISiowRAIDpKAASiowRAIDpKAHoeOkoAJElYR0lsiUlOTh47dmy7mzZt2jRgwAChqwPoOkEdJbElxs3NTaPRtLtp586dRUVFQldXEBERYfNW25hMptGjR9v9sIC9PGgdperq6v79+wtdXUFWVpbNW22Qnp6u0+lKSkrse1hxfv/999raWrsftq6urrKy0u6HhV08UB2luXPnSpIUGhra0Y4ajSY1NdXPzy8sLOzq1avmwaNHj4aGhnp6evr7+7/99tuWmQcPHhwwYMCNGzfmz5/v5+cXEBCwaNEig8FgmXDo0KGQkBAfH5+0tLROV7dsrampWbRokb+//8CBA19++eWamhqFM9VoNImJif7+/m+++ebmzZuDgoI8PDy2bt1q3hocHLxp0yaF3Z3NJ598curUKeU5WVlZC/6/Tz75RHmXnJycjz76yH4xYU8PVEfpyJEjkiQVFBQozDEajRUVFWFhYatWrTKPbNq0KSYmprq6+sSJE3q93jLz/PnzWVlZ8fHxL7zwQllZWX5+fmBgYHx8vGVCeXl5QUFBZmZmYmJip6tbtq5cudLV1fXXX3+9fPmyq6vrmjVrlE9q3Lhxp06dSkpK8vT0LCoq+uSTT7Zs2WLe9PTTT8+ePbuzn0oPk52dvXjx4vf+R6/Xf/HFF2qHgtMR2+7pTkcpNjbWxcVl9erVo0aNMo/88MMPeXl5+/fvz83NbWxstMxMSkry9fXNyclp/TLP19fXcnvp0qUajWb69Ol37tzpeoATJ078/PPPffv2lSQpOTk5ODhYef68efP69OkjSdKKFStcXFwiIiLu3r3b9eV6Iq1W6+XlZb5969YtdcOgmx7Szyj16tXLZDKZby9YsMDV1XXhwoUpKSkHDhywzDFXEy8vr8LCwoCAAEmSbt++XV1dbZmg1WptW93yXrVGo7HE6IjlTM1VtaP3uXuE5ubmt956a/fu3QpzLl++fPr0aQ8PD/PdO3fuXLlyZcaMGQq7VFZWPvXUU/YMCvt56D6jtHfv3qSkpHfeeSc8PNw8cvr06XPnzo0ZM2bv3r2SJDU3N7d+ifT888+npKSkp6cbjca//OUvI0eO3Llzp8Lxm5qazC86Otr67LPP6vX6d999V5ZlvV4/c+ZMm8+lx3FxcdHr9S+++KLCHL1eP2vWLJ1OZ7579erVN954w/yr6cjhw4fLy8vtGRT286B1lDrV1NQ0YMCA7Ozs9PR088jWrVunTZs2bty46urqyMjIxYsXt56fnJxsMpmGDx/+xBNPDBs2zPJ+cLtmzpwZGBiovDUtLe3OnTvDhg0LCAhobGw0v1WM1i5cuPDl/3zzzTdqx0G3COooiX0Vk52dPWjQoHab07IsK++7bdu2bdu2tR5Zvnz58uXLzbfXrl3b5jharTYjI0N5Ictt5TcmLVsPHjyoHPL+I7e7XLt3e7p58+adPn36+++/t4z87W9/UzEPusncUbJ7X0Llv+5v9w0Lhz0VbVhd3cAOs3Tp0k7nTJgwYcKECVYd9rnnnrM1EXoqlTtKHT05HfPXEzaUhgevmgBmD1dH6aWXXrJ7GAAKHrqOEgBHeug6SgAc6YH6jBIAZ/NAfUYJwEOCb70DIEkPW0cJgIPRUQIgEB0lAALRUQIgEB0lAD0PHSUAkkRHCYBQdJQACERHCYBAdJQACERHCUDPQ0cJgCTRUQIgFB0lAALRUQIgEB0lAALRUQLQ89BRAiBJdJQACEVHCYBAdJQACERHCYBAdJQA9Dx0lABIEh0lAELRUQIgEB0lAALRUQIgEB0lAD2PRpZlG3arqKiYPXv2iBEjlKd999139+7d66Hv+DY1NfXp00ftFDZqbGzsoT92qYeH77kPm8bGRo1GEx4erjzt+++/P3PmzODBg7t4WBtLjCRJFRUVd+/eVZ6zefPmsLCwoKAg25ZQ18aNG9evX9+vXz+1g9hi5cqVaWlpaqewUc8NbzQat23bJqIv4wClpaVnzpzZsmWL8rQ+ffp0vb5I3ekoDRw4sNM5/fv3nzRp0vjx421eRUX9+/efMmWKp6en2kFs4enp+dRTT6mdwkY9N3xdXV3//v17aPhHH320uLg4ICDAvoflvRgAAlFiAAhEiQEgECUGgEBiS0zfvn1FfLDKMdzd3TUajdopbNRDG2FmPTe8RqNxd3dXO4WNevfu3bdvX7sf1vamNQB0igslAAJRYgAIRIkBIBAlBoBAlBgAAlFiAAhEiQEgECUGgECUGAACUWIACGS3ElNbWxsVFeXt7R0dHV1bW2vVVtUpx/v888/Hjh3r6ekZHh5eWlqqSkIFXfnZFhUVOednZ5TDNzc3L1u2zNfXd8qUKdevX1cloQLl8Lm5uaGhoVqtNjQ09OzZs6okVGYymUaPHt3uJjs+Ye1WYrZv3z506FCDwTBkyJDU1FSrtqpOIV55eXlMTMyuXbsMBkN0dPQrr7yiVsiOdPqzvXXrVmxsbENDg+OzdUo5fFpaWn19fVlZmU6nS0pKUiWhAuXwMTExer2+pqYmMTExJiZGlYQK0tPTdTpdSUlJu1vt+YSV7SQoKKi4uFiW5eLi4qCgIKu2qk4hXk5OTlxcnPl2ZWWlj4+PCvkUKf9sW1pa5s6dm5mZacfftdPh6mgAAAJbSURBVB0phx8/fnxBQYEsy/X19RcuXFAhnyLl8GPGjNm1a1dNTc3u3bsff/xxNQIqyc7OPnbsWEePCjs+Ye32sHN3d29oaJBluaGhQavVWrVVdV2J19zcvGTJkmXLljk2WueUw6ekpKxZs0aWZecsMcrhvb29ExISvLy8Jk6cWFhYqEZAJcrh8/LyLP+Q5+XlqRGwcx09Kuz4hLXbhZIsy+ZvV5Fl2WQyWbVVdZ3G+/LLLydPnuzh4ZGenu7wdJ1QCJ+Tk3Py5MmUlBSVonVO+SdfX18vy/LFixefeeaZ+Ph4NQIqUQ6fkJCwbt26ioqKtWvXrl+/Xo2AtrPnE7Y79am1ESNGlJaWyrJcWlo6cuRIq7aqTiFeS0vL+vXrw8LCSkpKVErXCYXwer2+za/7q6++Uilm+5QfGP7+/hUVFbIsGwwGd3d3FfIpUg7v7u5uMBhkWa6qqurXr58K+bqgowpgxyes3V7FREVFZWRkyLKckZExZ84c8+CZM2cUtjoPhfDnzp07fPjw0aNHBw4caDQajUajmkHboxA+OTm5zYNp6tSpKka9n/LDJjIyct++fffu3Xv//fcnTZqkWsoOKIcPDg7es2eP0Wg8cOBASEiIaimtIeQJ25361Fptbe3MmTMHDRoUFRVVV1fX+mHd0VbnoRD+/v92S9Wk7VD+yVs4YXK5s/AGgyEiIsLDwyM8PPzSpUvqxWyfcvji4mKdTtevXz+dTmd+69QJtXlUiHjC8sWaAATir3sBCESJASAQJQaAQJQYAAJRYgAIRIkBIBAlBoBAlBgAAv0fZSjcN8LhEd4AAAAASUVORK5CYII=" alt="confidence" /></p>
+</div>
+</div>
+<div id="howtos" class="section level2">
+<h2>Howtos</h2>
+<p>The following sections show step by step descriptions of how to perform certain tasks using gmkin. In principle, this should be necessary as the GUI was designed to be largely self-explanatory. Nevertheless may help a beginner to understand how to use gmkin. At the same time, the gmkin author uses them as test cases to make sure that the most important functionality is not broken before releasing a new version.</p>
+<div id="use-a-model-and-a-dataset-from-a-built-in-workspace" class="section level3">
+<h3>1. Use a model and a dataset from a built-in workspace</h3>
+<ul>
+<li>Start gmkin</li>
+<li>In the project explorer, select the project ‘FOCUS_2006’</li>
+<li>In the dataset explorer, select ‘FOCUS example dataset C’</li>
+<li>In the model explorer, select ‘SFO’</li>
+<li>In the configuration display, press ‘Configure fit’</li>
+<li>In the configuration editor in the center, press ‘Run fit’</li>
+<li>In the pop-up window that appears, press ‘Yes’</li>
+<li>In the result viewer in the center, press ‘Keep fit’</li>
+<li>Switch to the Project editor in the center</li>
+<li>In the project explorer, enter the project name ‘Howto test 1’</li>
+<li>Press ‘Save project to project file’</li>
+</ul>
+</div>
+<div id="enter-a-simple-dataset-and-evaluate-it-using-a-model-from-the-gallery" class="section level3">
+<h3>2. Enter a simple dataset and evaluate it using a model from the gallery</h3>
+<ul>
+<li>Start gmkin</li>
+<li>In the project explorer, enter the project name ‘Howto test 2’</li>
+<li>Press ‘Save project to project file’</li>
+<li>Select the dataset editor in the center</li>
+<li>Enter dataset title ‘Data howto 2’</li>
+<li>Enter sampling times ‘0, 1, 3, 7, 14’</li>
+<li>Enter replicates ‘1’</li>
+<li>Enter observed variable ‘parent, A1’</li>
+<li>Press ‘Generate grid for entering kinetic data’</li>
+<li>In the value column of the dataset editor, enter values ‘100’, ‘30’, ‘10’, ‘5’, ‘3’, ‘’ (nothing), ’3’, ‘8’, ‘7’, ‘5’</li>
+<li>Press ‘Keep changes’</li>
+<li>Select the ‘Model gallery’ to the right</li>
+<li>From the model gallery, press ‘FOMC, one met’ below the corresponding model scheme</li>
+<li>In the dataset explorer, select ‘Test dataset howto 2’</li>
+<li>In the model explorer, select ‘FOMC, one met’</li>
+<li>In the configuration display, press ‘Configure fit’</li>
+<li>In the configuration editor in the center, press ‘Run fit’</li>
+<li>In the pop-up window that appears, press ‘Yes’</li>
+<li>In the result viewer in the center, press ‘Keep fit’</li>
+<li>Switch to the Project editor in the center</li>
+<li>Press ‘Save project to project file’</li>
+</ul>
+</div>
+<div id="load-a-tab-separated-input-file-in-wide-format-and-evaluate-using-a-newly-created-model" class="section level3">
+<h3>3. Load a tab separated input file in wide format and evaluate using a newly created model</h3>
+<ul>
+<li>Start gmkin</li>
+<li>In the project explorer, enter the project name ‘Howto test 3’</li>
+<li>Press ‘Save project to project file’</li>
+<li>Select the dataset editor in the center</li>
+<li>In the data upload widget, press ‘Browse’</li>
+<li>Select the file ‘testdata/d_synth_DFOP_lin_c.txt’ from gmkin installation</li>
+<li>Press ‘Upload’</li>
+<li>Press ‘Import using options specified below’</li>
+<li>Enter dataset title ‘DFOP lin c’</li>
+<li>Press ‘Keep changes’</li>
+<li>Select the model editor in the center</li>
+<li>Press ‘New model’</li>
+<li>Enter ‘DFOP lin’ as the model name</li>
+<li>Select ‘max’ in the dropbox ‘Use of formation fractions’</li>
+<li>Press ‘Add observed variable’ three times</li>
+<li>In the line where ‘parent’ is selected, in the dropbox after the word ‘to’, select ‘M1’</li>
+<li>Click outside the dropbox</li>
+<li>In the line where ‘M1’ is selected, in the dropbox after the word ‘to’, select ‘M2’</li>
+<li>Click outside the dropbox</li>
+<li>Press ‘Keep changes’</li>
+<li>In the dataset explorer, select ‘DFOP lin c’</li>
+<li>In the model explorer, select ‘DFOP lin’</li>
+<li>In the configuration display, press ‘Configure fit’</li>
+<li>In the configuration editor in the center, press ‘Run fit’</li>
+<li>In the pop-up window that appears, press ‘Yes’</li>
+<li>In the result viewer in the center, press ‘Keep fit’</li>
+<li>Switch to the Project editor in the center</li>
+<li>Press ‘Save project to project file’</li>
+</ul>
 <!-- vim: set foldmethod=syntax ts=2 sw=2 expandtab: -->
 </div>
 </div>

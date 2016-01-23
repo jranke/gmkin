@@ -405,4 +405,83 @@ confidence intervals are graphically displayed as bars as shown below.
 
 ![confidence](img/confidence.png)
 
+## Howtos
+
+The following sections show step by step descriptions of how to perform certain
+tasks using gmkin. In principle, this should be necessary as the GUI was 
+designed to be largely self-explanatory. Nevertheless may help a beginner to
+understand how to use gmkin. At the same time, the gmkin author uses them as
+test cases to make sure that the most important functionality is not broken
+before releasing a new version.
+
+### 1. Use a model and a dataset from a built-in workspace
+
+- Start gmkin
+- In the project explorer, select the project 'FOCUS_2006'
+- In the dataset explorer, select 'FOCUS example dataset C'
+- In the model explorer, select 'SFO'
+- In the configuration display, press 'Configure fit'
+- In the configuration editor in the center, press 'Run fit'
+- In the pop-up window that appears, press 'Yes'
+- In the result viewer in the center, press 'Keep fit'
+- Switch to the Project editor in the center
+- In the project explorer, enter the project name 'Howto test 1'
+- Press 'Save project to project file'
+
+### 2. Enter a simple dataset and evaluate it using a model from the gallery
+
+- Start gmkin
+- In the project explorer, enter the project name 'Howto test 2'
+- Press 'Save project to project file'
+- Select the dataset editor in the center
+- Enter dataset title 'Data howto 2'
+- Enter sampling times '0, 1, 3, 7, 14'
+- Enter replicates '1'
+- Enter observed variable 'parent, A1'
+- Press 'Generate grid for entering kinetic data'
+- In the value column of the dataset editor, enter values '100', '30', '10',
+  '5', '3', '' (nothing), '3', '8', '7', '5'
+- Press 'Keep changes'
+- Select the 'Model gallery' to the right
+- From the model gallery, press 'FOMC, one met' below the corresponding model scheme
+- In the dataset explorer, select 'Test dataset howto 2'
+- In the model explorer, select 'FOMC, one met'
+- In the configuration display, press 'Configure fit'
+- In the configuration editor in the center, press 'Run fit'
+- In the pop-up window that appears, press 'Yes'
+- In the result viewer in the center, press 'Keep fit'
+- Switch to the Project editor in the center
+- Press 'Save project to project file'
+
+### 3. Load a tab separated input file in wide format and evaluate using a newly created model
+
+- Start gmkin
+- In the project explorer, enter the project name 'Howto test 3'
+- Press 'Save project to project file'
+- Select the dataset editor in the center
+- In the data upload widget, press 'Browse'
+- Select the file 'testdata/d_synth_DFOP_lin_c.txt' from gmkin installation
+- Press 'Upload'
+- Press 'Import using options specified below'
+- Enter dataset title 'DFOP lin c'
+- Press 'Keep changes'
+- Select the model editor in the center
+- Press 'New model'
+- Enter 'DFOP lin' as the model name
+- Select 'max' in the dropbox 'Use of formation fractions'
+- Press 'Add observed variable' three times
+- In the line where 'parent' is selected, in the dropbox after the word 'to', select 'M1'
+- Click outside the dropbox
+- In the line where 'M1' is selected, in the dropbox after the word 'to', select 'M2'
+- Click outside the dropbox
+- Press 'Keep changes'
+- In the dataset explorer, select 'DFOP lin c'
+- In the model explorer, select 'DFOP lin'
+- In the configuration display, press 'Configure fit'
+- In the configuration editor in the center, press 'Run fit'
+- In the pop-up window that appears, press 'Yes'
+- In the result viewer in the center, press 'Keep fit'
+- Switch to the Project editor in the center
+- Press 'Save project to project file'
+
 <!-- vim: set foldmethod=syntax ts=2 sw=2 expandtab: -->
