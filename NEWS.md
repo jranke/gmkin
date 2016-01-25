@@ -1,6 +1,6 @@
 # NEWS for package 'gmkin'
 
-## gmkin 0.6-7 (2016-01-23)
+## gmkin 0.6-7 (2016-01-25)
 
 ### Bug fixes
 
