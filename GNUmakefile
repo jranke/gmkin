@@ -59,12 +59,8 @@ check-no-vignettes: build-no-vignettes
 README.html: README.md
 	"$(RBIN)/Rscript" -e "rmarkdown::render('README.md', output_format = 'html_document')"
 
-vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd
+vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd vignettes/img/*
 	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
-
-vignettes/gmkin_manual.md: vignettes/gmkin_manual.Rmd vignettes/img/*
-	cd vignettes; \
-		"$(RBIN)/Rscript" -e "knitr::knit('gmkin_manual.Rmd', out = 'gmkin_manual.md')"; \
 
 manual: vignettes/gmkin_manual.html
 

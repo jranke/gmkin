@@ -6,4 +6,5 @@ gmkin*.tar.gz
 inst/web*
 vignettes/cache
 vignettes/gmkin_manual_cache
+vignettes/gmkin_manual.R
 *.swp
