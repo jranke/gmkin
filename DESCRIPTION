@@ -5,6 +5,7 @@ Version: 0.6.7
 Date: 2016-01-25
 Authors@R: c(person("Johannes", "Ranke", role = c("aut", "cre", "cph"), 
                     email = "jranke@uni-bremen.de"),
+             person("Stefan", "Meinecke", role = "ctb"),
              person("Eurofins Regulatory AG", role = "cph"))
 Description: Browser based graphical user interface for R package mkin, based
   on the gWidgetsWWW2 package. Both gmkin and gWidgetsWWW2 are developed on
