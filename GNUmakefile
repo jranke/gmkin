@@ -74,6 +74,9 @@ sd:
 	git add -A
 	#git commit -m 'Vignettes rebuilt by staticdocs::build_site() for static documentation on r-forge' -e
 
+drat: build
+	"$(RBIN)/Rscript" -e "drat::insertPackage('$(TGZ)', commit = TRUE)"
+
 r-forge: sd
 	git archive master > $(PKGDIR)/gmkin.tar;\
 	cd $(RFDIR) && rm -r `ls` && tar -xf $(PKGDIR)/gmkin.tar;\
