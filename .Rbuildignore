@@ -1,6 +1,7 @@
 GNUmakefile
 README.html
 gmkin_.*\.tar\.gz
+gmkin_.*\.zip
 gmkin_screenshot.png
 Rprofile
 vignettes/.build.timestamp

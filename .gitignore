@@ -3,6 +3,7 @@ cache/*
 gmkin.Rcheck/*
 gmkin*.tar
 gmkin*.tar.gz
+gmkin*.zip
 inst/web*
 vignettes/cache
 vignettes/gmkin_manual_cache
