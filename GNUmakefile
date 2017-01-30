@@ -3,6 +3,7 @@ PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGDIR  := $(PWD)
 TGZ     := $(PKGNAME)_$(PKGVERS).tar.gz
 TGZVNR  := $(PKGNAME)_$(PKGVERS)-vignettes-not-rebuilt.tar.gz
+WINBIN  := $(PKGNAME)_$(PKGVERS).zip
 
 # Specify the directory holding R binaries. To use an alternate R build (say a
 # pre-prelease version) use `make RBIN=/path/to/other/R/` or `export RBIN=...`
@@ -41,6 +42,13 @@ build: $(TGZ)
 
 build-no-vignettes: $(TGZVNR)
 
+$(WINBIN): build
+	@echo "Building windows binary package..."
+	"$(RBIN)/R" CMD INSTALL $(TGZ) --build
+	@echo "DONE."
+
+winbin: $(WINBIN)
+
 install: build
 	"$(RBIN)/R" CMD INSTALL $(TGZ)
 
@@ -76,6 +84,9 @@ sd:
 
 drat: build
 	"$(RBIN)/Rscript" -e "drat::insertPackage('$(TGZ)', commit = TRUE)"
+
+dratwin: winbin
+	"$(RBIN)/Rscript" -e "drat::insertPackage('$(WINBIN)', 'e:/git/drat/', commit = TRUE)"
 
 r-forge: sd
 	git archive master > $(PKGDIR)/gmkin.tar;\
