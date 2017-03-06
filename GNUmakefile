@@ -65,7 +65,7 @@ check-no-vignettes: build-no-vignettes
 	mv $(TGZ) $(TGZVNR)
 
 README.html: README.md
-	"$(RBIN)/Rscript" -e "rmarkdown::render('README.md', output_format = 'html_document')"
+	"$(RBIN)/Rscript" -e "rmarkdown::render('README.md', output_format = 'html_document', output_options = list(self_contained = TRUE))"
 
 vignettes/gmkin_manual.html: vignettes/gmkin_manual.Rmd vignettes/img/*
 	"$(RBIN)/Rscript" -e "tools::buildVignette(file = 'vignettes/gmkin_manual.Rmd', dir = 'vignettes')"
