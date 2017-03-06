@@ -8,8 +8,6 @@ fitting kinetic models to chemical degradation data based on R package
 John Verzani. The GUI elements are created by the JavaScript library
 ExtJS which is bundled with gWidgetsWWW2.
 
-![gmkin screenshot](gmkin_screenshot.png)
-
 ## System requirements
 
 For running gmkin you need a system running a recent version of R (version
@@ -75,6 +73,7 @@ The latest changes to gmkin are recorded in the
 more details can be found in the 
 [commit history](https://github.com/jranke/gmkin/commits/master).
 
+![gmkin screenshot](gmkin_screenshot.png)
 
 ## Usage
 
