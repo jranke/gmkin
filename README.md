@@ -169,3 +169,4 @@ Agency ([Umweltbundesamt](http://www.umweltbundesamt.de)) in two projects in
 2014 and 2015 was crucial for reaching version 0.6.3 in November 2015 and is
 gratefully acknowledged. In particular, Stefan Meinecke contributed with a lot
 of user feedback and suggestions for improvement in that time.
+
