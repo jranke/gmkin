@@ -36,8 +36,8 @@ respective
 
 ### Installing gmkin and gWidgetsWWW2
 
-Windows and Linux users running R 3.1.0 or later can make use of the 
-package repository on R-Forge. Before installing gmkin, you should update 
+Windows and Linux users running R 3.1.0 or later can make use of my drat
+package repository on github. Before installing gmkin, you should update 
 your R packages already installed, e.g. by starting R, and pasting the 
 command
 
@@ -48,25 +48,23 @@ update.packages()
 or similar, depending on your R installation.
 
 For installing gmkin or upgrading to the latest released version, please 
-use the command
+install the drat package
 
 ```s
-install.packages("gmkin", repos = c("http://r-forge.r-project.org", getOption("repos")))
+install.packages("drat")
 ```
 
-If you have not set your CRAN mirror yet, you may have to select one from the list that 
-appears. 
+add my repository
 
-The above command temporarily adds the R-Forge repository to your package
-sources.  It should pull the gmkin package and its dependencies, notably the
-gWidgetsWWW2 package which is not available from the CRAN archive (see below).
-Mac users that have the necessary development files installed can probably 
-install from the source files in this repository (not tested).
+```s
+drat::addRepo("jranke")
+```
 
-In a previous version of this README I have described how to permanently add 
-the R-Forge repository to your options. However, I noticed this has unwanted
-side effects, so I do not recommend it any longer. Therefore, you may want
-to revert such changes to your R startup options.
+and install as usual
+
+```s
+install.packages("gmkin")
+```
 
 The latest changes to gmkin are recorded in the 
 [NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file,

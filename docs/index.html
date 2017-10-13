@@ -68,14 +68,15 @@
 <div id="installing-gmkin-and-gwidgetswww2" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installing-gmkin-and-gwidgetswww2" class="anchor"></a>Installing gmkin and gWidgetsWWW2</h3>
-<p>Windows and Linux users running R 3.1.0 or later can make use of the package repository on R-Forge. Before installing gmkin, you should update your R packages already installed, e.g. by starting R, and pasting the command</p>
+<p>Windows and Linux users running R 3.1.0 or later can make use of my drat package repository on github. Before installing gmkin, you should update your R packages already installed, e.g. by starting R, and pasting the command</p>
 <div class="sourceCode"><pre class="sourceCode s"><code class="sourceCode gnuassembler">update.packages()</code></pre></div>
 <p>or similar, depending on your R installation.</p>
-<p>For installing gmkin or upgrading to the latest released version, please use the command</p>
-<div class="sourceCode"><pre class="sourceCode s"><code class="sourceCode gnuassembler">install.packages(<span class="st">"gmkin"</span>, repos = c(<span class="st">"http://r-forge.r-project.org"</span>, getOption(<span class="st">"repos"</span>)))</code></pre></div>
-<p>If you have not set your CRAN mirror yet, you may have to select one from the list that appears.</p>
-<p>The above command temporarily adds the R-Forge repository to your package sources. It should pull the gmkin package and its dependencies, notably the gWidgetsWWW2 package which is not available from the CRAN archive (see below). Mac users that have the necessary development files installed can probably install from the source files in this repository (not tested).</p>
-<p>In a previous version of this README I have described how to permanently add the R-Forge repository to your options. However, I noticed this has unwanted side effects, so I do not recommend it any longer. Therefore, you may want to revert such changes to your R startup options.</p>
+<p>For installing gmkin or upgrading to the latest released version, please install the drat package</p>
+<div class="sourceCode"><pre class="sourceCode s"><code class="sourceCode gnuassembler">install.packages(<span class="st">"drat"</span>)</code></pre></div>
+<p>add my repository</p>
+<div class="sourceCode"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span class="kw">drat::</span>addRepo(<span class="st">"jranke"</span>)</code></pre></div>
+<p>and install as usual</p>
+<div class="sourceCode"><pre class="sourceCode s"><code class="sourceCode gnuassembler">install.packages(<span class="st">"gmkin"</span>)</code></pre></div>
 <p>The latest changes to gmkin are recorded in the <a href="https://github.com/jranke/gmkin/blob/master/NEWS.md">NEWS</a> file, more details can be found in the <a href="https://github.com/jranke/gmkin/commits/master">commit history</a>.</p>
 <p><img src="gmkin_screenshot.png" alt="gmkin screenshot"></p>
 </div>
