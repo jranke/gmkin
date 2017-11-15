@@ -1,9 +1,9 @@
 # gmkin
 
-The R package [gmkin](http://kinfit.r-forge.r-project.org/gmkin_static) 
+The R package [gmkin](https://pkgdown.jrwb.de/gmkin)
 provides a browser based graphical user interface (GUI) for
 fitting kinetic models to chemical degradation data based on R package
-[mkin](http://github.com/jranke/mkin). The GUI is based on the 
+[mkin](https://pkgdown.jrwb.de/mkin). The GUI is based on the
 [gWidgetsWWW2](http://github.com/jverzani/gWidgetsWWW2) package developed by
 John Verzani. The GUI elements are created by the JavaScript library
 ExtJS which is bundled with gWidgetsWWW2.
@@ -24,21 +24,21 @@ anything, it needs a screen space of 1366x740 pixels.
 ### Installing R
 
 Please refer to [CRAN](http://cran.r-project.org) for installation instructions
-and binary packages. If you are on Windows, please consult the 
+and binary packages. If you are on Windows, please consult the
 [FAQ for Windows](http://cran.r-project.org/bin/windows/base/rw-FAQ.html), especially
-the entries 
-"[How do I install R for Windows?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-install-R-for-Windows_003f)", 
+the entries
+"[How do I install R for Windows?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-install-R-for-Windows_003f)",
 "[How do I run it?](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#How-do-I-run-it_003f)".
 
 If you would like to upgrade your R installation, please refer to the
-respective 
+respective
 [FAQ entry](http://cran.r-project.org/bin/windows/base/rw-FAQ.html#What_0027s-the-best-way-to-upgrade_003f).
 
 ### Installing gmkin and gWidgetsWWW2
 
 Windows and Linux users running R 3.1.0 or later can make use of my drat
-package repository on github. Before installing gmkin, you should update 
-your R packages already installed, e.g. by starting R, and pasting the 
+package repository on github. Before installing gmkin, you should update
+your R packages already installed, e.g. by starting R, and pasting the
 command
 
 ```s
@@ -47,7 +47,7 @@ update.packages()
 
 or similar, depending on your R installation.
 
-For installing gmkin or upgrading to the latest released version, please 
+For installing gmkin or upgrading to the latest released version, please
 install the drat package
 
 ```s
@@ -66,9 +66,9 @@ and install as usual
 install.packages("gmkin")
 ```
 
-The latest changes to gmkin are recorded in the 
+The latest changes to gmkin are recorded in the
 [NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file,
-more details can be found in the 
+more details can be found in the
 [commit history](https://github.com/jranke/gmkin/commits/master).
 
 ![gmkin screenshot](gmkin_screenshot.png)
@@ -90,17 +90,17 @@ on Windows).
 ## Documentation
 
 For a complete overview of the functionality of the gmkin graphical user
-interface please refer to the 
-[manual](http://kinfit.r-forge.r-project.org/gmkin_static/vignettes/gmkin_manual.html)
-available at the gmkin [documentation website](http://kinfit.r-forge.r-project.org/gmkin_static).
+interface please refer to the
+[manual](https://pkgdown.jrwb.de/gmkin/articles/gmkin_manual.html)
+available at the gmkin [documentation website](https://pkgdown.jrwb.de/gmkin).
 
-In case you would like to see the documentation of the underlying mkin package, please 
-refer to its 
-[documentation website](http://kinfit.r-forge.r-project.org/mkin_static).
+In case you would like to see the documentation of the underlying mkin package, please
+refer to its
+[documentation website](https://pkgdown.jrwb.de/mkin).
 
 ## Status and known issues
 
-- gmkin was developed in the hope that it will be useful. However, no warranty can be 
+- gmkin was developed in the hope that it will be useful. However, no warranty can be
   given that it will meet your expectations. There may be bugs, so please be
   careful, check your results for plausibility and use your own expertise to judge
   yourself.
@@ -109,16 +109,16 @@ refer to its
   Once the GUI is started, it is reasonably responsive.
 - Please check the [issues](https://github.com/jranke/gmkin/issues) reported on github
 - The R console starting the graphical user interface is not secured against manipulations
-  from local users on multiuser systems 
+  from local users on multiuser systems
   (see [gWidgetsWWW2 issue](https://github.com/jverzani/gWidgetsWWW2/issues/22)).
 
 ### Notes on the gWidgetsWWW2 package
 
-The R package gWidgetsWWW2 is not available on CRAN because it contains 
+The R package gWidgetsWWW2 is not available on CRAN because it contains
 path names with more then 100 characters in the JavaScript files which limits
-its portability.  Also, it attaches some R objects to the search path, which is, 
+its portability.  Also, it attaches some R objects to the search path, which is,
 in its current form, not fully in line with the CRAN package policy. It is not
-a widely used library for creating graphical user interfaces and is not supported 
+a widely used library for creating graphical user interfaces and is not supported
 by a commercial company. However it makes it possible to create a reasonably
 complex user interface by just writing R code, and is therefore used by gmkin.
 
@@ -140,7 +140,7 @@ as fast and painless as possible.
 
 ## Simplifying the start of gmkin under Windows
 
-You can put the commands 
+You can put the commands
 
 ```s
 require(gmkin)
