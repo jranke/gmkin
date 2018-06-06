@@ -21,3 +21,4 @@ VignetteBuilder: knitr
 BugReports: http://github.com/jranke/gmkin/issues
 URL: http://kinfit.r-forge.r-project.org/gmkin_static,
      http://pkgdown.jrwb.de/gmkin
+RoxygenNote: 6.0.1
