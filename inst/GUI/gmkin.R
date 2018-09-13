@@ -1173,7 +1173,7 @@ f.gg.opts.transform_fractions <- gcheckbox("transform_fractions",
 weights <- c("manual", "none", "std", "mean")
 f.gg.opts.weight <- gcombobox(weights, selected = 1, label = "weight",
                               width = 180, cont = f.gg.opts.2)
-f.gg.opts.reweight.method <- gcombobox(c("none", "obs"), selected = 1,
+f.gg.opts.reweight.method <- gcombobox(c("none", "obs", "tc"), selected = 1,
                                        label = "IRLS",
                                        width = 180,
                                        cont = f.gg.opts.2)
