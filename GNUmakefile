@@ -83,7 +83,7 @@ drat: build
 	"$(RBIN)/Rscript" -e "drat::insertPackage('$(TGZ)', commit = TRUE)"
 
 dratwin: winbin
-	"$(RBIN)/Rscript" -e "drat::insertPackage('$(WINBIN)', 'e:/git/drat/', commit = TRUE)"
+	"$(RBIN)/Rscript" -e "drat::insertPackage('$(WINBIN)', '~/git/drat/', commit = TRUE)"
 
 r-forge:
 	git archive master > $(PKGDIR)/gmkin.tar;\
