@@ -20,17 +20,17 @@ opts_chunk$set(tidy = FALSE, cache = FALSE)
 ## Introduction
 
 The R add-on package gmkin provides a browser based graphical interface for
-performing kinetic evaluations of degradation data using the 
+performing kinetic evaluations of degradation data using the
 [mkin package](http://kinfit.r-forge.r-project.org/mkin_static).
 While the use of gmkin should be largely self-explanatory, this manual may serve
 as a functionality overview and reference.
 
-For system requirements and installation instructions, please refer to the 
+For system requirements and installation instructions, please refer to the
 [gmkin homepage](http://kinfit.r-forge.r-project.org/gmkin_static).
 
 ## Starting gmkin
 
-As gmkin is an R package, you need to start R and load the gmkin package before you can run gmkin. 
+As gmkin is an R package, you need to start R and load the gmkin package before you can run gmkin.
 The latter can be achieved by entering the command
 
 ```{r, eval = FALSE}
@@ -39,7 +39,7 @@ library(gmkin)
 
 into the R console. This will also load the packages that gmkin depends on,
 most notably gWidgetsWWW2 and mkin. Loading the package only has to be done
-once after you have started R. 
+once after you have started R.
 
 Before you start gmkin, you should make sure that R is using the working
 directory that you would like to keep your gmkin project file(s) in. If you use
@@ -81,7 +81,7 @@ However, it also contains a tab 'Data' for editing kinetic data.
 
 ## Project file management
 
-At startup, the project explorer to the left shows the two project workspaces 'FOCUS_2006' and 
+At startup, the project explorer to the left shows the two project workspaces 'FOCUS_2006' and
 'FOCUS_2006_Z' delivered with the package. The project manangement area in the
 center gives the possibility to save these projects under a new name, or to
 start a new, empty project.
@@ -90,19 +90,19 @@ A gmkin project workspace contains datasets, kinetic models for fitting, and
 so-called fits, i.e. the results of fitting models to data. The project area also shows the current
 working directory, where project workspace files are saved using the file extension `.gmkinws`.
 
-Once a project has been saved by the user, the project explorer to the left will show it in the 
+Once a project has been saved by the user, the project explorer to the left will show it in the
 project list.
 
 ![Screenshot of saving a new project](img/new_project.png)
 
 The current state of a project should repeatedly be saved during the work in order to avoid
-loosing data. This can be achieved by selecting the 'Project' tab in the center and pressing 
+loosing data. This can be achieved by selecting the 'Project' tab in the center and pressing
 the 'Save project to project file' button. More conveniently, the keyboard shortcut Shift-F12
 (was Ctrl-X in gmkin < 0.6.6) can be used to save the current status of the
 project.
 
-In the project file management area, datasets and models can be imported from 
-one of the projects in the project list, once it has been selected in the 
+In the project file management area, datasets and models can be imported from
+one of the projects in the project list, once it has been selected in the
 droplist labelled 'Import from:'.
 
 ![Screenshot of importing datasets and models](img/import.png)
@@ -114,7 +114,7 @@ if you are limited in vertical screen space.
 
 ## Dataset editor
 
-When you select one of the datasets in the dataset explorer to the left, some 
+When you select one of the datasets in the dataset explorer to the left, some
 summary information about the dataset is shown in the center, and the data itself
 is loaded into the data editor to the right.
 
@@ -123,8 +123,8 @@ is loaded into the data editor to the right.
 When you have added information about the units, or edited the data to the right, you should hit
 the button 'Keep changes'. This will add a new entry in the dataset explorer.
 
-In the dataset editor to the right, you can override original data (for example in order to 
-follow FOCUS recommendations for time zero samples or values below the limit of detection) 
+In the dataset editor to the right, you can override original data (for example in order to
+follow FOCUS recommendations for time zero samples or values below the limit of detection)
 by entering numbers in the override column.
 
 When saving a dataset, the sampling times, the number of replicates and the list of observed
@@ -158,7 +158,7 @@ be able to use the dataset that you created in a future gmkin session.
 
 ### Importing data from text files
 
-In case you want to work with a larger dataset that is already available as a computer 
+In case you want to work with a larger dataset that is already available as a computer
 file e.g. in a spreadsheet application, you can export these data as a tab separated
 or comma separated text file and import it using the "Browse" and "Upload" buttons in the
 dataset editor.
@@ -167,14 +167,14 @@ As an example, we can create a text file from one of the datasets shipped with
 the mkin package using the following R command:
 
 ```{r, eval = FALSE}
-write.table(schaefer07_complex_case, sep = ",", dec = ".", 
-            row.names = FALSE, quote = FALSE, 
+write.table(schaefer07_complex_case, sep = ",", dec = ".",
+            row.names = FALSE, quote = FALSE,
             file = "schaefer07.csv")
 ```
 
-This produces a text file with comma separated values in the current working directory of R. 
+This produces a text file with comma separated values in the current working directory of R.
 
-Loading this text file into gmkin using the "Browse" and "Upload" buttons 
+Loading this text file into gmkin using the "Browse" and "Upload" buttons
 
 ![Screenshot of the browse and upload dialogue](img/upload_dialogue.png)
 
@@ -192,14 +192,14 @@ the column names, i.e. the names of the observed variables when the data are in 
 
 As "Separator", whitespace, semicolon or comma can be chosen. If whitespace is selected,
 files in which the values are separated by a fixed or varying number of whitespace characters
-should be read in correctly. As the tabulator counts as a whitespace character, this is 
+should be read in correctly. As the tabulator counts as a whitespace character, this is
 also the option to choose for tabulator separated values.
 
 As the "Decimal" separator, comma "," or period "." can be selected.
 
 In the next line, it can be specified if the data are in wide or in long format.
 If in wide format, the only option left to specify is the title of the column containing
-the sampling times. If the data is in long format, the column headings specifying the 
+the sampling times. If the data is in long format, the column headings specifying the
 columns containing the observed variables (default is "name"), the sampling times
 (default is "time"), the observed values (default is "value") and, if present in the data,
 the relative errors (default is "err") can be adapted. The default settings appearing if
@@ -223,7 +223,7 @@ in a future gmkin session.
 
 ## Model editor
 
-The following screenshot shows the model editor for the model 'Z.2a.ff' from 
+The following screenshot shows the model editor for the model 'Z.2a.ff' from
 the project workspace 'FOCUS_2006_Z' provided with the gmkin package.
 
 ![Screenshot of the model editor](img/modeleditor.png)
@@ -255,14 +255,14 @@ If a dataset and a kinetic model are selected, the button "Configure fit" below
 in the Explorer window "Configuration" becomes active. Pressing it opens the "Configuration"
 area in the center and loads the dataset into the Data editor to the right, for viewing only.
 
-After pressing the button 'Plot unoptimised', the data and the kinetic model with default 
+After pressing the button 'Plot unoptimised', the data and the kinetic model with default
 starting parameters are plotted in the 'Plot' area to the right.
 
 ![Screenshot of the fit configuration area](img/configuration.png)
 
 ### Fit options
 
-The most important fit options of the `mkinfit` function can be set via the 
+The most important fit options of the `mkinfit` function can be set via the
 controls in the fit configuration area shown above. If the "plot" checkbox is
 checked (and on Windows, the R GUI is used for running gmkin), an R graphics
 device started via the R console shows the fitting progress, i.e. the change of
@@ -270,7 +270,7 @@ the model solution together with the data during the optimisation.
 
 The "solution\_type" can either be "auto", which means that the most effective solution
 method is chosen for the model, in the order of "analytical" (for parent only degradation
-data), "eigen" (for differential equation models with only linear terms, i.e. without 
+data), "eigen" (for differential equation models with only linear terms, i.e. without
 FOMC, DFOP or HS submodels) or "deSolve", which can handle all model definitions generated
 by the `mkin` package. If a compiler (gcc, on Windows install the 'Rtools' software package),
 then the "deSolve" solution method is alway chosen when there are more than one
@@ -280,8 +280,8 @@ The parameters "atol" and "rtol" are only effective if the solution type is "deS
 control the precision of the iterative numerical solution of the differential equation model.
 
 The checkboxes "transform\_rates" and "transform\_fractions" control if the parameters are fitted
-as defined in the model, or if they are internally transformed during the fitting process in 
-order to improve the estimation of standard errors and confidence intervals which are based 
+as defined in the model, or if they are internally transformed during the fitting process in
+order to improve the estimation of standard errors and confidence intervals which are based
 on a linear approximation at the optimum found by the fitting algorithm.
 
 If fitting with transformed fractions leads to a suboptimal fit, doing a first
@@ -289,9 +289,9 @@ run without transforming fractions may help. A final run using the optimised
 parameters from the previous run as starting values (see comment on "Get
 initials from" above) can then be performed with transformed fractions.
 
-The dropdown box "weight" specifies if and how the observed values should be weighted 
-in the fitting process. If "manual" is chosen, the values in the "err" column of the 
-dataset are used, which are set to unity by default. Setting these to higher values 
+The dropdown box "weight" specifies if and how the observed values should be weighted
+in the fitting process. If "manual" is chosen, the values in the "err" column of the
+dataset are used, which are set to unity by default. Setting these to higher values
 gives lower weight and vice versa. If "none" is chosen, observed
 values are not weighted. Please refer to the documentation of the `modFit` function from
 the `FME` package for the meaning of options "std" and "mean".
@@ -305,7 +305,7 @@ for more details. IRLS fitting can be configured using the options
 The drop down box "method.modFit" makes it possible to choose between the optimisation
 algorithms "Port" (the default in mkin versions > 0.9-33, a local optimisation
 algorithm using a model/trust region approach), "Marq" (the former default in
-mkin, a Levenberg-Marquardt variant from the R package `minpack.lm`), 
+mkin, a Levenberg-Marquardt variant from the R package `minpack.lm`),
 and "SANN" (the simulated annealing method - robust but inefficient and without
 a convergence criterion).
 
@@ -321,21 +321,21 @@ the model fit should be plotted can be selected as shown below.
 ![plot options](img/plotoptions.png)
 
 On systems running the Windows operating system, the windows metafile (wmf) format
-can be additionally chosen. Changing the file format for plotting will also change 
+can be additionally chosen. Changing the file format for plotting will also change
 the extension of the proposed filename for saving the plot.
 
 ### Parameters
 
-Below the fit control area, a table with the Starting parameter list is displayed. While 
+Below the fit control area, a table with the Starting parameter list is displayed. While
 name and type of the parameters should not be edited, their initial values can be edited
 by clicking on a row. Also, it can be specified if the parameters should be fixed
-in the optimisation process. 
+in the optimisation process.
 
 If the initial values for the parameters were changed, the resulting model solution
-can be visually checked by pressing the button "Plot unoptimised". This will update the 
+can be visually checked by pressing the button "Plot unoptimised". This will update the
 plot of the model and the data using the specified initial parameter values.
 
-If a similar model with a partially overlapping model definition has already be fitted, 
+If a similar model with a partially overlapping model definition has already be fitted,
 initial values for parameters with the same name in both models can also be retrieved
 from previous fits by selecting the fit and pressing the button "Get starting parameters
 from". This facilitates stepwise fitting of more complex degradation pathways.
@@ -347,26 +347,26 @@ parameter values are added to the parameter table.
 
 In many cases the starting parameters and the fit options do not need to be modified
 and the model fitting process can simply be started by pressing the "Run fit" button.
-In the R console, the progressive reduction in the model cost can be monitored and will 
+In the R console, the progressive reduction in the model cost can be monitored and will
 be displayed in the following way:
 
 ```{r, eval = FALSE}
-Model cost at call  1 :  15156.12 
-Model cost at call  3 :  15156.12 
-Model cost at call  7 :  14220.79 
-Model cost at call  8 :  14220.79 
-Model cost at call  11 :  14220.79 
-Model cost at call  12 :  3349.268 
-Model cost at call  15 :  3349.268 
-Model cost at call  17 :  788.6367 
-Model cost at call  18 :  788.6366 
-Model cost at call  22 :  374.0575 
-Model cost at call  23 :  374.0575 
-Model cost at call  27 :  371.2135 
-Model cost at call  28 :  371.2135 
-Model cost at call  32 :  371.2134 
-Model cost at call  36 :  371.2134 
-Model cost at call  37 :  371.2134 
+Model cost at call  1 :  15156.12
+Model cost at call  3 :  15156.12
+Model cost at call  7 :  14220.79
+Model cost at call  8 :  14220.79
+Model cost at call  11 :  14220.79
+Model cost at call  12 :  3349.268
+Model cost at call  15 :  3349.268
+Model cost at call  17 :  788.6367
+Model cost at call  18 :  788.6366
+Model cost at call  22 :  374.0575
+Model cost at call  23 :  374.0575
+Model cost at call  27 :  371.2135
+Model cost at call  28 :  371.2135
+Model cost at call  32 :  371.2134
+Model cost at call  36 :  371.2134
+Model cost at call  37 :  371.2134
 Optimisation by method Port successfully terminated.
 ```
 
@@ -374,7 +374,7 @@ If plotting of the fitting progress was selected, a new separate graphics
 window should either pop up, or a graphics window previously started for this
 purpose will be reused.
 
-If your screen size allows for it, you can arrange the R plotting window and the 
+If your screen size allows for it, you can arrange the R plotting window and the
 R console in a way that you can see everything at the same time:
 
 ![Screenshot of arrangement of plot window and console](img/arrangement.png)
@@ -382,7 +382,7 @@ R console in a way that you can see everything at the same time:
 ## Results and summary
 
 Once a fit has successfully been completed, the most important results are shown in several
-tables in the "Result" area as shown below. 
+tables in the "Result" area as shown below.
 
 ![Screenshot of the results](img/results.png)
 
@@ -399,8 +399,8 @@ Whenever a new fit has been configured or a run of a fit has been completed, the
 area is updated with the abovementioned plot of the data and the current model solution.
 
 In addition, a confidence interval plot is shown below this conventional plot. In case
-a fit has been run and confidence intervals were successfully calculated for the fit (i.e. 
-if the model was not overparameterised and no other problems occurred), the 
+a fit has been run and confidence intervals were successfully calculated for the fit (i.e.
+if the model was not overparameterised and no other problems occurred), the
 confidence intervals are graphically displayed as bars as shown below.
 
 ![confidence](img/confidence.png)
@@ -408,8 +408,8 @@ confidence intervals are graphically displayed as bars as shown below.
 ## Howtos
 
 The following sections show step by step descriptions of how to perform certain
-tasks using gmkin. In principle, this should be necessary as the GUI was 
-designed to be largely self-explanatory. Nevertheless may help a beginner to
+tasks using gmkin. In principle, this should not be necessary as the GUI was
+designed to be largely self-explanatory. Nevertheless it may help a beginner to
 understand how to use gmkin. At the same time, the gmkin author uses them as
 test cases to make sure that the most important functionality is not broken
 before releasing a new version.
