@@ -1,10 +1,12 @@
 # NEWS for package 'gmkin'
 
-## gmkin 0.6-10 (2019-07-06)
+## gmkin 0.6-10 (2019-07-08)
 
-- Adapt to mkin 0.9.49.1
+- Adapt to mkin 0.9.49.6
 
 - Use devEMF for better vector graphics export for Windows
+
+- Manual weighting is not possible as this functionality is currently not present in mkin versions > 0.9.48.1
 
 ## gmkin 0.6-9 (2018-09-13)
 

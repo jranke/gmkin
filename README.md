@@ -15,8 +15,7 @@ For running gmkin you need a system running a recent version of R (version
 (Firefox/Iceweasel and Chrome work for me) with JavaScript enabled.
 
 It should be possible to run gmkin on most laptop or desktop computers running
-Linux, Mac OS X, Windows XP or Windows 7. It is frequently checked under Linux and
-Windows 7.
+Linux, Mac OS X, Windows 7 or Windows 10. 
 
 To view the complete set of widgets in the browser window without resizing
 anything, it needs a screen space of 1366x740 pixels.
@@ -167,4 +166,7 @@ Agency ([Umweltbundesamt](http://www.umweltbundesamt.de)) in two projects in
 2014 and 2015 was crucial for reaching version 0.6.3 in November 2015 and is
 gratefully acknowledged. In particular, Stefan Meinecke contributed with a lot
 of user feedback and suggestions for improvement in that time.
+
+The adaptation to mkin versions > 0.9.49.6 that can do fits using a two-component
+error model was supported by another project by the Umweltbundesamt in 2018/2019.
 

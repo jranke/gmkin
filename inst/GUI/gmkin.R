@@ -299,17 +299,25 @@ c.ds <- glabel(empty_conf_labels[1], cont = c.gf, ext.args = list(margin = "0 0 
 c.m <- glabel(empty_conf_labels[2], cont = c.gf, ext.args = list(margin = "0 0 0 5"))
 
 update_f_conf <- function() { # {{{3
-  stmp <<- summary(ftmp)
+  stmp <<- suppressWarnings(summary(ftmp))
   svalue(f.gg.opts.st) <<- ftmp$solution_type
   svalue(f.gg.opts.atol) <<- ftmp$atol
   svalue(f.gg.opts.rtol) <<- ftmp$rtol
   svalue(f.gg.opts.transform_rates) <<- ftmp$transform_rates
   svalue(f.gg.opts.transform_fractions) <<- ftmp$transform_fractions
-  svalue(f.gg.opts.error_model) <<- ftmp$error_model
-  svalue(f.gg.opts.error_model_algorithm) <<- ftmp$error_model_algorithm
+  if (!is.null(ftmp$error_model_algorithm)) {
+    svalue(f.gg.opts.error_model_algorithm) <<- ftmp$error_model_algorithm
+    if (ftmp$error_model_algorithm == "OLS") {
+      svalue(f.gg.opts.error_model) <<- "const"
+    } else {
+      svalue(f.gg.opts.error_model) <<- ftmp$error_model
+    }
+  }
   svalue(f.gg.opts.reweight.tol) <<- ftmp$reweight.tol
   svalue(f.gg.opts.reweight.max.iter) <<- ftmp$reweight.max.iter
-  svalue(f.gg.opts.maxit) <<- ftmp$maxit
+  if (!is.null(ftmp$maxit)) {
+    svalue(f.gg.opts.maxit) <<- ftmp$maxit
+  }
   show_fit_option_widgets(TRUE)
   update_plot_obssel()
   f.gg.parms[,] <- get_Parameters(stmp, ftmp$optimised)
@@ -369,7 +377,6 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
     update_f_conf()
 
     f.run$call_Ext("enable")
-    print("test")
     svalue(f.running.label) <- "Fit configured and ready to run"
   } else {
     svalue(f.running.label) <- paste("No fit configured:",
@@ -977,13 +984,6 @@ run_fit_handler <- function(h, ...) { #{{{3
       iniparms <- Parameters.ini$Initial
       names(iniparms) <- sub("_0", "", Parameters.ini$Name)
       inifixed <- names(iniparms[Parameters.ini$Fixed])
-      weight <- svalue(f.gg.opts.weight)
-      if (weight == "manual") {
-        err = "err"
-      } else {
-        err = NULL
-      }
-      reweight.method <- svalue(f.gg.opts.reweight.method)
       if (svalue(f.gg.opts.plot)) {
         if (.Platform$OS.type == "windows") {
           # When on windows, check for an active windows device. If not present,
@@ -991,7 +991,6 @@ run_fit_handler <- function(h, ...) { #{{{3
           if (attr(dev.cur(), "names") != "windows") windows()
         }
       }
-      if (reweight.method == "none") reweight.method = NULL
       ftmp <<- mkinfit(m.cur, override(ds.cur$data),
                        state.ini = iniparms,
                        fixed_initials = inifixed,
@@ -1022,7 +1021,6 @@ run_fit_handler <- function(h, ...) { #{{{3
       f.keep$call_Ext("enable")
       show.initial.gb.o$call_Ext("enable")
       svalue(f.gg.opts.st) <- ftmp$solution_type
-      svalue(f.gg.opts.weight) <- ftmp$weight.ini
 
       svalue(f.running.label) <- "Terminated"
       update_f_results()
@@ -1089,7 +1087,8 @@ get_Parameters <- function(stmp, optimised) # {{{3
                            Fixed = pars$fixed,
                            Optimised = as.numeric(NA))
   Parameters <- rbind(subset(Parameters, Type == "state"),
-                      subset(Parameters, Type == "deparm"))
+                      subset(Parameters, Type == "deparm"),
+                      subset(Parameters, Type == "error"))
   rownames(Parameters) <- Parameters$Name
   if (optimised) {
     Parameters[rownames(stmp$bpar), "Optimised"] <- stmp$bpar[, "Estimate"]
@@ -1154,13 +1153,13 @@ f.gg.opts.error_model <- gcombobox(error_models, selected = 1,
                                    label = "error_model",
                                    width = 160,
                                    cont = f.gg.opts.1)
-error_model_algorithms <- c("d_3", "direct", "threestep", "IRLS")
-f.gg.opts.error_model_algorithm <- gcombobox(error_model_algorithms, selected = 1,
+error_model_algorithms <- c("d_3", "direct", "threestep", "IRLS", "OLS")
+f.gg.opts.error_model_algorithm <- gcombobox(error_model_algorithms, selected = 5,
                                    label = "error_model_algorithm",
                                    width = 160,
                                    cont = f.gg.opts.1)
-f.gg.opts.maxit <- gedit("auto", label = "maxit",
-                                 width = 20, cont = f.gg.opts.1)
+f.gg.opts.maxit <- gedit(200, label = "maxit",
+                         width = 20, cont = f.gg.opts.1)
 
 # Second group {{{4
 f.gg.opts.2 <- gformlayout(cont = f.gg.opts.g)
@@ -1169,12 +1168,6 @@ f.gg.opts.transform_rates <- gcheckbox("transform_rates",
 f.gg.opts.transform_fractions <- gcheckbox("transform_fractions",
                          cont = f.gg.opts.2, checked = TRUE)
 weights <- c("manual", "none", "std", "mean")
-f.gg.opts.weight <- gcombobox(weights, selected = 1, label = "weight",
-                              width = 180, cont = f.gg.opts.2)
-f.gg.opts.reweight.method <- gcombobox(c("none", "obs", "tc"), selected = 1,
-                                       label = "IRLS",
-                                       width = 180,
-                                       cont = f.gg.opts.2)
 f.gg.opts.reweight.tol <- gedit(1e-8, label = "reweight.tol",
                                  width = 20, cont = f.gg.opts.2)
 f.gg.opts.reweight.max.iter <- gedit(10, label = "reweight.max.iter",
@@ -1421,7 +1414,7 @@ plot_ftmp_save <- function(filename) {
   switch(plot_format,
          png = png(filename, width = 400, height = 400),
          pdf = pdf(filename),
-         wmf = win.metafile(filename))
+         emf = devEMF::emf(filename))
   plot_ftmp()
   dev.off()
   svalue(sb) <- paste("Saved plot to", filename, "in working directory", getwd())
