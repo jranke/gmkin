@@ -38,7 +38,10 @@ $(TGZVNR): $(pkgfiles)
 	"$(RBIN)/R" CMD build --no-build-vignettes . ;\
 	mv $(TGZ) $(TGZVNR)
                 
-build: $(TGZ)
+roxygen: 
+	"$(RBIN)/Rscript" -e 'devtools::document()'
+
+build: roxygen $(TGZ)
 
 build-no-vignettes: $(TGZVNR)
 

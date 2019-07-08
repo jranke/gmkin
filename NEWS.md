@@ -1,5 +1,11 @@
 # NEWS for package 'gmkin'
 
+## gmkin 0.6-10 (2019-07-06)
+
+- Adapt to mkin 0.9.49.1
+
+- Use devEMF for better vector graphics export for Windows
+
 ## gmkin 0.6-9 (2018-09-13)
 
 - Enable fits with the two-component error model during iterative reweighting (IRLS)

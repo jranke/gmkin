@@ -18,6 +18,22 @@
 
 # This makes use of the ::: operator
 # To avoid this, gWidgetsWWW2 needs to be adapted
+
+#' Start a graphical user interface (GUI) based on the \code{gWidgetsWWW2} toolkit.
+#'
+#' This function starts a browser based GUI. Please visit the 
+#' \href{http://github.com/jverzani/gWidgetsWWW2}{github page of gWidgetsWWW2} 
+#' for an explanation how this toolkit works.
+#'
+#' @param script_name During development, a script name with a local working
+#'   version of gmkin can be passed. Defaults to the location of the gmkin.R
+#'   script shipped with the package.
+#' @param show.log During development, it may be useful to see the log of the
+#' Rook apps.
+#' @return The function is called for its side effect, namely starting the GUI
+#'   in a browser. For the curious, the desperate or the adventurous, the gmkin
+#'   app (a GWidgetsApp object) is returned.
+#' @export
 gmkin <- function(script_name, show.log = FALSE) {
   if (missing(script_name)) {
     script_name = system.file("GUI/gmkin.R", package = "gmkin")

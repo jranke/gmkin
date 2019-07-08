@@ -1,6 +1,6 @@
 # gWidgetsWWW2 GUI for mkin {{{1
 
-# Copyright (C) 2013,2014,2015 Johannes Ranke
+# Copyright (C) 2013-2016,2018,2019 Johannes Ranke
 # Portions of this file are copyright (C) 2013 Eurofins Regulatory AG, Switzerland
 # Contact: jranke@uni-bremen.de
 
@@ -29,13 +29,13 @@ f_height = 142
 save_keybinding = "Shift-F12"
 gcb_observed_width = 100
 gcb_type_width = 70
-gcb_to_width = 160 
+gcb_to_width = 160
 gcb_sink_width = 70
 
 # Plotting {{{2
 plot_formats <- c("png", "pdf")
-if (exists("win.metafile", "package:grDevices", inherits = FALSE)) {
-  plot_formats = c("wmf", plot_formats)
+if (requireNamespace("devEMF", quietly = TRUE)) {
+  plot_formats = c("emf", plot_formats)
 }
 plot_format <- plot_formats[[1]]
 # Options {{{2
@@ -46,7 +46,7 @@ window_title <- paste0("gmkin ", packageVersion("gmkin"),
                        "- Browser based GUI for kinetic evaluations using mkin")
 w  <- gwindow(window_title)
 sb <- gstatusbar(paste("Powered by gWidgetsWWW2 (ExtJS, Rook)",
-                       "and mkin (FME, deSolve and minpack.lm)",
+                       "and mkin (deSolve, numDeriv)",
                        "--- Working directory is", getwd()), cont = w)
 
 bl <- gborderlayout(cont = w,
@@ -57,7 +57,7 @@ bl$set_panel_size("west", left_width)
 bl$set_panel_size("east", right_width)
 
 center <- gnotebook(cont = bl, where = "center")
-center$add_handler("tabchange", 
+center$add_handler("tabchange",
                   function(h, ...) {
                     if (svalue(h$obj) == 1) {
                       svalue(right) <<- 1
@@ -65,7 +65,7 @@ center$add_handler("tabchange",
                   })
 left   <- gvbox(cont = bl, use.scrollwindow = TRUE, where = "west", spacing = 0)
 right   <- gnotebook(cont = bl, use.scrollwindow = TRUE, where = "east")
-right$add_handler("tabchange", 
+right$add_handler("tabchange",
                   function(h, ...) {
                     if (svalue(h$obj) == 3 && ! model_gallery_created) {
                       create_model_gallery()
@@ -77,7 +77,7 @@ right$add_handler("tabchange",
 # Override function for making it possible to override original data points using the GUI {{{2
 override <- function(d) {
   if (!is.null(d$override)) {
-    d_new <- data.frame(name = d$name, time = d$time, 
+    d_new <- data.frame(name = d$name, time = d$time,
                         value = ifelse(is.na(d$override), d$value, d$override),
                         err = d$err)
     return(d_new)
@@ -89,7 +89,7 @@ override <- function(d) {
 update_p.df <- function() {
   wd_projects <- gsub(".gmkinws", "", dir(pattern = ".gmkinws$"))
   if (length(wd_projects) > 0) {
-    p.df.wd <- data.frame(Name = wd_projects, 
+    p.df.wd <- data.frame(Name = wd_projects,
                           Source = rep("working directory",
                                        length(wd_projects)),
                           stringsAsFactors = FALSE)
@@ -105,8 +105,8 @@ update_ds.df <- function() {
   if (is.na(ws$ds[1])) ds.df <<- ds.df.empty
   else ds.df <<- data.frame(Title = sapply(ws$ds, function(x) x$title), stringsAsFactors = FALSE)
   ds.gtable[,] <- ds.df
-  ds.delete$call_Ext("disable")  
-  ds.copy$call_Ext("disable")  
+  ds.delete$call_Ext("disable")
+  ds.copy$call_Ext("disable")
 }
 # Update dataframe with models {{{2
 update_m.df <- function() {
@@ -117,8 +117,8 @@ update_m.df <- function() {
   else m.df <<- data.frame(Name = sapply(ws$m, function(x) x$name), stringsAsFactors = FALSE)
   m.gtable[,] <- m.df
   update_m_editor()
-  m.delete$call_Ext("disable")  
-  m.copy$call_Ext("disable")  
+  m.delete$call_Ext("disable")
+  m.copy$call_Ext("disable")
 }
 # Update dataframe with fits {{{2
 update_f.df <- function() {
@@ -131,7 +131,7 @@ update_f.df <- function() {
   f.df <<- f.df
   f.gtable[,] <- f.df
   get.initials.gc[,] <- paste("Result", f.df$Name)
-  f.delete$call_Ext("disable")  
+  f.delete$call_Ext("disable")
 }
 # Generate the initial workspace {{{1
 # Project workspace {{{2
@@ -177,7 +177,7 @@ f.gf <-  gframe("Results", cont = left, horizontal = FALSE, spacing = 0)
 p.gtable <- gtable(p.df, cont = p.gf, width = left_width - 10, height = 120,
                    ext.args = list(resizable = TRUE, resizeHandles = 's'))
 size(p.gtable) <- list(columnWidths = c(130, 100))
-p.loaded <- NA # The index of the loaded project. We reset the selection to this when the user 
+p.loaded <- NA # The index of the loaded project. We reset the selection to this when the user
                # does not confirm
 p.modified <- FALSE # Keep track of modifications after loading
 p.switcher <- function(h, ...) {
@@ -209,7 +209,7 @@ p.switcher <- function(h, ...) {
   }
   if (p.modified) {
     gconfirm("When you switch projects, you loose any unsaved changes. Proceed to switch?",
-             handler = function(h, ...) { 
+             handler = function(h, ...) {
       switch_project()
     })
   } else {
@@ -234,8 +234,8 @@ ds.switcher <- function(h, ...) {
   svalue(c.ds) <- ds.df[ds.i, "Title"]
   ds.cur <<- ws$ds[[ds.i]]
   update_ds_editor()
-  ds.delete$call_Ext("enable")  
-  ds.copy$call_Ext("enable")  
+  ds.delete$call_Ext("enable")
+  ds.copy$call_Ext("enable")
   if (!is.null(svalue(m.gtable, index = TRUE))) {
     if (length(svalue(m.gtable)) > 0) {
       if (!is.na(svalue(m.gtable))) f.conf$call_Ext("enable")
@@ -251,10 +251,10 @@ addHandlerClicked(ds.gtable, ds.switcher)
 m.switcher <- function(h, ...) {
   m.i <- h$row_index
   svalue(c.m) <- m.df[m.i, "Name"]
-  m.cur <<- ws$m[[m.i]] 
+  m.cur <<- ws$m[[m.i]]
   update_m_editor()
-  m.delete$call_Ext("enable")  
-  m.copy$call_Ext("enable")  
+  m.delete$call_Ext("enable")
+  m.copy$call_Ext("enable")
   if (!is.null(svalue(ds.gtable, index = TRUE))) {
     if (length(svalue(ds.gtable)) > 0) {
       if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
@@ -276,9 +276,9 @@ f.switcher <- function(h, ...) {
   } else {
     ftmp <<- ws$ftmp
   }
-  c.ds$call_Ext("setText", 
+  c.ds$call_Ext("setText",
      paste0("<font color='gray'>", ftmp$ds$title, "</font>"), FALSE)
-  c.m$call_Ext("setText", 
+  c.m$call_Ext("setText",
      paste0("<font color='gray'>", ftmp$mkinmod$name, "</font>"), FALSE)
   f.conf$call_Ext("disable")
 
@@ -300,19 +300,16 @@ c.m <- glabel(empty_conf_labels[2], cont = c.gf, ext.args = list(margin = "0 0 0
 
 update_f_conf <- function() { # {{{3
   stmp <<- summary(ftmp)
-  svalue(f.gg.opts.plot) <<- FALSE
   svalue(f.gg.opts.st) <<- ftmp$solution_type
-  svalue(f.gg.opts.weight) <<- ftmp$weight
   svalue(f.gg.opts.atol) <<- ftmp$atol
   svalue(f.gg.opts.rtol) <<- ftmp$rtol
   svalue(f.gg.opts.transform_rates) <<- ftmp$transform_rates
   svalue(f.gg.opts.transform_fractions) <<- ftmp$transform_fractions
-  svalue(f.gg.opts.reweight.method) <<- ifelse(
-    is.null(ftmp$reweight.method), "none", ftmp$reweight.method)
+  svalue(f.gg.opts.error_model) <<- ftmp$error_model
+  svalue(f.gg.opts.error_model_algorithm) <<- ftmp$error_model_algorithm
   svalue(f.gg.opts.reweight.tol) <<- ftmp$reweight.tol
   svalue(f.gg.opts.reweight.max.iter) <<- ftmp$reweight.max.iter
-  svalue(f.gg.opts.maxit.modFit) <<- ftmp$maxit.modFit
-  svalue(f.gg.opts.method.modFit) <<- ftmp$method.modFit
+  svalue(f.gg.opts.maxit) <<- ftmp$maxit
   show_fit_option_widgets(TRUE)
   update_plot_obssel()
   f.gg.parms[,] <- get_Parameters(stmp, ftmp$optimised)
@@ -321,7 +318,7 @@ update_f_results <- function() { # {{{3
   svalue(r.name) <- ftmp$name
   r.parameters[] <- cbind(Parameter = rownames(stmp$bpar), stmp$bpar[, c(1, 4, 5, 6)])
   err.min <- 100 * stmp$errmin$err.min
-  r.frames.chi2.gt[] <- cbind(Variable = rownames(stmp$errmin), 
+  r.frames.chi2.gt[] <- cbind(Variable = rownames(stmp$errmin),
                               Error = signif(err.min, 3),
                               n.opt = stmp$errmin$n.optim,
                               df = stmp$errmin$df)
@@ -350,7 +347,7 @@ update_f_results <- function() { # {{{3
 }
 update_plot_obssel <- function() {
    delete(f.gg.plotopts, f.gg.po.obssel)
-   f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec), 
+   f.gg.po.obssel <<- gcheckboxgroup(names(ftmp$mkinmod$spec),
                                      cont = f.gg.plotopts, checked = TRUE)
 }
 configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
@@ -362,9 +359,8 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
     }
     ftmp <<- suppressWarnings(mkinfit(m.cur,
                               override(ds.cur$data),
-                              method.modFit = "Marq",
-                              err = "err", quiet = TRUE,
-                              control.modFit = list(maxiter = 0)))
+                              quiet = TRUE,
+                              control = list(iter.max = 0)))
     ftmp$optimised <<- FALSE
     ftmp$ds <<- ds.cur
     ws$ftmp <<- ftmp
@@ -372,8 +368,8 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
     update_f.df()
     update_f_conf()
 
-    svalue(f.gg.opts.method.modFit) <<- "Port"
     f.run$call_Ext("enable")
+    print("test")
     svalue(f.running.label) <- "Fit configured and ready to run"
   } else {
     svalue(f.running.label) <- paste("No fit configured:",
@@ -387,16 +383,16 @@ configure_fit_handler <- function(h, ...) { # Configure fit button {{{3
   }
   svalue(center) <- 4
 }
-f.conf.line <- ggroup(cont = c.gf, 
+f.conf.line <- ggroup(cont = c.gf,
                       ext.args = list(layout = list(type = "vbox", align = "center")))
-f.conf <- gbutton("<b>Configure fit</b>", 
+f.conf <- gbutton("<b>Configure fit</b>",
                   width = 100,
                   cont = f.conf.line,
                   handler = configure_fit_handler,
                   ext.args = list(disabled = TRUE))
 
 # center: Project editor {{{1
-p.editor  <- gframe("", horizontal = FALSE, cont = center, 
+p.editor  <- gframe("", horizontal = FALSE, cont = center,
                      label = "Project")
 # Line with buttons {{{2
 p.line.buttons <- ggroup(cont = p.editor, horizontal = TRUE)
@@ -461,7 +457,7 @@ p.save.action <- gaction("Save project to project file", parent = w,
       }
       if (file.exists(filename)) {
         gconfirm(paste("File", filename, "exists. Overwrite?"),
-                 parent = w, 
+                 parent = w,
                  handler = function(h, ...) {
           try_to_save(filename)
         })
@@ -471,7 +467,7 @@ p.save.action <- gaction("Save project to project file", parent = w,
     }
   })
 p.save.action$add_keybinding(save_keybinding)
-p.save <- gbutton(action = p.save.action, 
+p.save <- gbutton(action = p.save.action,
                   cont = p.line.buttons)
 tooltip(p.save) <- paste("Press", save_keybinding, "to save")
 
@@ -542,7 +538,7 @@ p.line.import.p <- gcombobox(c("", p.df$Name), label = "Import from", cont = p.l
   })
 p.line.import.frames <- ggroup(cont = p.editor, horizontal = TRUE)
 
-p.line.import.dsf <- gframe("Datasets for import", cont = p.line.import.frames, 
+p.line.import.dsf <- gframe("Datasets for import", cont = p.line.import.frames,
                             horizontal = FALSE, spacing = 0)
 p.line.import.dst <- gtable(ds.df.empty, cont = p.line.import.dsf, multiple = TRUE,
                             width = left_width - 10, height = 160,
@@ -558,7 +554,7 @@ p.line.import.dsb <- gbutton("Import selected", cont = p.line.import.dsf,
   }
 )
 
-p.line.import.mf <- gframe("Models for import", cont = p.line.import.frames, 
+p.line.import.mf <- gframe("Models for import", cont = p.line.import.frames,
                            horizontal = FALSE, spacing = 0)
 p.line.import.mt <- gtable(m.df.empty, cont = p.line.import.mf, multiple = TRUE,
                             width = left_width - 10, height = 160,
@@ -597,7 +593,7 @@ copy_dataset_handler <- function(h, ...) {
   ds.new$title <- paste("Copy of ", ds.cur$title)
   stage_dataset(ds.new)
 }
-  
+
 delete_dataset_handler <- function(h, ...) {
   ds.i <- svalue(ds.gtable, index = TRUE)
   ws$delete_ds(ds.i)
@@ -611,7 +607,7 @@ keep_ds_changes_handler <- function(h, ...) {
   editor_title <- svalue(ds.title.ge)
   editor_ds <- mkinds$new(
     title = editor_title,
-    data = ds.e.gdf[,], 
+    data = ds.e.gdf[,],
     time_unit = svalue(ds.e.stu),
     unit = svalue(ds.e.obu))
 
@@ -665,7 +661,7 @@ load_text_file_with_data <- function(h, ...) {
   }
   svalue(ds.e.up.skip) <- tmptextskip
   if (svalue(ds.e.up.header)) {
-    tmptextheader <<- strsplit(tmptext[tmptextskip + 1], 
+    tmptextheader <<- strsplit(tmptext[tmptextskip + 1],
                              " |\t|;|,")[[1]]
   }
   svalue(ds.e.up.wide.time) <- tmptextheader[[1]]
@@ -673,13 +669,13 @@ load_text_file_with_data <- function(h, ...) {
   svalue(ds.e.up.text) <- c("<pre>", c(tmptext[1:5], "\n...\n"), "</pre>")
   visible(ds.e.import) <- TRUE
 }
- 
+
 new_ds_from_csv_handler <- function(h, ...) {
    tmpd <- try(read.table(tmptextfile,
-                          skip = as.numeric(svalue(ds.e.up.skip)), 
+                          skip = as.numeric(svalue(ds.e.up.skip)),
                           dec = svalue(ds.e.up.dec),
-                          sep = switch(svalue(ds.e.up.sep), 
-                                       whitespace = "", 
+                          sep = switch(svalue(ds.e.up.sep),
+                                       whitespace = "",
                                        ";" = ";",
                                        "," = ","),
                           header = svalue(ds.e.up.header),
@@ -731,7 +727,7 @@ ds.e.buttons <- ggroup(cont = ds.editor, horizontal = TRUE)
 ds.e.new <- gbutton("New dataset", cont = ds.e.buttons, handler = new_dataset_handler)
 ds.copy <- gbutton("Copy dataset", cont = ds.e.buttons,
   handler = copy_dataset_handler, ext.args = list(disabled = TRUE))
-ds.delete <- gbutton("Delete dataset", cont = ds.e.buttons, 
+ds.delete <- gbutton("Delete dataset", cont = ds.e.buttons,
   handler = delete_dataset_handler, ext.args = list(disabled = TRUE))
 ds.keep <- gbutton("Keep changes", cont = ds.e.buttons, handler = keep_ds_changes_handler)
 ds.keep$call_Ext("disable")
@@ -761,7 +757,7 @@ upload_dataset.gf <- gfile(text = "Upload text file", cont = ds.editor,
 # Import options {{{3
 ds.e.import <- ggroup(cont = ds.editor, horizontal = FALSE)
 visible(ds.e.import) <- FALSE
-ds.e.preview <- ggroup(cont = ds.e.import, 
+ds.e.preview <- ggroup(cont = ds.e.import,
                       # width = 540,  height = 150,
                        ext.args = list(layout = list(type="vbox", align = "center")))
 ds.e.up.text <- ghtml("<pre></pre>", cont = ds.e.preview, width = 530, height = 150)
@@ -816,7 +812,7 @@ copy_model_handler <- function(h, ...) {
   m.new$name <- paste("Copy of ", m.cur$name)
   stage_model(m.new)
 }
-  
+
 delete_model_handler <- function(h, ...) {
   m.i <- svalue(m.gtable, index = TRUE)
   ws$delete_m(m.i)
@@ -837,9 +833,9 @@ keep_m_changes_handler <- function(h, ...) {
     names(spec)[[obs.i]] <- svalue(m.e.obs[[obs.i]])
   }
 
-  m.cur <<- mkinmod(use_of_ff = svalue(m.ff.gc), 
+  m.cur <<- mkinmod(use_of_ff = svalue(m.ff.gc),
                     speclist = spec)
-  m.cur$name <<- svalue(m.name.ge) 
+  m.cur$name <<- svalue(m.name.ge)
 
   m.i <- svalue(m.gtable, index = TRUE)
   if (!is.null(m.i) && !is.na(m.i) && ws$m[[m.i]]$name == m.cur$name) {
@@ -863,24 +859,24 @@ add_observed <- function(obs.i) {
     m.add_observed$call_Ext("disable")
   }
   m.e.rows[[obs.i]] <<- ggroup(cont = m.editor, horizontal = TRUE)
-  m.e.obs[[obs.i]] <<- gcombobox(ws$observed, 
-                                 selected = obs.i, 
+  m.e.obs[[obs.i]] <<- gcombobox(ws$observed,
+                                 selected = obs.i,
                                  width = gcb_observed_width,
                                  cont = m.e.rows[[obs.i]])
   obs.types <- if (obs.i == 1) c("SFO", "FOMC", "DFOP", "HS", "SFORB")
     else c("SFO", "SFORB")
   m.e.type[[obs.i]] <<- gcombobox(obs.types, width = gcb_type_width,
                                   selected = 1L, cont = m.e.rows[[obs.i]])
-  glabel("to", cont = m.e.rows[[obs.i]]) 
+  glabel("to", cont = m.e.rows[[obs.i]])
   m.e.to[[obs.i]] <<- gcombobox(ws$observed, selected = 0L,
                                 width = gcb_to_width,
                                 editable = TRUE,
                                 ext.args = list(multiSelect = TRUE),
                                 cont = m.e.rows[[obs.i]])
   m.e.sink[[obs.i]] <<- gcheckbox("Sink", width = gcb_sink_width,
-                                  checked = TRUE, cont = m.e.rows[[obs.i]]) 
+                                  checked = TRUE, cont = m.e.rows[[obs.i]])
   if (obs.i > 1) {
-    gbutton("Remove observed variable", handler = remove_observed_handler, 
+    gbutton("Remove observed variable", handler = remove_observed_handler,
             action = obs.i, cont = m.e.rows[[obs.i]])
   }
 }
@@ -916,7 +912,7 @@ m.e.buttons <- ggroup(cont = m.editor, horizontal = TRUE)
 m.e.new <- gbutton("New model", cont = m.e.buttons, handler = new_model_handler)
 m.copy <- gbutton("Copy model", cont = m.e.buttons,
   handler = copy_model_handler, ext.args = list(disabled = TRUE))
-m.delete <- gbutton("Delete model", cont = m.e.buttons, 
+m.delete <- gbutton("Delete model", cont = m.e.buttons,
   handler = delete_model_handler, ext.args = list(disabled = TRUE))
 m.keep <- gbutton("Keep changes", cont = m.e.buttons, handler = keep_m_changes_handler)
 m.keep$call_Ext("disable")
@@ -924,11 +920,11 @@ m.keep$call_Ext("disable")
 # Formlayout for meta data {{{3
 m.e.gfl <- gformlayout(cont = m.editor)
 m.name.ge <- gedit(label = "<b>Model name</b>", width = 60, cont = m.e.gfl)
-m.ff.gc <- gcombobox(c("min", "max"), label = "Use of formation fractions", 
+m.ff.gc <- gcombobox(c("min", "max"), label = "Use of formation fractions",
                      cont = m.e.gfl)
 svalue(m.ff.gc) <- m.cur$use_of_ff
 m.add_observed.line <- ggroup(cont = m.editor)
-m.add_observed <- gbutton("Add observed variable", 
+m.add_observed <- gbutton("Add observed variable",
   width = 150,
   cont = m.add_observed.line,
   handler = add_observed_handler)
@@ -960,7 +956,7 @@ show_m_spec()
 
 
 # center: Fit configuration {{{1
-f.config  <- gframe("", horizontal = FALSE, cont = center, 
+f.config  <- gframe("", horizontal = FALSE, cont = center,
                     label = "Configuration")
 # Handler functions {{{2
 run_confirm_message <- paste("The progress of the fit is shown in the R console. ",
@@ -970,7 +966,7 @@ run_confirm_message <- paste("The progress of the fit is shown in the R console.
                                "the Windows R GUI). " ) } else "",
                              "Proceed to start the fit?", sep = "")
 run_fit_handler <- function(h, ...) { #{{{3
-  gconfirm(run_confirm_message, handler = function(h, ...) 
+  gconfirm(run_confirm_message, handler = function(h, ...)
     {
       Parameters <- f.gg.parms[,]
       Parameters.de <- subset(Parameters, Type == "deparm")
@@ -999,7 +995,7 @@ run_fit_handler <- function(h, ...) { #{{{3
       ftmp <<- mkinfit(m.cur, override(ds.cur$data),
                        state.ini = iniparms,
                        fixed_initials = inifixed,
-                       parms.ini = deparms, 
+                       parms.ini = deparms,
                        fixed_parms = defixed,
                        plot = svalue(f.gg.opts.plot),
                        solution_type = svalue(f.gg.opts.st),
@@ -1007,13 +1003,10 @@ run_fit_handler <- function(h, ...) { #{{{3
                        rtol = as.numeric(svalue(f.gg.opts.rtol)),
                        transform_rates = svalue(f.gg.opts.transform_rates),
                        transform_fractions = svalue(f.gg.opts.transform_fractions),
-                       weight = weight,
-                       err = err,
-                       reweight.method = reweight.method,
                        reweight.tol = as.numeric(svalue(f.gg.opts.reweight.tol)),
                        reweight.max.iter = as.numeric(svalue(f.gg.opts.reweight.max.iter)),
-                       method.modFit = svalue(f.gg.opts.method.modFit),
-                       maxit.modFit = svalue(f.gg.opts.maxit.modFit)
+                       error_model = svalue(f.gg.opts.error_model),
+                       error_model_algorithm = svalue(f.gg.opts.error_model_algorithm)
                        )
       ftmp$optimised <<- TRUE
       ftmp$ds <<- ds.cur
@@ -1077,7 +1070,7 @@ export_csv_handler <- function(h, ...) { # {{{3
     rownames(subset(ftmp$fixed, type == "deparm")))
   odeparms <- parms.all[odenames]
 
-  out <- mkinpredict(ftmp$mkinmod, odeparms, odeini, outtimes, 
+  out <- mkinpredict(ftmp$mkinmod, odeparms, odeini, outtimes,
           solution_type = solution_type, atol = ftmp$atol, rtol = ftmp$rtol)
 
   write.csv(out, csv_file)
@@ -1110,17 +1103,17 @@ show_plot <- function(type) {
   deparms <- as.numeric(Parameters.de[[type]])
   names(deparms) <- rownames(Parameters.de)
   if (type == "Initial") {
-    ftmp <<- suppressWarnings(mkinfit(m.cur, 
+    ftmp <<- suppressWarnings(mkinfit(m.cur,
                                       override(ds.cur$data),
                                       parms.ini = deparms,
-                                      state.ini = stateparms, 
+                                      state.ini = stateparms,
                                       fixed_parms = names(deparms),
                                       fixed_initials = names(stateparms),
                                       err = "err", quiet = TRUE,
                                       method.modFit = "Marq",
                                       control.modFit = list(maxiter = 0)))
     ftmp$ds <<- ds.cur
-  } 
+  }
   svalue(plot.ftmp.gi) <<- plot_ftmp_png()
   svalue(plot.ftmp.savefile) <- paste0(ftmp$mkinmod$name, " - ", ftmp$ds$title, ".", plot_format)
   svalue(plot.confint.gi) <<- if (type == "Initial") NA
@@ -1132,12 +1125,12 @@ show_plot <- function(type) {
 f.run.line <- ggroup(cont = f.config)
 f.run <- gbutton("<b>Run fit</b>",
                  width = 100,
-                 cont = f.run.line, 
+                 cont = f.run.line,
                  handler = run_fit_handler,
                  ext.args = list(disabled = TRUE))
 
 f.running.line <- ggroup(cont = f.config)
-f.running_noconf <- paste("No fit configured. Please select a dataset and a model and", 
+f.running_noconf <- paste("No fit configured. Please select a dataset and a model and",
                           "press the button 'Configure fit' on the left.")
 f.running.label <- glabel(f.running_noconf, cont = f.running.line)
 
@@ -1147,7 +1140,7 @@ f.gg.opts.g <- ggroup(cont = f.config)
 # First group {{{4
 f.gg.opts.1 <- gformlayout(cont = f.gg.opts.g)
 solution_types <- c("auto", "analytical", "eigen", "deSolve")
-f.gg.opts.plot <- gcheckbox("Plot during the fit", 
+f.gg.opts.plot <- gcheckbox("Plot during the fit",
                             cont = f.gg.opts.1, checked = FALSE)
 f.gg.opts.st <- gcombobox(solution_types, selected = 1,
                           label = "solution_type", width = 160,
@@ -1156,12 +1149,17 @@ f.gg.opts.atol <- gedit(1e-8, label = "atol", width = 20,
                          cont = f.gg.opts.1)
 f.gg.opts.rtol <- gedit(1e-10, label = "rtol", width = 20,
                          cont = f.gg.opts.1)
-optimisation_methods <- c("Port", "Marq", "SANN")
-f.gg.opts.method.modFit <- gcombobox(optimisation_methods, selected = 1,
-                                     label = "method.modFit",
-                                     width = 160,
-                                     cont = f.gg.opts.1)
-f.gg.opts.maxit.modFit <- gedit("auto", label = "maxit.modFit",
+error_models <- c("const", "obs", "tc")
+f.gg.opts.error_model <- gcombobox(error_models, selected = 1,
+                                   label = "error_model",
+                                   width = 160,
+                                   cont = f.gg.opts.1)
+error_model_algorithms <- c("d_3", "direct", "threestep", "IRLS")
+f.gg.opts.error_model_algorithm <- gcombobox(error_model_algorithms, selected = 1,
+                                   label = "error_model_algorithm",
+                                   width = 160,
+                                   cont = f.gg.opts.1)
+f.gg.opts.maxit <- gedit("auto", label = "maxit",
                                  width = 20, cont = f.gg.opts.1)
 
 # Second group {{{4
@@ -1184,7 +1182,7 @@ f.gg.opts.reweight.max.iter <- gedit(10, label = "reweight.max.iter",
 
 f.gg.plotopts <- ggroup(cont = f.gg.opts.g, horizontal = FALSE, width = 80)
 
-f.gg.po.format <- gcombobox(plot_formats, selected = 1, 
+f.gg.po.format <- gcombobox(plot_formats, selected = 1,
                   cont = f.gg.plotopts, width = 50,
                   handler = function(h, ...) {
                     plot_format <<- svalue(h$obj)
@@ -1193,7 +1191,7 @@ f.gg.po.format <- gcombobox(plot_formats, selected = 1,
                   })
 plot_format <- svalue(f.gg.po.format)
 f.gg.po.legend <- gcheckbox("legend", cont = f.gg.plotopts, checked = TRUE)
-f.gg.po.obssel <- gcheckboxgroup("", cont = f.gg.plotopts, 
+f.gg.po.obssel <- gcheckboxgroup("", cont = f.gg.plotopts,
                                  checked = TRUE)
 visible(f.gg.po.obssel) <- FALSE
 # Parameter table {{{3
@@ -1212,7 +1210,7 @@ get_initials_handler <- function(h, ...)
 get.initials.gb <- gbutton("Get starting parameters from", cont = f.parameters.line,
                            handler = get_initials_handler)
 get.initials.gc <- gcombobox(paste("Result", f.df$Name), width = 200, cont = f.parameters.line)
-show.initial.gb.u <- gbutton("Plot unoptimised", 
+show.initial.gb.u <- gbutton("Plot unoptimised",
                              handler = function(h, ...) show_plot("Initial"),
                              cont = f.parameters.line)
 tooltip(show.initial.gb.u) <- "Show model with inital parameters shown below"
@@ -1229,13 +1227,13 @@ Parameters <- Parameters.empty <- data.frame(
   Fixed = logical(1),
   Optimised = numeric(1))
 # Dataframe with initial and optimised parameters {{{4
-f.gg.parms <- gdf(Parameters, cont = f.config, height = 500, 
+f.gg.parms <- gdf(Parameters, cont = f.config, height = 500,
                   name = "Starting parameters",
                   do_add_remove_buttons = FALSE)
 size(f.gg.parms) <- list(columnWidths = c(220, 50, 65, 50, 65))
 
 # Do not show fit option widgets when no fit is configured
-show_fit_option_widgets <- function(show) 
+show_fit_option_widgets <- function(show)
 {
   visible(f.gg.opts.g) <- show
   visible(f.parameters.line) <- show
@@ -1244,11 +1242,11 @@ show_fit_option_widgets <- function(show)
 show_fit_option_widgets(FALSE)
 
 # center: Results viewer {{{1
-r.viewer  <- gframe("", horizontal = FALSE, cont = center, 
+r.viewer  <- gframe("", horizontal = FALSE, cont = center,
                     label = "Result")
 # Row with buttons {{{2
 r.buttons <- ggroup(cont = r.viewer, horizontal = TRUE)
-f.delete <- gbutton("Delete fit", cont = r.buttons, 
+f.delete <- gbutton("Delete fit", cont = r.buttons,
   handler = delete_fit_handler, ext.args = list(disabled = TRUE))
 f.keep <- gbutton("Keep fit", cont = r.buttons, handler = keep_fit_handler)
 tooltip(f.keep) <- "Store the optimised model with all settings and the current dataset in the fit list"
@@ -1265,7 +1263,7 @@ par.df.empty <- data.frame(
   Parameter = character(1),
   Estimate = numeric(1), "Pr(>t)" = numeric(1),
   Lower = numeric(1), Upper = numeric(1), check.names = FALSE)
-r.par.gf <- gframe("Optimised parameters", cont = r.viewer, 
+r.par.gf <- gframe("Optimised parameters", cont = r.viewer,
                    horizontal = FALSE, spacing = 0)
 r.parameters <- gtable(par.df.empty, cont = r.par.gf, height = 200,
                        ext.args = list(resizable = TRUE, resizeHandles = 's'))
@@ -1273,16 +1271,16 @@ r.parameters <- gtable(par.df.empty, cont = r.par.gf, height = 200,
 # Tables with chi2, ff, DT50 {{{2
 r.frames <- ggroup(cont = r.viewer, horizontal = TRUE, spacing = 0)
 
-r.frames.chi2 <- gframe("Chi2 errors [%]", cont = r.frames, 
+r.frames.chi2 <- gframe("Chi2 errors [%]", cont = r.frames,
                         horizontal = TRUE, spacing = 0)
 chi2.df.empty = data.frame(Variable = character(1), Error = character(1),
-                           n.opt = character(1), df = character(1), 
+                           n.opt = character(1), df = character(1),
                            stringsAsFactors = FALSE)
 r.frames.chi2.gt <- gtable(chi2.df.empty, cont = r.frames.chi2,
                             width = 180, height = 150)
 size(r.frames.chi2.gt) <- list(columnWidths = c(60, 35, 35, 15))
 
-r.frames.ff <- gframe("Formation fractions", cont = r.frames, 
+r.frames.ff <- gframe("Formation fractions", cont = r.frames,
                       horizontal = TRUE, spacing = 0)
 ff.df.empty = data.frame(Path = character(1), ff = character(1),
                          stringsAsFactors = FALSE)
@@ -1290,7 +1288,7 @@ r.frames.ff.gt <- gtable(ff.df.empty, cont = r.frames.ff,
                          width = 150, height = 150)
 size(r.frames.ff.gt) <- list(columnWidths = c(80, 15))
 
-r.frames.distimes <- gframe("Disappearance times", cont = r.frames, 
+r.frames.distimes <- gframe("Disappearance times", cont = r.frames,
                             horizontal = TRUE, spacing = 0)
 distimes.df.empty = data.frame(Variable = character(1), DT50 = character(1),
                                stringsAsFactors = FALSE)
@@ -1298,7 +1296,7 @@ r.frames.distimes.gt <- gtable(distimes.df.empty, cont = r.frames.distimes,
                                width = 150, height = 150)
 
 # Summary {{{2
-f.gg.summary <- gframe("Summary", height = 400, use.scrollwindow = TRUE, 
+f.gg.summary <- gframe("Summary", height = 400, use.scrollwindow = TRUE,
                        cont = r.viewer, horizontal = FALSE)
 f.gg.summary.topline <- ggroup(cont = f.gg.summary, horizontal = TRUE)
 f.gg.summary.filename <- gedit("", width = 40, cont = f.gg.summary.topline)
@@ -1328,7 +1326,7 @@ workflow_url <- "/custom/gmkin_png/workflow/gmkin_workflow_434x569.png"
 workflow.gi <- gimage(workflow_url, size = c(434, 569), label = "Workflow", cont = workflow.gg)
 
 # Data editor {{{2
-ds.e.gdf <- gdf(ds.cur$data, label = "Data", name = "Kinetic data", 
+ds.e.gdf <- gdf(ds.cur$data, label = "Data", name = "Kinetic data",
                 do_add_remove_buttons = FALSE,
                 width = 488, height = 577, cont = right)
 
@@ -1346,10 +1344,10 @@ add_gallery_model_handler <- function(h, ...) {
   update_m.df()
   m.i <- nrow(m.df)
   svalue(c.m) <- m.df[m.i, "Name"]
-  m.cur <<- ws$m[[m.i]] 
+  m.cur <<- ws$m[[m.i]]
   update_m_editor()
-  m.delete$call_Ext("enable")  
-  m.copy$call_Ext("enable")  
+  m.delete$call_Ext("enable")
+  m.copy$call_Ext("enable")
   if (!is.null(svalue(ds.gtable, index = TRUE))) {
     if (length(svalue(ds.gtable)) > 0) {
       if (!is.na(svalue(ds.gtable))) f.conf$call_Ext("enable")
@@ -1370,10 +1368,10 @@ create_model_gallery <- function() {
     for (j in 1:4) {
       model <- UBA_model_gallery[[i]][[j]]
       m.url = paste0("/custom/gmkin_png/", gsub(" ", "_", model$name), ".png")
-      m.g.fields[[i]][[j]] <<- gimage(m.url, width = 110, 
+      m.g.fields[[i]][[j]] <<- gimage(m.url, width = 110,
                                      height = if (i == 1) 80 else if (i == 2) 160 else 220,
                                      cont = m.g.rows[[i]])
-      m.g.buttons[[i]][[j]] <<- gbutton(model$name, width = 110, 
+      m.g.buttons[[i]][[j]] <<- gbutton(model$name, width = 110,
                                        cont = m.g.buttonrows[[i]],
                                        handler = add_gallery_model_handler,
                                        action = c(i, j))
@@ -1400,11 +1398,11 @@ plot_ftmp <- function() {
     } else {
       plot_legend = TRUE
     }
-    plot(ftmp, main = paste(ftmp$mkinmod$name, "-", ftmp$ds$title), 
+    plot(ftmp, main = paste(ftmp$mkinmod$name, "-", ftmp$ds$title),
          obs_vars = obs_vars_plot,
-         xlab = ifelse(ftmp$ds$time_unit == "", "Time", 
+         xlab = ifelse(ftmp$ds$time_unit == "", "Time",
                        paste("Time in", ftmp$ds$time_unit)),
-         ylab = ifelse(ftmp$ds$unit == "", "Observed", 
+         ylab = ifelse(ftmp$ds$unit == "", "Observed",
                        paste("Observed in", ftmp$ds$unit)),
          legend = plot_legend,
          show_residuals = TRUE)
@@ -1432,7 +1430,7 @@ plot_ftmp_save <- function(filename) {
 plot_confint_png <- function() {
   tf <- get_tempfile(ext=".png")
   png(tf, width = 400, height = 400)
-  mkinparplot(ftmp) 
+  mkinparplot(ftmp)
   dev.off()
   return(tf)
 }
@@ -1446,7 +1444,7 @@ plot.ftmp.savebutton <-  gbutton("Save plot", cont = plot.ftmp.saveline,
                                       filename <- svalue(plot.ftmp.savefile)
                                       if (file.exists(filename))
                                       {
-                                        gconfirm(paste("File", filename, 
+                                        gconfirm(paste("File", filename,
                                                        "exists. Overwrite?"),
                                                  parent = w,
                                                  handler = function(h, ...) {
@@ -1474,7 +1472,7 @@ manual.gh <- ghtml(label = "Manuals", paste0("<div class = 'manual' style = 'mar
 </div>"), width = 460, cont = right)
 
 # Changes {{{2
-gmkin_news <- markdown::markdownToHTML(system.file("NEWS.md", 
+gmkin_news <- markdown::markdownToHTML(system.file("NEWS.md",
                                                    package = "gmkin"),
                                        fragment.only = TRUE)
 
