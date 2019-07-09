@@ -21,12 +21,12 @@ opts_chunk$set(tidy = FALSE, cache = FALSE)
 
 The R add-on package gmkin provides a browser based graphical interface for
 performing kinetic evaluations of degradation data using the
-[mkin package](http://kinfit.r-forge.r-project.org/mkin_static).
+[mkin package](https://pkgdown.jrwb.de/mkin).
 While the use of gmkin should be largely self-explanatory, this manual may serve
 as a functionality overview and reference.
 
 For system requirements and installation instructions, please refer to the
-[gmkin homepage](http://kinfit.r-forge.r-project.org/gmkin_static).
+[gmkin homepage](https://pkgdown.jrwb.de/gmkin).
 
 ## Starting gmkin
 
@@ -289,28 +289,16 @@ run without transforming fractions may help. A final run using the optimised
 parameters from the previous run as starting values (see comment on "Get
 initials from" above) can then be performed with transformed fractions.
 
-The dropdown box "weight" specifies if and how the observed values should be weighted
-in the fitting process. If "manual" is chosen, the values in the "err" column of the
-dataset are used, which are set to unity by default. Setting these to higher values
-gives lower weight and vice versa. If "none" is chosen, observed
-values are not weighted. Please refer to the documentation of the `modFit` function from
-the `FME` package for the meaning of options "std" and "mean".
-
-If the "IRLS" option is set to "obs", then we make use of iteratively
-reweighted least squares fitting.  Please refer to the `mkinfit`
-[documentation](http://kinfit.r-forge.r-project.org/mkin_static/mkinfit.html)
+If the "error_model" option is set to "obs" or "tc", then a suitable
+"error_model_algorithm" has to be selected. The recommended algorithm for these
+error model is "d_3", which is the one selected by "mkin" for there error models.
+Please refer to the `mkinfit`
+[documentation](https://pkgdown.jrwb.de/mkin/reference)
 for more details. IRLS fitting can be configured using the options
 "reweight.tol" and "reweight.max.iter".
 
-The drop down box "method.modFit" makes it possible to choose between the optimisation
-algorithms "Port" (the default in mkin versions > 0.9-33, a local optimisation
-algorithm using a model/trust region approach), "Marq" (the former default in
-mkin, a Levenberg-Marquardt variant from the R package `minpack.lm`),
-and "SANN" (the simulated annealing method - robust but inefficient and without
-a convergence criterion).
-
-Finally, the maximum number of iterations for the optimisation can be adapted using the
-"maxit.modFit" field.
+The maximum number of iterations for the optimisation can be adapted using the
+"maxit" field.
 
 ### Plot options
 
@@ -320,7 +308,7 @@ the model fit should be plotted can be selected as shown below.
 
 ![plot options](img/plotoptions.png)
 
-On systems running the Windows operating system, the windows metafile (wmf) format
+On systems running the Windows operating system, the enhanced metafile (emf) format
 can be additionally chosen. Changing the file format for plotting will also change
 the extension of the proposed filename for saving the plot.
 
@@ -351,23 +339,21 @@ In the R console, the progressive reduction in the model cost can be monitored a
 be displayed in the following way:
 
 ```{r, eval = FALSE}
-Model cost at call  1 :  15156.12
-Model cost at call  3 :  15156.12
-Model cost at call  7 :  14220.79
-Model cost at call  8 :  14220.79
-Model cost at call  11 :  14220.79
-Model cost at call  12 :  3349.268
-Model cost at call  15 :  3349.268
-Model cost at call  17 :  788.6367
-Model cost at call  18 :  788.6366
-Model cost at call  22 :  374.0575
-Model cost at call  23 :  374.0575
-Model cost at call  27 :  371.2135
-Model cost at call  28 :  371.2135
-Model cost at call  32 :  371.2134
-Model cost at call  36 :  371.2134
-Model cost at call  37 :  371.2134
-Optimisation by method Port successfully terminated.
+> Ordinary least squares optimisation
+Sum of squared residuals at call 1: 2388.077
+Sum of squared residuals at call 3: 2388.077
+Sum of squared residuals at call 4: 247.1962
+Sum of squared residuals at call 7: 200.6791
+Sum of squared residuals at call 10: 197.7231
+Sum of squared residuals at call 11: 197.0872
+Sum of squared residuals at call 14: 196.535
+Sum of squared residuals at call 15: 196.535
+Sum of squared residuals at call 16: 196.535
+Sum of squared residuals at call 17: 196.5334
+Sum of squared residuals at call 20: 196.5334
+Sum of squared residuals at call 25: 196.5334
+Negative log-likelihood at call 31: 26.64668
+Optimisation successfully terminated.
 ```
 
 If plotting of the fitting progress was selected, a new separate graphics
@@ -444,7 +430,7 @@ before releasing a new version.
 - Press 'Keep changes'
 - Select the 'Model gallery' to the right
 - From the model gallery, press 'FOMC, one met' below the corresponding model scheme
-- In the dataset explorer, select 'Test dataset howto 2'
+- In the dataset explorer, select 'Data howto 2'
 - In the model explorer, select 'FOMC, one met'
 - In the configuration display, press 'Configure fit'
 - In the configuration editor in the center, press 'Run fit'
@@ -470,7 +456,8 @@ before releasing a new version.
 - Enter 'DFOP lin' as the model name
 - Select 'max' in the dropbox 'Use of formation fractions'
 - Press 'Add observed variable' three times
-- In the line where 'parent' is selected, in the dropbox after the word 'to', select 'M1'
+- In the line where 'parent' is selected, in the dropbox to the right change 'SFO' to 'DFOP'
+- In the line where 'parent' is selected, after the word 'to', select 'M1'
 - Click outside the dropbox
 - In the line where 'M1' is selected, in the dropbox after the word 'to', select 'M2'
 - Click outside the dropbox

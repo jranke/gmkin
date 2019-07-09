@@ -1108,9 +1108,9 @@ show_plot <- function(type) {
                                       state.ini = stateparms,
                                       fixed_parms = names(deparms),
                                       fixed_initials = names(stateparms),
-                                      err = "err", quiet = TRUE,
-                                      method.modFit = "Marq",
-                                      control.modFit = list(maxiter = 0)))
+                                      transform_fraction = FALSE, # to be able to fix ff
+                                      quiet = TRUE,
+                                      control = list(iter.max = 0)))
     ftmp$ds <<- ds.cur
   }
   svalue(plot.ftmp.gi) <<- plot_ftmp_png()

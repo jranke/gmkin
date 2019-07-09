@@ -1,8 +1,8 @@
 # NEWS for package 'gmkin'
 
-## gmkin 0.6-10 (2019-07-08)
+## gmkin 0.6-10 (2019-07-09)
 
-- Adapt to mkin 0.9.49.6
+- Adapt to mkin 0.9.49.6, making the new way to fit variance by variable and the two-component error model available to gmkin
 
 - Use devEMF for better vector graphics export for Windows
 

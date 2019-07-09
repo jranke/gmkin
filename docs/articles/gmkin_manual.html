@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmkin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.10</span>
       </span>
     </div>
 
@@ -76,7 +76,7 @@
       <h1>Manual for gmkin</h1>
                         <h4 class="author">Johannes Ranke</h4>
             
-            <h4 class="date">2019-03-14</h4>
+            <h4 class="date">2019-07-09</h4>
       
       
       <div class="hidden name"><code>gmkin_manual.Rmd</code></div>
@@ -88,8 +88,8 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>The R add-on package gmkin provides a browser based graphical interface for performing kinetic evaluations of degradation data using the <a href="http://kinfit.r-forge.r-project.org/mkin_static">mkin package</a>. While the use of gmkin should be largely self-explanatory, this manual may serve as a functionality overview and reference.</p>
-<p>For system requirements and installation instructions, please refer to the <a href="http://kinfit.r-forge.r-project.org/gmkin_static">gmkin homepage</a>.</p>
+<p>The R add-on package gmkin provides a browser based graphical interface for performing kinetic evaluations of degradation data using the <a href="https://pkgdown.jrwb.de/mkin">mkin package</a>. While the use of gmkin should be largely self-explanatory, this manual may serve as a functionality overview and reference.</p>
+<p>For system requirements and installation instructions, please refer to the <a href="https://pkgdown.jrwb.de/gmkin">gmkin homepage</a>.</p>
 </div>
 <div id="starting-gmkin" class="section level2">
 <h2 class="hasAnchor">
@@ -216,10 +216,8 @@
 <p>The parameters “atol” and “rtol” are only effective if the solution type is “deSolve”. They control the precision of the iterative numerical solution of the differential equation model.</p>
 <p>The checkboxes “transform_rates” and “transform_fractions” control if the parameters are fitted as defined in the model, or if they are internally transformed during the fitting process in order to improve the estimation of standard errors and confidence intervals which are based on a linear approximation at the optimum found by the fitting algorithm.</p>
 <p>If fitting with transformed fractions leads to a suboptimal fit, doing a first run without transforming fractions may help. A final run using the optimised parameters from the previous run as starting values (see comment on “Get initials from” above) can then be performed with transformed fractions.</p>
-<p>The dropdown box “weight” specifies if and how the observed values should be weighted in the fitting process. If “manual” is chosen, the values in the “err” column of the dataset are used, which are set to unity by default. Setting these to higher values gives lower weight and vice versa. If “none” is chosen, observed values are not weighted. Please refer to the documentation of the <code>modFit</code> function from the <code>FME</code> package for the meaning of options “std” and “mean”.</p>
-<p>If the “IRLS” option is set to “obs”, then we make use of iteratively reweighted least squares fitting. Please refer to the <code>mkinfit</code> <a href="http://kinfit.r-forge.r-project.org/mkin_static/mkinfit.html">documentation</a> for more details. IRLS fitting can be configured using the options “reweight.tol” and “reweight.max.iter”.</p>
-<p>The drop down box “method.modFit” makes it possible to choose between the optimisation algorithms “Port” (the default in mkin versions &gt; 0.9-33, a local optimisation algorithm using a model/trust region approach), “Marq” (the former default in mkin, a Levenberg-Marquardt variant from the R package <code>minpack.lm</code>), and “SANN” (the simulated annealing method - robust but inefficient and without a convergence criterion).</p>
-<p>Finally, the maximum number of iterations for the optimisation can be adapted using the “maxit.modFit” field.</p>
+<p>If the “error_model” option is set to “obs” or “tc”, then a suitable “error_model_algorithm” has to be selected. The recommended algorithm for these error model is “d_3”, which is the one selected by “mkin” for there error models. Please refer to the <code>mkinfit</code> <a href="https://pkgdown.jrwb.de/mkin/reference">documentation</a> for more details. IRLS fitting can be configured using the options “reweight.tol” and “reweight.max.iter”.</p>
+<p>The maximum number of iterations for the optimisation can be adapted using the “maxit” field.</p>
 </div>
 <div id="plot-options" class="section level3">
 <h3 class="hasAnchor">
@@ -228,7 +226,7 @@
 <div class="figure">
 <img src="img/plotoptions.png" alt="plot options"><p class="caption">plot options</p>
 </div>
-<p>On systems running the Windows operating system, the windows metafile (wmf) format can be additionally chosen. Changing the file format for plotting will also change the extension of the proposed filename for saving the plot.</p>
+<p>On systems running the Windows operating system, the enhanced metafile (emf) format can be additionally chosen. Changing the file format for plotting will also change the extension of the proposed filename for saving the plot.</p>
 </div>
 <div id="parameters" class="section level3">
 <h3 class="hasAnchor">
@@ -242,23 +240,21 @@
 <h3 class="hasAnchor">
 <a href="#fitting-the-model" class="anchor"></a>Fitting the model</h3>
 <p>In many cases the starting parameters and the fit options do not need to be modified and the model fitting process can simply be started by pressing the “Run fit” button. In the R console, the progressive reduction in the model cost can be monitored and will be displayed in the following way:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">Model cost at call  <span class="dv">1</span> <span class="op">:</span><span class="st">  </span><span class="fl">15156.12</span></a>
-<a class="sourceLine" id="cb4-2" title="2">Model cost at call  <span class="dv">3</span> <span class="op">:</span><span class="st">  </span><span class="fl">15156.12</span></a>
-<a class="sourceLine" id="cb4-3" title="3">Model cost at call  <span class="dv">7</span> <span class="op">:</span><span class="st">  </span><span class="fl">14220.79</span></a>
-<a class="sourceLine" id="cb4-4" title="4">Model cost at call  <span class="dv">8</span> <span class="op">:</span><span class="st">  </span><span class="fl">14220.79</span></a>
-<a class="sourceLine" id="cb4-5" title="5">Model cost at call  <span class="dv">11</span> <span class="op">:</span><span class="st">  </span><span class="fl">14220.79</span></a>
-<a class="sourceLine" id="cb4-6" title="6">Model cost at call  <span class="dv">12</span> <span class="op">:</span><span class="st">  </span><span class="fl">3349.268</span></a>
-<a class="sourceLine" id="cb4-7" title="7">Model cost at call  <span class="dv">15</span> <span class="op">:</span><span class="st">  </span><span class="fl">3349.268</span></a>
-<a class="sourceLine" id="cb4-8" title="8">Model cost at call  <span class="dv">17</span> <span class="op">:</span><span class="st">  </span><span class="fl">788.6367</span></a>
-<a class="sourceLine" id="cb4-9" title="9">Model cost at call  <span class="dv">18</span> <span class="op">:</span><span class="st">  </span><span class="fl">788.6366</span></a>
-<a class="sourceLine" id="cb4-10" title="10">Model cost at call  <span class="dv">22</span> <span class="op">:</span><span class="st">  </span><span class="fl">374.0575</span></a>
-<a class="sourceLine" id="cb4-11" title="11">Model cost at call  <span class="dv">23</span> <span class="op">:</span><span class="st">  </span><span class="fl">374.0575</span></a>
-<a class="sourceLine" id="cb4-12" title="12">Model cost at call  <span class="dv">27</span> <span class="op">:</span><span class="st">  </span><span class="fl">371.2135</span></a>
-<a class="sourceLine" id="cb4-13" title="13">Model cost at call  <span class="dv">28</span> <span class="op">:</span><span class="st">  </span><span class="fl">371.2135</span></a>
-<a class="sourceLine" id="cb4-14" title="14">Model cost at call  <span class="dv">32</span> <span class="op">:</span><span class="st">  </span><span class="fl">371.2134</span></a>
-<a class="sourceLine" id="cb4-15" title="15">Model cost at call  <span class="dv">36</span> <span class="op">:</span><span class="st">  </span><span class="fl">371.2134</span></a>
-<a class="sourceLine" id="cb4-16" title="16">Model cost at call  <span class="dv">37</span> <span class="op">:</span><span class="st">  </span><span class="fl">371.2134</span></a>
-<a class="sourceLine" id="cb4-17" title="17">Optimisation by method Port successfully terminated.</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="op">&gt;</span><span class="st"> </span>Ordinary least squares optimisation</a>
+<a class="sourceLine" id="cb4-2" title="2">Sum of squared residuals at call <span class="dv">1</span><span class="op">:</span><span class="st"> </span><span class="fl">2388.077</span></a>
+<a class="sourceLine" id="cb4-3" title="3">Sum of squared residuals at call <span class="dv">3</span><span class="op">:</span><span class="st"> </span><span class="fl">2388.077</span></a>
+<a class="sourceLine" id="cb4-4" title="4">Sum of squared residuals at call <span class="dv">4</span><span class="op">:</span><span class="st"> </span><span class="fl">247.1962</span></a>
+<a class="sourceLine" id="cb4-5" title="5">Sum of squared residuals at call <span class="dv">7</span><span class="op">:</span><span class="st"> </span><span class="fl">200.6791</span></a>
+<a class="sourceLine" id="cb4-6" title="6">Sum of squared residuals at call <span class="dv">10</span><span class="op">:</span><span class="st"> </span><span class="fl">197.7231</span></a>
+<a class="sourceLine" id="cb4-7" title="7">Sum of squared residuals at call <span class="dv">11</span><span class="op">:</span><span class="st"> </span><span class="fl">197.0872</span></a>
+<a class="sourceLine" id="cb4-8" title="8">Sum of squared residuals at call <span class="dv">14</span><span class="op">:</span><span class="st"> </span><span class="fl">196.535</span></a>
+<a class="sourceLine" id="cb4-9" title="9">Sum of squared residuals at call <span class="dv">15</span><span class="op">:</span><span class="st"> </span><span class="fl">196.535</span></a>
+<a class="sourceLine" id="cb4-10" title="10">Sum of squared residuals at call <span class="dv">16</span><span class="op">:</span><span class="st"> </span><span class="fl">196.535</span></a>
+<a class="sourceLine" id="cb4-11" title="11">Sum of squared residuals at call <span class="dv">17</span><span class="op">:</span><span class="st"> </span><span class="fl">196.5334</span></a>
+<a class="sourceLine" id="cb4-12" title="12">Sum of squared residuals at call <span class="dv">20</span><span class="op">:</span><span class="st"> </span><span class="fl">196.5334</span></a>
+<a class="sourceLine" id="cb4-13" title="13">Sum of squared residuals at call <span class="dv">25</span><span class="op">:</span><span class="st"> </span><span class="fl">196.5334</span></a>
+<a class="sourceLine" id="cb4-14" title="14">Negative log<span class="op">-</span>likelihood at call <span class="dv">31</span><span class="op">:</span><span class="st"> </span><span class="fl">26.64668</span></a>
+<a class="sourceLine" id="cb4-15" title="15">Optimisation successfully terminated.</a></code></pre></div>
 <p>If plotting of the fitting progress was selected, a new separate graphics window should either pop up, or a graphics window previously started for this purpose will be reused.</p>
 <p>If your screen size allows for it, you can arrange the R plotting window and the R console in a way that you can see everything at the same time:</p>
 <div class="figure">
@@ -326,7 +322,7 @@
 <li>Press ‘Keep changes’</li>
 <li>Select the ‘Model gallery’ to the right</li>
 <li>From the model gallery, press ‘FOMC, one met’ below the corresponding model scheme</li>
-<li>In the dataset explorer, select ‘Test dataset howto 2’</li>
+<li>In the dataset explorer, select ‘Data howto 2’</li>
 <li>In the model explorer, select ‘FOMC, one met’</li>
 <li>In the configuration display, press ‘Configure fit’</li>
 <li>In the configuration editor in the center, press ‘Run fit’</li>
@@ -355,7 +351,8 @@
 <li>Enter ‘DFOP lin’ as the model name</li>
 <li>Select ‘max’ in the dropbox ‘Use of formation fractions’</li>
 <li>Press ‘Add observed variable’ three times</li>
-<li>In the line where ‘parent’ is selected, in the dropbox after the word ‘to’, select ‘M1’</li>
+<li>In the line where ‘parent’ is selected, in the dropbox to the right change ‘SFO’ to ‘DFOP’</li>
+<li>In the line where ‘parent’ is selected, after the word ‘to’, select ‘M1’</li>
 <li>Click outside the dropbox</li>
 <li>In the line where ‘M1’ is selected, in the dropbox after the word ‘to’, select ‘M2’</li>
 <li>Click outside the dropbox</li>
@@ -400,7 +397,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
 </div>
       </footer>
 </div>
