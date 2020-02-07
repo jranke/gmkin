@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manual for gmkin • gmkin</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Manual for gmkin">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
@@ -38,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -70,13 +71,14 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Manual for gmkin</h1>
                         <h4 class="author">Johannes Ranke</h4>
             
-            <h4 class="date">2019-07-09</h4>
+            <h4 class="date">2020-02-07</h4>
       
       
       <div class="hidden name"><code>gmkin_manual.Rmd</code></div>
@@ -95,7 +97,7 @@
 <h2 class="hasAnchor">
 <a href="#starting-gmkin" class="anchor"></a>Starting gmkin</h2>
 <p>As gmkin is an R package, you need to start R and load the gmkin package before you can run gmkin. The latter can be achieved by entering the command</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(gmkin)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(gmkin)</a></code></pre></div>
 <p>into the R console. This will also load the packages that gmkin depends on, most notably gWidgetsWWW2 and mkin. Loading the package only has to be done once after you have started R.</p>
 <p>Before you start gmkin, you should make sure that R is using the working directory that you would like to keep your gmkin project file(s) in. If you use the standard R GUI application on windows, you can change the working directory from the File menu (‘File’ -&gt; ‘Change dir…’).</p>
 <p>Once you are sure that the working directory is what you want it to be, gmkin can be started by entering the R command</p>
@@ -161,7 +163,7 @@
 <a href="#importing-data-from-text-files" class="anchor"></a>Importing data from text files</h3>
 <p>In case you want to work with a larger dataset that is already available as a computer file e.g. in a spreadsheet application, you can export these data as a tab separated or comma separated text file and import it using the “Browse” and “Upload” buttons in the dataset editor.</p>
 <p>As an example, we can create a text file from one of the datasets shipped with the mkin package using the following R command:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/write.table">write.table</a></span>(schaefer07_complex_case, <span class="dt">sep =</span> <span class="st">","</span>, <span class="dt">dec =</span> <span class="st">"."</span>,</a>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(schaefer07_complex_case, <span class="dt">sep =</span> <span class="st">","</span>, <span class="dt">dec =</span> <span class="st">"."</span>,</a>
 <a class="sourceLine" id="cb3-2" title="2">            <span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">quote =</span> <span class="ot">FALSE</span>,</a>
 <a class="sourceLine" id="cb3-3" title="3">            <span class="dt">file =</span> <span class="st">"schaefer07.csv"</span>)</a></code></pre></div>
 <p>This produces a text file with comma separated values in the current working directory of R.</p>
@@ -372,6 +374,7 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
@@ -392,17 +395,20 @@
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by Johannes Ranke.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

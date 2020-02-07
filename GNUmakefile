@@ -11,7 +11,7 @@ WINBIN  := $(PKGNAME)_$(PKGVERS).zip
 RBIN ?= $(shell dirname "`which R`")
 
 # Specify static documentation directories for subversion on r-forge
-RFSVN ?= $(HOME)/svn/kinfit.r-forge
+RFSVN ?= $(HOME)/svn/r-forge/kinfit
 RFDIR ?= $(RFSVN)/pkg/gmkin
 SDDIR ?= $(RFSVN)/www/gmkin_static
 
