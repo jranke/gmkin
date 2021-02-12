@@ -1,5 +1,11 @@
 # NEWS for package 'gmkin'
 
+## gmkin 0.6-11 (2021-02-21)
+
+- Adapt built-in 'FOCUS_2006' workspace to mkin 1.0.x as we have now have the 'deg_func' element in 'mkinmod' objects
+
+- The three HOWTO tests in the manual pass
+
 ## gmkin 0.6-10 (2019-07-09)
 
 - Adapt to mkin 0.9.49.6, making the new way to fit variance by variable and the two-component error model available to gmkin

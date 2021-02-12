@@ -1,6 +1,7 @@
 ^GNUmakefile$
 ^README.html$
 ^gmkin_.*\.tar\.gz$
+^gmkin\.tar$
 ^gmkin_.*\.zip$
 ^gmkin_screenshot.png$
 ^Rprofile$

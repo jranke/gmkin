@@ -411,6 +411,8 @@ before releasing a new version.
 - In the pop-up window that appears, press 'Yes'
 - In the result viewer in the center, press 'Keep fit'
 - Switch to the Project editor in the center
+- Check that the working directory is OK for writing a test project
+- If not, enter a suitable path (e.g. "~" which will be resolved to your home directory) and press 'Change'
 - In the project explorer, enter the project name 'Howto test 1'
 - Press 'Save project to project file'
 

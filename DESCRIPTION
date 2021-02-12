@@ -1,8 +1,8 @@
 Package: gmkin
 Type: Package
 Title: Graphical User Interface for Fitting Kinetic Models to Chemical Degradation Data
-Version: 0.6.10
-Date: 2019-07-08
+Version: 0.6.11
+Date: 2021-02-21
 Authors@R: c(person("Johannes", "Ranke", role = c("aut", "cre", "cph"), 
                     email = "jranke@uni-bremen.de"),
              person("Stefan", "Meinecke", role = "ctb"),
@@ -10,7 +10,7 @@ Authors@R: c(person("Johannes", "Ranke", role = c("aut", "cre", "cph"),
 Description: Browser based graphical user interface for R package mkin, based
   on the gWidgetsWWW2 package. Both gmkin and gWidgetsWWW2 are developed on
   GitHub, but are also available from the R-Forge repository.
-Depends: mkin (>= 0.9.49.6), gWidgetsWWW2 (>= 0.4-7)
+Depends: R (>= 3.5.0), mkin (>= 1.0.1), gWidgetsWWW2 (>= 0.4-7)
 Imports: R6, markdown, plyr, devEMF
 Suggests: knitr, rmarkdown
 License: GPL
@@ -20,4 +20,4 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 BugReports: http://github.com/jranke/gmkin/issues
 URL: http://pkgdown.jrwb.de/gmkin
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
