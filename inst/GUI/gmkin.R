@@ -987,19 +987,11 @@ run_fit_handler <- function(h, ...) { #{{{3
       iniparms <- Parameters.ini$Initial
       names(iniparms) <- sub("_0", "", Parameters.ini$Name)
       inifixed <- names(iniparms[Parameters.ini$Fixed])
-      if (svalue(f.gg.opts.plot)) {
-        if (.Platform$OS.type == "windows") {
-          # When on windows, check for an active windows device. If not present,
-          # open one
-          if (attr(dev.cur(), "names") != "windows") windows()
-        }
-      }
       ftmp <<- mkinfit(m.cur, override(ds.cur$data),
                        state.ini = iniparms,
                        fixed_initials = inifixed,
                        parms.ini = deparms,
                        fixed_parms = defixed,
-                       plot = svalue(f.gg.opts.plot),
                        solution_type = svalue(f.gg.opts.st),
                        atol = as.numeric(svalue(f.gg.opts.atol)),
                        rtol = as.numeric(svalue(f.gg.opts.rtol)),
@@ -1142,8 +1134,6 @@ f.gg.opts.g <- ggroup(cont = f.config)
 # First group {{{4
 f.gg.opts.1 <- gformlayout(cont = f.gg.opts.g)
 solution_types <- c("auto", "analytical", "eigen", "deSolve")
-f.gg.opts.plot <- gcheckbox("Plot during the fit",
-                            cont = f.gg.opts.1, checked = FALSE)
 f.gg.opts.st <- gcombobox(solution_types, selected = 1,
                           label = "solution_type", width = 160,
                           cont = f.gg.opts.1)
