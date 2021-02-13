@@ -10,9 +10,10 @@ ExtJS which is bundled with gWidgetsWWW2.
 
 ## System requirements
 
-For running gmkin you need a system running a recent version of R (version
-3.1.0 or later), the gWidgesWWW2 package, the gmkin package and a web browser
-(Firefox/Iceweasel and Chrome work for me) with JavaScript enabled.
+For running current gmkin you need a system running a recent version of
+R (4.0.x, on Linux older versions may work as well), the gWidgesWWW2 package,
+the gmkin package and a web browser (Firefox and Chrome work for me) with
+JavaScript enabled.
 
 It should be possible to run gmkin on most laptop or desktop computers running
 Linux, Mac OS X, Windows 7 or Windows 10. 
@@ -35,7 +36,7 @@ respective
 
 ### Installing gmkin and gWidgetsWWW2
 
-Windows and Linux users running R 3.1.0 or later can make use of my drat
+Windows and Linux users can make use of my drat
 package repository on github. Before installing gmkin, you should update
 your R packages already installed, e.g. by starting R, and pasting the
 command
@@ -149,21 +150,21 @@ while (TRUE) {
 }
 ```
 
-into an R script (e.g. under `C:\Users\<your username>\AppData\Roaming\gmkin_start.R`),
+in an R script (e.g. under `C:\Users\<your username>\AppData\Roaming\gmkin_start.R`),
 and create a Windows shortcut, e.g. on the Desktop, with the target
 `"C:\Program Files\R\R-4.x.y\bin\R.exe" --slave -f c:\Users\<your username>\AppData\Roaming\gmkin_start.R`,
 where R-4.x.y is the version of R that you would like to use with gmkin.  This
 will start a non-interactive R console that runs the gmkin GUI. In the
 properties dialogue of the shortcut, you can also set the working directory in
 which it starts gmkin.  Thanks to Jonas Klein of the Umweltbundesamt for the
-trick with using Sys.sleep in a while loop and for suggesting the AppData
+trick with using 'Sys.sleep' in a while loop and for suggesting the AppData
 directory for the start script.
 
 Caveat: The last time I tested this (13 February 2021), starting gmkin with
-such a shortcut slowed down loading the GUI elements significantly. This was
-under Windows 10 64 bit. Therefore, for Windows I would currently recommend to
-start the R GUI application and start gmkin from there as described under
-'Usage'.
+such a shortcut slowed down the loading of the GUI elements significantly. This
+was under Windows 10 64 bit. Therefore, for Windows I would currently recommend
+to start the R GUI application and start gmkin from there as described above
+under 'Usage'.
 
 ## Acknowledgements
 
@@ -175,4 +176,3 @@ of user feedback and suggestions for improvement in that time.
 
 The adaptation to mkin versions > 0.9.49.6 that can do fits using a two-component
 error model was supported by another project by the Umweltbundesamt in 2018/2019.
-
