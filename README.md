@@ -151,13 +151,19 @@ while (TRUE) {
 
 into an R script (e.g. under `C:\Users\<your username>\AppData\Roaming\gmkin_start.R`),
 and create a Windows shortcut, e.g. on the Desktop, with the target
-`"C:\Program Files\R\R-3.x.y\bin\R.exe" --slave -f c:\Users\<your username>\AppData\Roaming\gmkin_start.R`,
-where R.x.y is the version of R that you would like to use with gmkin.  This
+`"C:\Program Files\R\R-4.x.y\bin\R.exe" --slave -f c:\Users\<your username>\AppData\Roaming\gmkin_start.R`,
+where R-4.x.y is the version of R that you would like to use with gmkin.  This
 will start a non-interactive R console that runs the gmkin GUI. In the
 properties dialogue of the shortcut, you can also set the working directory in
 which it starts gmkin.  Thanks to Jonas Klein of the Umweltbundesamt for the
 trick with using Sys.sleep in a while loop and for suggesting the AppData
 directory for the start script.
+
+Caveat: The last time I tested this (13 February 2021), starting gmkin with
+such a shortcut slowed down loading the GUI elements significantly. This was
+under Windows 10 64 bit. Therefore, for Windows I would currently recommend to
+start the R GUI application and start gmkin from there as described under
+'Usage'.
 
 ## Acknowledgements
 
