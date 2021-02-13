@@ -4,7 +4,6 @@
 ^gmkin\.tar$
 ^gmkin_.*\.zip$
 ^gmkin_screenshot.png$
-^Rprofile$
 ^inst/GUI/gmkin_workflow_inkscape.svg$
 ^docs$
 ^_pkgdown\.yml$
