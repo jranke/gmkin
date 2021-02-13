@@ -1,6 +1,10 @@
 # NEWS for package 'gmkin'
 
-## gmkin 0.6-11 (2021-02-21)
+## gmkin 0.6-12 (2021-02-13)
+
+- Depend on mkin (>= 1.0.2) which preserves model names stored in 'mkinmod' objects, which were overwritten starting from mkin 1.0.0
+
+## gmkin 0.6-11 (2021-02-12)
 
 - Adapt built-in 'FOCUS_2006' workspace to mkin 1.0.x as we have now have the 'deg_func' element in 'mkinmod' objects
 
