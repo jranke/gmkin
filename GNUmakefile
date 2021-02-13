@@ -26,7 +26,6 @@ pkgfiles = NEWS.md \
 	R/* \
 	man/* \
 	README.html \
-	TODO \
 	vignettes/gmkin_manual.html
 
 all: check clean
