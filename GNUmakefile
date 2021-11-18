@@ -73,7 +73,7 @@ dratwin: winbin
 	"$(RBIN)/Rscript" -e "drat::insertPackage('$(WINBIN)', '~/git/drat/', commit = TRUE)"
 
 r-forge:
-	git archive master > $(PKGDIR)/gmkin.tar;\
+	git archive main > $(PKGDIR)/gmkin.tar;\
 	cd $(RFDIR) && rm -r `ls` && tar -xf $(PKGDIR)/gmkin.tar;\
 	rm -r $(SDDIR)/*;\
 	cp -a docs/* $(SDDIR);\

@@ -67,9 +67,9 @@ install.packages("gmkin")
 ```
 
 The latest changes to gmkin are recorded in the
-[NEWS](https://github.com/jranke/gmkin/blob/master/NEWS.md) file,
+[NEWS](https://github.com/jranke/gmkin/blob/main/NEWS.md) file,
 more details can be found in the
-[commit history](https://github.com/jranke/gmkin/commits/master).
+[commit history](https://github.com/jranke/gmkin/commits/main).
 
 ![gmkin screenshot](gmkin_screenshot.png)
 
